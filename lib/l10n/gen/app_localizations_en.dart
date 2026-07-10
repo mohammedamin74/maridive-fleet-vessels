@@ -54,6 +54,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noResults => 'No vessels match your search';
 
   @override
+  String get filterAll => 'All';
+
+  @override
+  String get fleetLabel => 'Fleet';
+
+  @override
   String get vesselDetails => 'Vessel Details';
 
   @override

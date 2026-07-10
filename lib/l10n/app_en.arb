@@ -20,6 +20,8 @@
 
   "searchVessels": "Search vessels...",
   "noResults": "No vessels match your search",
+  "filterAll": "All",
+  "fleetLabel": "Fleet",
 
   "vesselDetails": "Vessel Details",
   "imoNumber": "IMO Number",

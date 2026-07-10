@@ -54,6 +54,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noResults => 'لا توجد سفن مطابقة لبحثك';
 
   @override
+  String get filterAll => 'الكل';
+
+  @override
+  String get fleetLabel => 'الأسطول';
+
+  @override
   String get vesselDetails => 'تفاصيل السفينة';
 
   @override

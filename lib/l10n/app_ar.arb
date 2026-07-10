@@ -19,6 +19,8 @@
 
   "searchVessels": "البحث عن سفينة...",
   "noResults": "لا توجد سفن مطابقة لبحثك",
+  "filterAll": "الكل",
+  "fleetLabel": "الأسطول",
 
   "vesselDetails": "تفاصيل السفينة",
   "imoNumber": "رقم IMO",

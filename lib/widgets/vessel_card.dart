@@ -66,6 +66,20 @@ class VesselCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (vessel.imo.isNotEmpty &&
+                            vessel.imo.toUpperCase() != 'N/A') ...[
+                          _MetaChip(
+                              icon: Icons.tag, label: 'IMO ${vessel.imo}'),
+                          const SizedBox(width: 8),
+                        ],
+                        _MetaChip(
+                            icon: Icons.people_alt_outlined,
+                            label: '${vessel.crew}'),
+                      ],
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
@@ -89,10 +103,38 @@ class VesselCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right,
+                  color: scheme.onSurface.withValues(alpha: 0.3)),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _MetaChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    final muted = Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: muted),
+        const SizedBox(width: 3),
+        Text(
+          label,
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(fontSize: 11, color: muted),
+        ),
+      ],
     );
   }
 }

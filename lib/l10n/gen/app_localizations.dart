@@ -188,6 +188,18 @@ abstract class AppLocalizations {
   /// **'No vessels match your search'**
   String get noResults;
 
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @fleetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fleet'**
+  String get fleetLabel;
+
   /// No description provided for @vesselDetails.
   ///
   /// In en, this message translates to:
