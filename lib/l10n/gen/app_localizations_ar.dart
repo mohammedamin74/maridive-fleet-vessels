@@ -250,4 +250,175 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get exportReport => 'تصدير التقرير';
+
+  @override
+  String get vesselOperations => 'عمليات السفينة';
+
+  @override
+  String get viewEntries => 'عرض السجلات';
+
+  @override
+  String get tankStatusPdf => 'تقرير حالة الخزانات PDF';
+
+  @override
+  String get save => 'حفظ';
+
+  @override
+  String get delete => 'حذف';
+
+  @override
+  String openCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مفتوحة',
+      many: '$count مفتوحة',
+      few: '$count مفتوحة',
+      two: '٢ مفتوحة',
+      one: '١ مفتوح',
+      zero: 'لا توجد مفتوحة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count معلقة',
+      many: '$count معلقة',
+      few: '$count معلقة',
+      two: '٢ معلقة',
+      one: '١ معلق',
+      zero: 'لا توجد معلقة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get defects => 'الأعطال';
+
+  @override
+  String get addDefect => 'الإبلاغ عن عطل';
+
+  @override
+  String get defectTitleLabel => 'العنوان';
+
+  @override
+  String get defectDescriptionLabel => 'الوصف';
+
+  @override
+  String get severityLabel => 'الخطورة';
+
+  @override
+  String get severityMinor => 'بسيط';
+
+  @override
+  String get severityMajor => 'كبير';
+
+  @override
+  String get severityCritical => 'حرج';
+
+  @override
+  String get statusOpenDefect => 'مفتوح';
+
+  @override
+  String get statusInProgress => 'قيد المعالجة';
+
+  @override
+  String get statusClosedDefect => 'مغلق';
+
+  @override
+  String get noDefects => 'لا توجد أعطال مسجلة';
+
+  @override
+  String get reportedOn => 'تاريخ الإبلاغ';
+
+  @override
+  String get markInProgress => 'قيد المعالجة';
+
+  @override
+  String get markClosed => 'إغلاق';
+
+  @override
+  String get reopen => 'إعادة فتح';
+
+  @override
+  String criticalDefectsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عطل حرج',
+      many: '$count عطلاً حرجًا',
+      few: '$count أعطال حرجة',
+      two: 'عطلان حرجان',
+      one: 'عطل حرج واحد',
+      zero: 'لا توجد أعطال حرجة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get requisitions => 'طلبات التوريد';
+
+  @override
+  String get addRequisition => 'طلب توريد جديد';
+
+  @override
+  String get itemNameLabel => 'اسم الصنف';
+
+  @override
+  String get quantityLabel => 'الكمية';
+
+  @override
+  String get unitLabel => 'الوحدة';
+
+  @override
+  String get notesLabel => 'ملاحظات (اختياري)';
+
+  @override
+  String get priorityLabel => 'الأولوية';
+
+  @override
+  String get priorityLow => 'منخفضة';
+
+  @override
+  String get priorityNormal => 'عادية';
+
+  @override
+  String get priorityUrgent => 'عاجلة';
+
+  @override
+  String get reqStatusPending => 'قيد الانتظار';
+
+  @override
+  String get reqStatusApproved => 'معتمد';
+
+  @override
+  String get reqStatusOrdered => 'تم الطلب';
+
+  @override
+  String get reqStatusReceived => 'تم الاستلام';
+
+  @override
+  String get reqStatusRejected => 'مرفوض';
+
+  @override
+  String get noRequisitions => 'لا توجد طلبات توريد بعد';
+
+  @override
+  String get requestedOn => 'تاريخ الطلب';
+
+  @override
+  String get markApproved => 'اعتماد';
+
+  @override
+  String get markOrdered => 'تحديد كـ تم الطلب';
+
+  @override
+  String get markReceived => 'تحديد كـ تم الاستلام';
+
+  @override
+  String get markRejected => 'رفض';
 }

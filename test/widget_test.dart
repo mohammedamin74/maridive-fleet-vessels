@@ -10,12 +10,16 @@ void main() {
   late Box settingsBox;
   late Box readingsBox;
   late Box notesBox;
+  late Box defectsBox;
+  late Box requisitionsBox;
 
   setUp(() async {
     Hive.init('./.dart_tool/hive_test');
     settingsBox = await Hive.openBox('test_settings_${DateTime.now().microsecondsSinceEpoch}');
     readingsBox = await Hive.openBox('test_readings_${DateTime.now().microsecondsSinceEpoch}');
     notesBox = await Hive.openBox('test_notes_${DateTime.now().microsecondsSinceEpoch}');
+    defectsBox = await Hive.openBox('test_defects_${DateTime.now().microsecondsSinceEpoch}');
+    requisitionsBox = await Hive.openBox('test_requisitions_${DateTime.now().microsecondsSinceEpoch}');
   });
 
   testWidgets('Dashboard shows fleet title and vessel cards', (WidgetTester tester) async {
@@ -24,7 +28,12 @@ void main() {
         providers: [
           ChangeNotifierProvider(create: (_) => AppState(settingsBox: settingsBox)),
           ChangeNotifierProvider(
-            create: (_) => TankDataProvider(readingsBox: readingsBox, notesBox: notesBox),
+            create: (_) => TankDataProvider(
+              readingsBox: readingsBox,
+              notesBox: notesBox,
+              defectsBox: defectsBox,
+              requisitionsBox: requisitionsBox,
+            ),
           ),
         ],
         child: const MaridiveFleetApp(),

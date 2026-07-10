@@ -529,6 +529,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export Report'**
   String get exportReport;
+
+  /// No description provided for @vesselOperations.
+  ///
+  /// In en, this message translates to:
+  /// **'Vessel Operations'**
+  String get vesselOperations;
+
+  /// No description provided for @viewEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'View entries'**
+  String get viewEntries;
+
+  /// No description provided for @tankStatusPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank status PDF'**
+  String get tankStatusPdf;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @openCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 open} other{{count} open}}'**
+  String openCount(int count);
+
+  /// No description provided for @pendingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 pending} other{{count} pending}}'**
+  String pendingCount(int count);
+
+  /// No description provided for @defects.
+  ///
+  /// In en, this message translates to:
+  /// **'Defects'**
+  String get defects;
+
+  /// No description provided for @addDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Report Defect'**
+  String get addDefect;
+
+  /// No description provided for @defectTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get defectTitleLabel;
+
+  /// No description provided for @defectDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get defectDescriptionLabel;
+
+  /// No description provided for @severityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get severityLabel;
+
+  /// No description provided for @severityMinor.
+  ///
+  /// In en, this message translates to:
+  /// **'Minor'**
+  String get severityMinor;
+
+  /// No description provided for @severityMajor.
+  ///
+  /// In en, this message translates to:
+  /// **'Major'**
+  String get severityMajor;
+
+  /// No description provided for @severityCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get severityCritical;
+
+  /// No description provided for @statusOpenDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get statusOpenDefect;
+
+  /// No description provided for @statusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get statusInProgress;
+
+  /// No description provided for @statusClosedDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get statusClosedDefect;
+
+  /// No description provided for @noDefects.
+  ///
+  /// In en, this message translates to:
+  /// **'No defects reported'**
+  String get noDefects;
+
+  /// No description provided for @reportedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Reported'**
+  String get reportedOn;
+
+  /// No description provided for @markInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark In Progress'**
+  String get markInProgress;
+
+  /// No description provided for @markClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Closed'**
+  String get markClosed;
+
+  /// No description provided for @reopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen'**
+  String get reopen;
+
+  /// No description provided for @criticalDefectsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 critical defect} other{{count} critical defects}}'**
+  String criticalDefectsTitle(int count);
+
+  /// No description provided for @requisitions.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisitions'**
+  String get requisitions;
+
+  /// No description provided for @addRequisition.
+  ///
+  /// In en, this message translates to:
+  /// **'New Requisition'**
+  String get addRequisition;
+
+  /// No description provided for @itemNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Item Name'**
+  String get itemNameLabel;
+
+  /// No description provided for @quantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantityLabel;
+
+  /// No description provided for @unitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get unitLabel;
+
+  /// No description provided for @notesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get notesLabel;
+
+  /// No description provided for @priorityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get priorityLabel;
+
+  /// No description provided for @priorityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get priorityLow;
+
+  /// No description provided for @priorityNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get priorityNormal;
+
+  /// No description provided for @priorityUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get priorityUrgent;
+
+  /// No description provided for @reqStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get reqStatusPending;
+
+  /// No description provided for @reqStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get reqStatusApproved;
+
+  /// No description provided for @reqStatusOrdered.
+  ///
+  /// In en, this message translates to:
+  /// **'Ordered'**
+  String get reqStatusOrdered;
+
+  /// No description provided for @reqStatusReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get reqStatusReceived;
+
+  /// No description provided for @reqStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get reqStatusRejected;
+
+  /// No description provided for @noRequisitions.
+  ///
+  /// In en, this message translates to:
+  /// **'No requisitions yet'**
+  String get noRequisitions;
+
+  /// No description provided for @requestedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get requestedOn;
+
+  /// No description provided for @markApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get markApproved;
+
+  /// No description provided for @markOrdered.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Ordered'**
+  String get markOrdered;
+
+  /// No description provided for @markReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Received'**
+  String get markReceived;
+
+  /// No description provided for @markRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get markRejected;
 }
 
 class _AppLocalizationsDelegate

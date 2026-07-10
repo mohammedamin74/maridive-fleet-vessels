@@ -98,5 +98,64 @@
   "addNoteHint": "Add a note...",
   "noNotes": "No log entries yet",
 
-  "exportReport": "Export Report"
+  "exportReport": "Export Report",
+
+  "vesselOperations": "Vessel Operations",
+  "viewEntries": "View entries",
+  "tankStatusPdf": "Tank status PDF",
+  "save": "Save",
+  "delete": "Delete",
+
+  "openCount": "{count, plural, one{1 open} other{{count} open}}",
+  "@openCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "pendingCount": "{count, plural, one{1 pending} other{{count} pending}}",
+  "@pendingCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "defects": "Defects",
+  "addDefect": "Report Defect",
+  "defectTitleLabel": "Title",
+  "defectDescriptionLabel": "Description",
+  "severityLabel": "Severity",
+  "severityMinor": "Minor",
+  "severityMajor": "Major",
+  "severityCritical": "Critical",
+  "statusOpenDefect": "Open",
+  "statusInProgress": "In Progress",
+  "statusClosedDefect": "Closed",
+  "noDefects": "No defects reported",
+  "reportedOn": "Reported",
+  "markInProgress": "Mark In Progress",
+  "markClosed": "Mark Closed",
+  "reopen": "Reopen",
+
+  "criticalDefectsTitle": "{count, plural, one{1 critical defect} other{{count} critical defects}}",
+  "@criticalDefectsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "requisitions": "Requisitions",
+  "addRequisition": "New Requisition",
+  "itemNameLabel": "Item Name",
+  "quantityLabel": "Quantity",
+  "unitLabel": "Unit",
+  "notesLabel": "Notes (optional)",
+  "priorityLabel": "Priority",
+  "priorityLow": "Low",
+  "priorityNormal": "Normal",
+  "priorityUrgent": "Urgent",
+  "reqStatusPending": "Pending",
+  "reqStatusApproved": "Approved",
+  "reqStatusOrdered": "Ordered",
+  "reqStatusReceived": "Received",
+  "reqStatusRejected": "Rejected",
+  "noRequisitions": "No requisitions yet",
+  "requestedOn": "Requested",
+  "markApproved": "Approve",
+  "markOrdered": "Mark Ordered",
+  "markReceived": "Mark Received",
+  "markRejected": "Reject"
 }

@@ -6,6 +6,7 @@ import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/alerts_panel.dart';
+import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/vessel_card.dart';
 import 'settings_screen.dart';
@@ -44,6 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ? 0.0
         : vessels.fold<double>(0, (sum, v) => sum + data.avgFuelPercent(v)) / vessels.length;
     final alerts = data.alertsFor(vessels);
+    final criticalDefects = data.criticalOpenDefects(vessels);
 
     return Scaffold(
       body: SafeArea(
@@ -98,6 +100,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 sliver: SliverToBoxAdapter(child: AlertsPanel(alerts: alerts)),
+              ),
+            if (criticalDefects.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: DefectsPanel(defects: criticalDefects, vessels: vessels),
+                ),
               ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),

@@ -12,13 +12,20 @@ Future<void> main() async {
   final settingsBox = await Hive.openBox('settings');
   final readingsBox = await Hive.openBox('tank_readings');
   final notesBox = await Hive.openBox('vessel_notes');
+  final defectsBox = await Hive.openBox('defects');
+  final requisitionsBox = await Hive.openBox('requisitions');
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AppState(settingsBox: settingsBox)),
         ChangeNotifierProvider(
-          create: (_) => TankDataProvider(readingsBox: readingsBox, notesBox: notesBox),
+          create: (_) => TankDataProvider(
+            readingsBox: readingsBox,
+            notesBox: notesBox,
+            defectsBox: defectsBox,
+            requisitionsBox: requisitionsBox,
+          ),
         ),
       ],
       child: const MaridiveFleetApp(),

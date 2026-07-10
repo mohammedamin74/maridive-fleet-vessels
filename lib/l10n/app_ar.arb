@@ -97,5 +97,64 @@
   "addNoteHint": "أضف ملاحظة...",
   "noNotes": "لا توجد ملاحظات بعد",
 
-  "exportReport": "تصدير التقرير"
+  "exportReport": "تصدير التقرير",
+
+  "vesselOperations": "عمليات السفينة",
+  "viewEntries": "عرض السجلات",
+  "tankStatusPdf": "تقرير حالة الخزانات PDF",
+  "save": "حفظ",
+  "delete": "حذف",
+
+  "openCount": "{count, plural, zero{لا توجد مفتوحة} one{١ مفتوح} two{٢ مفتوحة} few{{count} مفتوحة} many{{count} مفتوحة} other{{count} مفتوحة}}",
+  "@openCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "pendingCount": "{count, plural, zero{لا توجد معلقة} one{١ معلق} two{٢ معلقة} few{{count} معلقة} many{{count} معلقة} other{{count} معلقة}}",
+  "@pendingCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "defects": "الأعطال",
+  "addDefect": "الإبلاغ عن عطل",
+  "defectTitleLabel": "العنوان",
+  "defectDescriptionLabel": "الوصف",
+  "severityLabel": "الخطورة",
+  "severityMinor": "بسيط",
+  "severityMajor": "كبير",
+  "severityCritical": "حرج",
+  "statusOpenDefect": "مفتوح",
+  "statusInProgress": "قيد المعالجة",
+  "statusClosedDefect": "مغلق",
+  "noDefects": "لا توجد أعطال مسجلة",
+  "reportedOn": "تاريخ الإبلاغ",
+  "markInProgress": "قيد المعالجة",
+  "markClosed": "إغلاق",
+  "reopen": "إعادة فتح",
+
+  "criticalDefectsTitle": "{count, plural, zero{لا توجد أعطال حرجة} one{عطل حرج واحد} two{عطلان حرجان} few{{count} أعطال حرجة} many{{count} عطلاً حرجًا} other{{count} عطل حرج}}",
+  "@criticalDefectsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "requisitions": "طلبات التوريد",
+  "addRequisition": "طلب توريد جديد",
+  "itemNameLabel": "اسم الصنف",
+  "quantityLabel": "الكمية",
+  "unitLabel": "الوحدة",
+  "notesLabel": "ملاحظات (اختياري)",
+  "priorityLabel": "الأولوية",
+  "priorityLow": "منخفضة",
+  "priorityNormal": "عادية",
+  "priorityUrgent": "عاجلة",
+  "reqStatusPending": "قيد الانتظار",
+  "reqStatusApproved": "معتمد",
+  "reqStatusOrdered": "تم الطلب",
+  "reqStatusReceived": "تم الاستلام",
+  "reqStatusRejected": "مرفوض",
+  "noRequisitions": "لا توجد طلبات توريد بعد",
+  "requestedOn": "تاريخ الطلب",
+  "markApproved": "اعتماد",
+  "markOrdered": "تحديد كـ تم الطلب",
+  "markReceived": "تحديد كـ تم الاستلام",
+  "markRejected": "رفض"
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../models/defect.dart';
+import '../models/requisition.dart';
 import '../models/tank.dart';
 import '../models/vessel.dart';
 import '../services/report_service.dart';
@@ -8,6 +10,8 @@ import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
+import 'defect_list_screen.dart';
+import 'requisition_list_screen.dart';
 import 'tank_category_screen.dart';
 import 'vessel_logbook_screen.dart';
 
@@ -18,6 +22,9 @@ class VesselDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final data = context.watch<TankDataProvider>();
+    final openDefects = data.defectsFor(vessel.id).where((d) => d.status != DefectStatus.closed).length;
+    final pendingReqs = data.requisitionsFor(vessel.id).where((r) => r.status == RequisitionStatus.pending).length;
 
     return Scaffold(
       body: SafeArea(
@@ -31,7 +38,7 @@ class VesselDetailScreen extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -67,6 +74,61 @@ class VesselDetailScreen extends StatelessWidget {
                     subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.other).length),
                     color: AppColors.statusPort,
                     onTap: () => _openCategory(context, TankCategory.other, t.categoryOther),
+                  ),
+                ]),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              sliver: SliverToBoxAdapter(
+                child: Text(t.vesselOperations, style: Theme.of(context).textTheme.titleLarge),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 1.15,
+                ),
+                delegate: SliverChildListDelegate([
+                  CategoryTile(
+                    icon: Icons.menu_book_outlined,
+                    title: t.logbook,
+                    subtitle: t.viewEntries,
+                    color: AppColors.teal500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => VesselLogbookScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.report_problem_outlined,
+                    title: t.defects,
+                    subtitle: t.openCount(openDefects),
+                    color: openDefects > 0 ? AppColors.statusMaintenance : AppColors.statusPort,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => DefectListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.shopping_cart_outlined,
+                    title: t.requisitions,
+                    subtitle: t.pendingCount(pendingReqs),
+                    color: AppColors.amber400,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => RequisitionListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.picture_as_pdf_outlined,
+                    title: t.exportReport,
+                    subtitle: t.tankStatusPdf,
+                    color: AppColors.navy500,
+                    onTap: () async {
+                      await ReportService.exportVesselReport(vessel: vessel, data: data);
+                    },
                   ),
                 ]),
               ),
@@ -107,22 +169,6 @@ class _VesselHeader extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
               ),
               const Spacer(),
-              IconButton(
-                tooltip: t.logbook,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => VesselLogbookScreen(vessel: vessel)),
-                ),
-                icon: const Icon(Icons.menu_book_outlined, color: Colors.white),
-              ),
-              IconButton(
-                tooltip: t.exportReport,
-                onPressed: () async {
-                  final data = context.read<TankDataProvider>();
-                  await ReportService.exportVesselReport(vessel: vessel, data: data);
-                },
-                icon: const Icon(Icons.picture_as_pdf_outlined, color: Colors.white),
-              ),
-              const SizedBox(width: 4),
               StatusBadge(status: vessel.status),
             ],
           ),

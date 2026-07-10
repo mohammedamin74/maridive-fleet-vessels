@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import '../models/defect.dart';
+import '../models/requisition.dart';
 import '../models/tank.dart';
 import '../models/tank_reading.dart';
 import '../models/vessel.dart';
@@ -20,15 +22,23 @@ class TankAlert {
   });
 }
 
-/// Wraps the Hive-backed readings/notes boxes and derives live tank levels.
-/// Tank current levels are NOT stored on the static [Tank] catalog — they
-/// are always the most recent [TankReading] for that vessel+tank pair, so
-/// there is one source of truth for "current level" and "history".
+/// Wraps the Hive-backed readings/notes/defects/requisitions boxes and
+/// derives live tank levels. Tank current levels are NOT stored on the
+/// static [Tank] catalog — they are always the most recent [TankReading]
+/// for that vessel+tank pair, so there is one source of truth for
+/// "current level" and "history".
 class TankDataProvider extends ChangeNotifier {
   final Box readingsBox;
   final Box notesBox;
+  final Box defectsBox;
+  final Box requisitionsBox;
 
-  TankDataProvider({required this.readingsBox, required this.notesBox});
+  TankDataProvider({
+    required this.readingsBox,
+    required this.notesBox,
+    required this.defectsBox,
+    required this.requisitionsBox,
+  });
 
   List<TankReading> readingsFor(String vesselId, String tankId) {
     final list = readingsBox.values
@@ -122,6 +132,109 @@ class TankDataProvider extends ChangeNotifier {
 
   Future<void> deleteNote(String noteId) async {
     await notesBox.delete(noteId);
+    notifyListeners();
+  }
+
+  // --- Defects ---
+
+  List<Defect> defectsFor(String vesselId) {
+    final list = defectsBox.values
+        .map((e) => Defect.fromMap(e as Map))
+        .where((d) => d.vesselId == vesselId)
+        .toList();
+    list.sort((a, b) => b.reportedAt.compareTo(a.reportedAt));
+    return list;
+  }
+
+  List<Defect> criticalOpenDefects(List<Vessel> vessels) {
+    final vesselIds = vessels.map((v) => v.id).toSet();
+    final list = defectsBox.values
+        .map((e) => Defect.fromMap(e as Map))
+        .where((d) =>
+            vesselIds.contains(d.vesselId) &&
+            d.status != DefectStatus.closed &&
+            (d.severity == DefectSeverity.critical || d.severity == DefectSeverity.major))
+        .toList();
+    list.sort((a, b) => b.severity.index.compareTo(a.severity.index));
+    return list;
+  }
+
+  Future<void> addDefect({
+    required String vesselId,
+    required String title,
+    required String description,
+    required DefectSeverity severity,
+  }) async {
+    final defect = Defect(
+      id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
+      vesselId: vesselId,
+      title: title,
+      description: description,
+      severity: severity,
+      status: DefectStatus.open,
+      reportedAt: DateTime.now(),
+    );
+    await defectsBox.put(defect.id, defect.toMap());
+    notifyListeners();
+  }
+
+  Future<void> updateDefectStatus(String id, DefectStatus status) async {
+    final raw = defectsBox.get(id);
+    if (raw == null) return;
+    final defect = Defect.fromMap(raw as Map).copyWith(status: status);
+    await defectsBox.put(id, defect.toMap());
+    notifyListeners();
+  }
+
+  Future<void> deleteDefect(String id) async {
+    await defectsBox.delete(id);
+    notifyListeners();
+  }
+
+  // --- Requisitions ---
+
+  List<Requisition> requisitionsFor(String vesselId) {
+    final list = requisitionsBox.values
+        .map((e) => Requisition.fromMap(e as Map))
+        .where((r) => r.vesselId == vesselId)
+        .toList();
+    list.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
+    return list;
+  }
+
+  Future<void> addRequisition({
+    required String vesselId,
+    required String itemName,
+    required double quantity,
+    required String unit,
+    required RequisitionPriority priority,
+    String notes = '',
+  }) async {
+    final requisition = Requisition(
+      id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
+      vesselId: vesselId,
+      itemName: itemName,
+      quantity: quantity,
+      unit: unit,
+      priority: priority,
+      status: RequisitionStatus.pending,
+      notes: notes,
+      requestedAt: DateTime.now(),
+    );
+    await requisitionsBox.put(requisition.id, requisition.toMap());
+    notifyListeners();
+  }
+
+  Future<void> updateRequisitionStatus(String id, RequisitionStatus status) async {
+    final raw = requisitionsBox.get(id);
+    if (raw == null) return;
+    final requisition = Requisition.fromMap(raw as Map).copyWith(status: status);
+    await requisitionsBox.put(id, requisition.toMap());
+    notifyListeners();
+  }
+
+  Future<void> deleteRequisition(String id) async {
+    await requisitionsBox.delete(id);
     notifyListeners();
   }
 }

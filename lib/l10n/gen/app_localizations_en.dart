@@ -242,4 +242,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get exportReport => 'Export Report';
+
+  @override
+  String get vesselOperations => 'Vessel Operations';
+
+  @override
+  String get viewEntries => 'View entries';
+
+  @override
+  String get tankStatusPdf => 'Tank status PDF';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String openCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open',
+      one: '1 open',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pending',
+      one: '1 pending',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get defects => 'Defects';
+
+  @override
+  String get addDefect => 'Report Defect';
+
+  @override
+  String get defectTitleLabel => 'Title';
+
+  @override
+  String get defectDescriptionLabel => 'Description';
+
+  @override
+  String get severityLabel => 'Severity';
+
+  @override
+  String get severityMinor => 'Minor';
+
+  @override
+  String get severityMajor => 'Major';
+
+  @override
+  String get severityCritical => 'Critical';
+
+  @override
+  String get statusOpenDefect => 'Open';
+
+  @override
+  String get statusInProgress => 'In Progress';
+
+  @override
+  String get statusClosedDefect => 'Closed';
+
+  @override
+  String get noDefects => 'No defects reported';
+
+  @override
+  String get reportedOn => 'Reported';
+
+  @override
+  String get markInProgress => 'Mark In Progress';
+
+  @override
+  String get markClosed => 'Mark Closed';
+
+  @override
+  String get reopen => 'Reopen';
+
+  @override
+  String criticalDefectsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count critical defects',
+      one: '1 critical defect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get requisitions => 'Requisitions';
+
+  @override
+  String get addRequisition => 'New Requisition';
+
+  @override
+  String get itemNameLabel => 'Item Name';
+
+  @override
+  String get quantityLabel => 'Quantity';
+
+  @override
+  String get unitLabel => 'Unit';
+
+  @override
+  String get notesLabel => 'Notes (optional)';
+
+  @override
+  String get priorityLabel => 'Priority';
+
+  @override
+  String get priorityLow => 'Low';
+
+  @override
+  String get priorityNormal => 'Normal';
+
+  @override
+  String get priorityUrgent => 'Urgent';
+
+  @override
+  String get reqStatusPending => 'Pending';
+
+  @override
+  String get reqStatusApproved => 'Approved';
+
+  @override
+  String get reqStatusOrdered => 'Ordered';
+
+  @override
+  String get reqStatusReceived => 'Received';
+
+  @override
+  String get reqStatusRejected => 'Rejected';
+
+  @override
+  String get noRequisitions => 'No requisitions yet';
+
+  @override
+  String get requestedOn => 'Requested';
+
+  @override
+  String get markApproved => 'Approve';
+
+  @override
+  String get markOrdered => 'Mark Ordered';
+
+  @override
+  String get markReceived => 'Mark Received';
+
+  @override
+  String get markRejected => 'Reject';
 }
