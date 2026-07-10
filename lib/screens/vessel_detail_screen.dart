@@ -1,4 +1,3 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
@@ -42,28 +41,28 @@ class VesselDetailScreen extends StatelessWidget {
                 ),
                 delegate: SliverChildListDelegate([
                   CategoryTile(
-                    icon: FontAwesomeIcons.gasPump,
+                    icon: Icons.local_gas_station,
                     title: t.categoryFuelOil,
                     subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.fuelOil).length),
                     color: AppColors.amber400,
                     onTap: () => _openCategory(context, TankCategory.fuelOil, t.categoryFuelOil),
                   ),
                   CategoryTile(
-                    icon: FontAwesomeIcons.droplet,
+                    icon: Icons.water_drop,
                     title: t.categoryBrineMud,
                     subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.brineMud).length),
                     color: AppColors.navy500,
                     onTap: () => _openCategory(context, TankCategory.brineMud, t.categoryBrineMud),
                   ),
                   CategoryTile(
-                    icon: FontAwesomeIcons.oilCan,
+                    icon: Icons.oil_barrel,
                     title: t.categoryLubeHydraulic,
                     subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.lubeHydraulic).length),
                     color: AppColors.teal500,
                     onTap: () => _openCategory(context, TankCategory.lubeHydraulic, t.categoryLubeHydraulic),
                   ),
                   CategoryTile(
-                    icon: FontAwesomeIcons.layerGroup,
+                    icon: Icons.layers,
                     title: t.categoryOther,
                     subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.other).length),
                     color: AppColors.statusPort,
@@ -140,16 +139,16 @@ class _VesselHeader extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   vessel.type,
-                  style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 14),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 14),
                 ),
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    _InfoChip(icon: FontAwesomeIcons.hashtag, label: t.imoNumber, value: vessel.imo),
+                    _InfoChip(icon: Icons.tag, label: t.imoNumber, value: vessel.imo),
                     const SizedBox(width: 10),
-                    _InfoChip(icon: FontAwesomeIcons.locationDot, label: t.homePort, value: vessel.homePort),
+                    _InfoChip(icon: Icons.location_on, label: t.homePort, value: vessel.homePort),
                     const SizedBox(width: 10),
-                    _InfoChip(icon: FontAwesomeIcons.userGroup, label: t.crewOnBoard, value: '${vessel.crew}'),
+                    _InfoChip(icon: Icons.groups, label: t.crewOnBoard, value: '${vessel.crew}'),
                   ],
                 ),
               ],
@@ -173,13 +172,13 @@ class _InfoChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.12),
+          color: Colors.white.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            FaIcon(icon, size: 12, color: Colors.white.withOpacity(0.8)),
+            Icon(icon, size: 12, color: Colors.white.withValues(alpha: 0.8)),
             const SizedBox(height: 6),
             Text(
               value,
@@ -189,7 +188,7 @@ class _InfoChip extends StatelessWidget {
             ),
             Text(
               label,
-              style: TextStyle(color: Colors.white.withOpacity(0.65), fontSize: 10),
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.65), fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

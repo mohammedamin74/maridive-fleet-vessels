@@ -1,4 +1,3 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/vessel.dart';
@@ -38,7 +37,7 @@ class VesselCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
-                child: const FaIcon(FontAwesomeIcons.ship, color: Colors.white, size: 22),
+                child: const Icon(Icons.directions_boat_filled, color: Colors.white, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -68,7 +67,7 @@ class VesselCard extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(FontAwesomeIcons.gasPump, size: 13, color: scheme.onSurface.withOpacity(0.5)),
+                        Icon(Icons.local_gas_station, size: 13, color: scheme.onSurface.withValues(alpha: 0.5)),
                         const SizedBox(width: 6),
                         Expanded(child: TankLevelBarHorizontal(percent: fuelPercent, color: fuelColor)),
                         const SizedBox(width: 8),

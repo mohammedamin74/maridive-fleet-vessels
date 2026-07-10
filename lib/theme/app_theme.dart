@@ -26,7 +26,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -61,7 +61,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.navy800,
         elevation: 0,
         surfaceTintColor: Colors.transparent,
@@ -82,7 +82,7 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: scheme.brightness == Brightness.dark
-            ? AppColors.navy700.withOpacity(0.4)
+            ? AppColors.navy700.withValues(alpha: 0.4)
             : AppColors.slate100,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -158,7 +158,7 @@ class AppTheme {
         color: scheme.onSurface,
       ),
       bodyLarge: TextStyle(fontSize: 15, color: scheme.onSurface),
-      bodyMedium: TextStyle(fontSize: 13.5, color: scheme.onSurface.withOpacity(0.72)),
+      bodyMedium: TextStyle(fontSize: 13.5, color: scheme.onSurface.withValues(alpha: 0.72)),
       labelLarge: TextStyle(
         fontSize: 13,
         fontWeight: FontWeight.w700,

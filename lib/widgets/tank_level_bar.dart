@@ -20,7 +20,7 @@ class TankLevelBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final track = scheme.brightness == Brightness.dark
-        ? AppColors.navy700.withOpacity(0.5)
+        ? AppColors.navy700.withValues(alpha: 0.5)
         : AppColors.slate200;
 
     return ClipRRect(
@@ -62,7 +62,7 @@ class TankLevelBarHorizontal extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final track = scheme.brightness == Brightness.dark
-        ? AppColors.navy700.withOpacity(0.5)
+        ? AppColors.navy700.withValues(alpha: 0.5)
         : AppColors.slate200;
 
     return ClipRRect(

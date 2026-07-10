@@ -30,9 +30,9 @@ class AlertsPanel extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.statusMaintenance.withOpacity(0.1),
+        color: AppColors.statusMaintenance.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.statusMaintenance.withOpacity(0.3)),
+        border: Border.all(color: AppColors.statusMaintenance.withValues(alpha: 0.3)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),

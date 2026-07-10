@@ -104,7 +104,7 @@ class TankCategoryScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(color: color),
                     ),
                     const SizedBox(width: 4),
-                    Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.35)),
+                    Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35)),
                   ],
                 ),
               ),

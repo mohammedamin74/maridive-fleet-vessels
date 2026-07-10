@@ -23,7 +23,7 @@ class SoundingTableScreen extends StatelessWidget {
             children: [
               Container(
                 color: scheme.brightness == Brightness.dark
-                    ? AppColors.navy700.withOpacity(0.5)
+                    ? AppColors.navy700.withValues(alpha: 0.5)
                     : AppColors.slate100,
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 child: Row(

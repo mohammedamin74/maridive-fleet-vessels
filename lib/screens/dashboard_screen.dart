@@ -1,4 +1,3 @@
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/fleet_data.dart';
@@ -58,7 +57,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Expanded(
                       child: StatTile(
-                        icon: FontAwesomeIcons.ship,
+                        icon: Icons.directions_boat_filled,
                         value: '${vessels.length}',
                         label: t.totalVessels,
                         accent: AppColors.teal400,
@@ -67,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: StatTile(
-                        icon: FontAwesomeIcons.circleCheck,
+                        icon: Icons.check_circle,
                         value: '$activeCount',
                         label: t.activeVessels,
                         accent: AppColors.statusActive,
@@ -76,7 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: StatTile(
-                        icon: FontAwesomeIcons.anchor,
+                        icon: Icons.anchor,
                         value: '$portCount',
                         label: t.inPort,
                         accent: AppColors.statusPort,
@@ -85,7 +84,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: StatTile(
-                        icon: FontAwesomeIcons.gaugeHigh,
+                        icon: Icons.speed,
                         value: '${(avgFuel * 100).round()}%',
                         label: t.avgFuelLevel,
                         accent: AppColors.amber400,
@@ -173,7 +172,7 @@ class _Header extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   t.dashboardSubtitle,
-                  style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 13),
+                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 13),
                 ),
               ],
             ),

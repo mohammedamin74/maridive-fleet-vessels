@@ -43,7 +43,7 @@ class AppColors {
   static LinearGradient tankFillGradient(Color color) => LinearGradient(
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
-        colors: [color, color.withOpacity(0.55)],
+        colors: [color, color.withValues(alpha: 0.55)],
       );
 
   static Color statusColor(String status) {
