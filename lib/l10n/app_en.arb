@@ -1,0 +1,102 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Maridive Fleet Vessels",
+  "@appTitle": {},
+
+  "dashboardTitle": "Fleet Dashboard",
+  "dashboardSubtitle": "Offshore Support Vessels · Libya",
+  "fleetOverview": "Fleet Overview",
+  "totalVessels": "Vessels",
+  "activeVessels": "Active",
+  "inPort": "In Port",
+  "underMaintenance": "Maintenance",
+  "avgFuelLevel": "Avg. Fuel",
+
+  "statusActive": "Active",
+  "statusStandby": "Standby",
+  "statusInPort": "In Port",
+  "statusMaintenance": "Maintenance",
+
+  "searchVessels": "Search vessels...",
+  "noResults": "No vessels match your search",
+
+  "vesselDetails": "Vessel Details",
+  "imoNumber": "IMO Number",
+  "vesselType": "Vessel Type",
+  "homePort": "Home Port",
+  "crewOnBoard": "Crew on Board",
+  "lastUpdated": "Last updated",
+
+  "tankSystems": "Tank Systems",
+  "categoryFuelOil": "Fuel Oil Tanks",
+  "categoryBrineMud": "Brine / Mud Tanks",
+  "categoryLubeHydraulic": "Lube & Hydraulic Oil",
+  "categoryOther": "Other Tanks",
+  "categorySoundingTables": "Sounding Tables",
+
+  "tanksInCategory": "{count, plural, one{1 tank} other{{count} tanks}}",
+  "@tanksInCategory": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "selectTank": "Select Tank",
+  "tankLevel": "Tank Level",
+  "tankPercent": "Tank Percent",
+  "capacity": "Capacity",
+  "currentVolume": "Current Volume",
+
+  "pumpCalculator": "Pump-Out Calculator",
+  "quantityToPumpOut": "Quantity to Pump Out",
+  "stopPumpingAtLevel": "Stop Pumping at Level",
+  "remainingAfterPumping": "Remaining After Pumping",
+  "calculate": "Calculate",
+  "reset": "Reset",
+  "enterAValue": "Enter a value",
+
+  "soundingTableTitle": "{tank} — Sounding Table",
+  "@soundingTableTitle": {
+    "placeholders": { "tank": { "type": "String" } }
+  },
+  "levelCm": "Level (cm)",
+  "volumeM3": "Volume (m³)",
+
+  "settings": "Settings",
+  "language": "Language",
+  "english": "English",
+  "arabic": "العربية",
+  "theme": "Theme",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "about": "About",
+  "aboutBody": "Maridive Fleet Vessels helps crews and shore staff monitor fuel, mud, lube and hydraulic tank levels across the fleet of offshore support vessels operating in Libya.",
+
+  "back": "Back",
+  "close": "Close",
+  "gallons": "IG",
+  "cubicMeters": "m³",
+  "percent": "%",
+
+  "updateLevel": "Update Current Level",
+  "newReading": "New Reading",
+  "saveReading": "Save",
+  "noReadingsYet": "No readings yet",
+  "viewHistory": "View Reading History",
+  "readingHistory": "Reading History",
+  "noHistory": "No readings recorded yet",
+
+  "criticalLevel": "Critical",
+  "warningLevel": "Warning",
+  "noData": "No Data",
+
+  "alertsTitle": "{count, plural, one{1 tank needs attention} other{{count} tanks need attention}}",
+  "@alertsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "logbook": "Logbook",
+  "addNoteHint": "Add a note...",
+  "noNotes": "No log entries yet",
+
+  "exportReport": "Export Report"
+}

@@ -1,0 +1,101 @@
+{
+  "@@locale": "ar",
+
+  "appTitle": "أسطول ماريديف",
+
+  "dashboardTitle": "لوحة تحكم الأسطول",
+  "dashboardSubtitle": "سفن الدعم البحري · ليبيا",
+  "fleetOverview": "نظرة عامة على الأسطول",
+  "totalVessels": "السفن",
+  "activeVessels": "نشطة",
+  "inPort": "في الميناء",
+  "underMaintenance": "صيانة",
+  "avgFuelLevel": "متوسط الوقود",
+
+  "statusActive": "نشطة",
+  "statusStandby": "احتياط",
+  "statusInPort": "في الميناء",
+  "statusMaintenance": "صيانة",
+
+  "searchVessels": "البحث عن سفينة...",
+  "noResults": "لا توجد سفن مطابقة لبحثك",
+
+  "vesselDetails": "تفاصيل السفينة",
+  "imoNumber": "رقم IMO",
+  "vesselType": "نوع السفينة",
+  "homePort": "الميناء الرئيسي",
+  "crewOnBoard": "الطاقم على متن السفينة",
+  "lastUpdated": "آخر تحديث",
+
+  "tankSystems": "أنظمة الخزانات",
+  "categoryFuelOil": "خزانات وقود الديزل",
+  "categoryBrineMud": "خزانات المحلول الملحي / الطين",
+  "categoryLubeHydraulic": "زيت التشحيم والهيدروليك",
+  "categoryOther": "خزانات أخرى",
+  "categorySoundingTables": "جداول السبر",
+
+  "tanksInCategory": "{count, plural, zero{لا خزانات} one{خزان واحد} two{خزانان} few{{count} خزانات} many{{count} خزانًا} other{{count} خزان}}",
+  "@tanksInCategory": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "selectTank": "اختر الخزان",
+  "tankLevel": "مستوى الخزان",
+  "tankPercent": "نسبة الخزان",
+  "capacity": "السعة",
+  "currentVolume": "الحجم الحالي",
+
+  "pumpCalculator": "حاسبة الضخ",
+  "quantityToPumpOut": "الكمية المراد ضخها",
+  "stopPumpingAtLevel": "إيقاف الضخ عند المستوى",
+  "remainingAfterPumping": "المتبقي بعد الضخ",
+  "calculate": "احسب",
+  "reset": "إعادة تعيين",
+  "enterAValue": "أدخل قيمة",
+
+  "soundingTableTitle": "{tank} — جدول السبر",
+  "@soundingTableTitle": {
+    "placeholders": { "tank": { "type": "String" } }
+  },
+  "levelCm": "المستوى (سم)",
+  "volumeM3": "الحجم (م³)",
+
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "english": "English",
+  "arabic": "العربية",
+  "theme": "المظهر",
+  "themeDark": "داكن",
+  "themeLight": "فاتح",
+  "about": "حول التطبيق",
+  "aboutBody": "يساعد تطبيق أسطول ماريديف الطواقم وموظفي الشاطئ على مراقبة مستويات خزانات الوقود والطين والتشحيم والهيدروليك عبر أسطول سفن الدعم البحري العاملة في ليبيا.",
+
+  "back": "رجوع",
+  "close": "إغلاق",
+  "gallons": "غالون",
+  "cubicMeters": "م³",
+  "percent": "٪",
+
+  "updateLevel": "تحديث المستوى الحالي",
+  "newReading": "قراءة جديدة",
+  "saveReading": "حفظ",
+  "noReadingsYet": "لا توجد قراءات بعد",
+  "viewHistory": "عرض سجل القراءات",
+  "readingHistory": "سجل القراءات",
+  "noHistory": "لم يتم تسجيل أي قراءات بعد",
+
+  "criticalLevel": "حرج",
+  "warningLevel": "تحذير",
+  "noData": "لا توجد بيانات",
+
+  "alertsTitle": "{count, plural, zero{لا توجد خزانات تحتاج انتباه} one{خزان واحد يحتاج انتباه} two{خزانان يحتاجان انتباه} few{{count} خزانات تحتاج انتباه} many{{count} خزانًا يحتاج انتباه} other{{count} خزان يحتاج انتباه}}",
+  "@alertsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "logbook": "سجل السفينة",
+  "addNoteHint": "أضف ملاحظة...",
+  "noNotes": "لا توجد ملاحظات بعد",
+
+  "exportReport": "تصدير التقرير"
+}
