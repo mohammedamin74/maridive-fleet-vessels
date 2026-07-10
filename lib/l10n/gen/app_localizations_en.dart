@@ -637,6 +637,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addPhoto => 'Add Photo';
 
   @override
+  String get addFile => 'Add File';
+
+  @override
+  String get attachmentsLabel => 'Attachments';
+
+  @override
   String get urgentNotifications => 'Urgent Notifications';
 
   @override

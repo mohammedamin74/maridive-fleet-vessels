@@ -1,3 +1,5 @@
+import 'attachment.dart';
+
 enum DefectPriority { low, medium, high, critical }
 
 enum DefectStatus { open, inProgress, closed }
@@ -15,7 +17,7 @@ class Defect {
   final String assignedOfficer;
   final String requiredSpareParts;
   final String actionTaken;
-  final List<String> photosBase64;
+  final List<Attachment> attachments;
   final DateTime reportedAt;
 
   const Defect({
@@ -29,14 +31,14 @@ class Defect {
     required this.assignedOfficer,
     required this.requiredSpareParts,
     required this.actionTaken,
-    required this.photosBase64,
+    required this.attachments,
     required this.reportedAt,
   });
 
   Defect copyWith(
           {DefectStatus? status,
           String? actionTaken,
-          List<String>? photosBase64}) =>
+          List<Attachment>? attachments}) =>
       Defect(
         id: id,
         vesselId: vesselId,
@@ -48,7 +50,7 @@ class Defect {
         assignedOfficer: assignedOfficer,
         requiredSpareParts: requiredSpareParts,
         actionTaken: actionTaken ?? this.actionTaken,
-        photosBase64: photosBase64 ?? this.photosBase64,
+        attachments: attachments ?? this.attachments,
         reportedAt: reportedAt,
       );
 
@@ -63,7 +65,7 @@ class Defect {
         'assignedOfficer': assignedOfficer,
         'requiredSpareParts': requiredSpareParts,
         'actionTaken': actionTaken,
-        'photosBase64': photosBase64,
+        'attachments': Attachment.listToMap(attachments),
         'reportedAt': reportedAt.toIso8601String(),
       };
 
@@ -80,7 +82,7 @@ class Defect {
         assignedOfficer: (map['assignedOfficer'] as String?) ?? '',
         requiredSpareParts: (map['requiredSpareParts'] as String?) ?? '',
         actionTaken: (map['actionTaken'] as String?) ?? '',
-        photosBase64: ((map['photosBase64'] as List?) ?? []).cast<String>(),
+        attachments: Attachment.listFromMap(map),
         reportedAt: DateTime.parse(map['reportedAt'] as String),
       );
 }

@@ -1,3 +1,4 @@
+import 'attachment.dart';
 import 'checklist_item.dart';
 
 enum TaskCategory {
@@ -22,7 +23,7 @@ class DailyTask {
   final DateTime scheduledTime;
   final TaskStatus status;
   final List<ChecklistItem> checklistItems;
-  final List<String> photosBase64;
+  final List<Attachment> attachments;
   final DateTime createdAt;
 
   const DailyTask({
@@ -35,7 +36,7 @@ class DailyTask {
     required this.scheduledTime,
     required this.status,
     required this.checklistItems,
-    required this.photosBase64,
+    required this.attachments,
     required this.createdAt,
   });
 
@@ -48,7 +49,7 @@ class DailyTask {
   DailyTask copyWith({
     TaskStatus? status,
     List<ChecklistItem>? checklistItems,
-    List<String>? photosBase64,
+    List<Attachment>? attachments,
   }) =>
       DailyTask(
         id: id,
@@ -60,7 +61,7 @@ class DailyTask {
         scheduledTime: scheduledTime,
         status: status ?? this.status,
         checklistItems: checklistItems ?? this.checklistItems,
-        photosBase64: photosBase64 ?? this.photosBase64,
+        attachments: attachments ?? this.attachments,
         createdAt: createdAt,
       );
 
@@ -74,7 +75,7 @@ class DailyTask {
         'scheduledTime': scheduledTime.toIso8601String(),
         'status': status.name,
         'checklistItems': checklistItems.map((c) => c.toMap()).toList(),
-        'photosBase64': photosBase64,
+        'attachments': Attachment.listToMap(attachments),
         'createdAt': createdAt.toIso8601String(),
       };
 
@@ -93,7 +94,7 @@ class DailyTask {
         checklistItems: ((map['checklistItems'] as List?) ?? [])
             .map((e) => ChecklistItem.fromMap(e as Map))
             .toList(),
-        photosBase64: ((map['photosBase64'] as List?) ?? []).cast<String>(),
+        attachments: Attachment.listFromMap(map),
         createdAt: DateTime.parse(map['createdAt'] as String),
       );
 }

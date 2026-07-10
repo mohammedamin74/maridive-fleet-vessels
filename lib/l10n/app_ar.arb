@@ -240,6 +240,8 @@
   "certTypeOther": "أخرى",
   "noCertificates": "لا توجد شهادات مسجلة",
   "addPhoto": "إضافة صورة",
+  "addFile": "إضافة ملف",
+  "attachmentsLabel": "المرفقات",
 
   "urgentNotifications": "الإشعارات العاجلة",
   "noUrgentNotifications": "لا توجد إشعارات عاجلة",

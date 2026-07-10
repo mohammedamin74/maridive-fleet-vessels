@@ -7,7 +7,7 @@ import '../models/vessel.dart';
 import '../services/report_service.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
-import '../widgets/photo_picker.dart';
+import '../widgets/attachment_picker.dart';
 
 class DefectListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -146,16 +146,16 @@ class DefectListScreen extends StatelessWidget {
                               _Chip(
                                   label: _statusLabel(t, defect.status),
                                   color: _statusColor(defect.status)),
-                              if (defect.photosBase64.isNotEmpty) ...[
+                              if (defect.attachments.isNotEmpty) ...[
                                 const SizedBox(width: 10),
-                                Icon(Icons.photo_camera,
+                                Icon(Icons.attach_file,
                                     size: 14,
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
                                         .withValues(alpha: 0.5)),
                                 const SizedBox(width: 2),
-                                Text('${defect.photosBase64.length}',
+                                Text('${defect.attachments.length}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                               ],
@@ -180,7 +180,7 @@ class DefectListScreen extends StatelessWidget {
       BuildContext context, AppLocalizations t, Defect defect) {
     final data = context.read<TankDataProvider>();
     final actionController = TextEditingController(text: defect.actionTaken);
-    var photos = defect.photosBase64;
+    var files = defect.attachments;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -230,18 +230,18 @@ class DefectListScreen extends StatelessWidget {
                           data.updateDefectActionTaken(defect.id, v),
                     ),
                     const SizedBox(height: 14),
-                    Text(t.evidencePhotosLabel,
+                    Text(t.attachmentsLabel,
                         style: Theme.of(sheetContext).textTheme.bodyMedium),
                     const SizedBox(height: 6),
-                    PhotoPickerStrip(
-                      photosBase64: photos,
-                      onAdd: (encoded) {
-                        data.addDefectPhoto(defect.id, encoded);
-                        setState(() => photos = [...photos, encoded]);
+                    AttachmentPickerStrip(
+                      attachments: files,
+                      onAdd: (file) {
+                        data.addDefectAttachment(defect.id, file);
+                        setState(() => files = [...files, file]);
                       },
                       onRemove: (index) {
-                        data.removeDefectPhoto(defect.id, index);
-                        setState(() => photos = [...photos]..removeAt(index));
+                        data.removeDefectAttachment(defect.id, index);
+                        setState(() => files = [...files]..removeAt(index));
                       },
                     ),
                     const SizedBox(height: 20),

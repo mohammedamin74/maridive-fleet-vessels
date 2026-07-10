@@ -178,16 +178,16 @@ class DailyTasksListScreen extends StatelessWidget {
                                   '$checkedCount/${task.checklistItems.length}',
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
-                              if (task.photosBase64.isNotEmpty) ...[
+                              if (task.attachments.isNotEmpty) ...[
                                 const SizedBox(width: 10),
-                                Icon(Icons.photo_camera,
+                                Icon(Icons.attach_file,
                                     size: 14,
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
                                         .withValues(alpha: 0.5)),
                                 const SizedBox(width: 2),
-                                Text('${task.photosBase64.length}',
+                                Text('${task.attachments.length}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                               ],

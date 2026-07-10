@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import '../models/attachment.dart';
 import '../models/defect.dart';
 import '../models/requisition.dart';
 import '../models/tank.dart';
@@ -186,7 +187,7 @@ class TankDataProvider extends ChangeNotifier {
       assignedOfficer: assignedOfficer,
       requiredSpareParts: requiredSpareParts,
       actionTaken: '',
-      photosBase64: const [],
+      attachments: const [],
       reportedAt: DateTime.now(),
     );
     await defectsBox.put(defect.id, defect.toMap());
@@ -210,23 +211,23 @@ class TankDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addDefectPhoto(String id, String photoBase64) async {
+  Future<void> addDefectAttachment(String id, Attachment attachment) async {
     final raw = defectsBox.get(id);
     if (raw == null) return;
     final defect = Defect.fromMap(raw as Map);
     await defectsBox.put(
         id,
         defect.copyWith(
-            photosBase64: [...defect.photosBase64, photoBase64]).toMap());
+            attachments: [...defect.attachments, attachment]).toMap());
     notifyListeners();
   }
 
-  Future<void> removeDefectPhoto(String id, int index) async {
+  Future<void> removeDefectAttachment(String id, int index) async {
     final raw = defectsBox.get(id);
     if (raw == null) return;
     final defect = Defect.fromMap(raw as Map);
-    final photos = [...defect.photosBase64]..removeAt(index);
-    await defectsBox.put(id, defect.copyWith(photosBase64: photos).toMap());
+    final files = [...defect.attachments]..removeAt(index);
+    await defectsBox.put(id, defect.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 
@@ -260,6 +261,7 @@ class TankDataProvider extends ChangeNotifier {
     required RequisitionPriority priority,
     DateTime? requiredDeliveryDate,
     String notes = '',
+    List<Attachment> attachments = const [],
   }) async {
     final seq = requisitionsBox.values
             .map((e) => Requisition.fromMap(e as Map))
@@ -284,7 +286,7 @@ class TankDataProvider extends ChangeNotifier {
       status: RequisitionStatus.pending,
       requiredDeliveryDate: requiredDeliveryDate,
       notes: notes,
-      photosBase64: const [],
+      attachments: attachments,
       requestedAt: DateTime.now(),
     );
     await requisitionsBox.put(requisition.id, requisition.toMap());
@@ -301,24 +303,25 @@ class TankDataProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addRequisitionPhoto(String id, String photoBase64) async {
+  Future<void> addRequisitionAttachment(
+      String id, Attachment attachment) async {
     final raw = requisitionsBox.get(id);
     if (raw == null) return;
     final requisition = Requisition.fromMap(raw as Map);
     await requisitionsBox.put(
         id,
         requisition.copyWith(
-            photosBase64: [...requisition.photosBase64, photoBase64]).toMap());
+            attachments: [...requisition.attachments, attachment]).toMap());
     notifyListeners();
   }
 
-  Future<void> removeRequisitionPhoto(String id, int index) async {
+  Future<void> removeRequisitionAttachment(String id, int index) async {
     final raw = requisitionsBox.get(id);
     if (raw == null) return;
     final requisition = Requisition.fromMap(raw as Map);
-    final photos = [...requisition.photosBase64]..removeAt(index);
+    final files = [...requisition.attachments]..removeAt(index);
     await requisitionsBox.put(
-        id, requisition.copyWith(photosBase64: photos).toMap());
+        id, requisition.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 

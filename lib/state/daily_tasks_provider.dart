@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import '../models/attachment.dart';
 import '../models/checklist_item.dart';
 import '../models/daily_task.dart';
 
@@ -39,7 +40,7 @@ class DailyTasksProvider extends ChangeNotifier {
       status: TaskStatus.pending,
       checklistItems:
           checklistLabels.map((l) => ChecklistItem(label: l)).toList(),
-      photosBase64: const [],
+      attachments: const [],
       createdAt: DateTime.now(),
     );
     await box.put(task.id, task.toMap());
@@ -74,21 +75,21 @@ class DailyTasksProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addPhoto(String id, String photoBase64) async {
+  Future<void> addAttachment(String id, Attachment attachment) async {
     final raw = box.get(id);
     if (raw == null) return;
     final task = DailyTask.fromMap(raw as Map);
-    final updated = List<String>.from(task.photosBase64)..add(photoBase64);
-    await box.put(id, task.copyWith(photosBase64: updated).toMap());
+    final updated = List<Attachment>.from(task.attachments)..add(attachment);
+    await box.put(id, task.copyWith(attachments: updated).toMap());
     notifyListeners();
   }
 
-  Future<void> removePhoto(String id, int index) async {
+  Future<void> removeAttachment(String id, int index) async {
     final raw = box.get(id);
     if (raw == null) return;
     final task = DailyTask.fromMap(raw as Map);
-    final updated = List<String>.from(task.photosBase64)..removeAt(index);
-    await box.put(id, task.copyWith(photosBase64: updated).toMap());
+    final updated = List<Attachment>.from(task.attachments)..removeAt(index);
+    await box.put(id, task.copyWith(attachments: updated).toMap());
     notifyListeners();
   }
 

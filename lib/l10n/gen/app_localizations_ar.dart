@@ -669,6 +669,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addPhoto => 'إضافة صورة';
 
   @override
+  String get addFile => 'إضافة ملف';
+
+  @override
+  String get attachmentsLabel => 'المرفقات';
+
+  @override
   String get urgentNotifications => 'الإشعارات العاجلة';
 
   @override

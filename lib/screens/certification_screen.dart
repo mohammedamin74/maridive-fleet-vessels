@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../models/attachment.dart';
 import '../models/crew_certificate.dart';
 import '../models/vessel.dart';
 import '../models/vessel_certificate.dart';
 import '../state/certification_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/attachment_picker.dart';
 import '../widgets/photo_picker.dart';
 
 Color reminderColor(CertReminderStatus s) {
@@ -80,6 +82,7 @@ class _CertificationScreenState extends State<CertificationScreen>
     final authorityController = TextEditingController();
     DateTime issueDate = DateTime.now();
     DateTime expiryDate = DateTime.now().add(const Duration(days: 365));
+    List<Attachment> certFiles = [];
 
     showModalBottomSheet(
       context: context,
@@ -159,6 +162,17 @@ class _CertificationScreenState extends State<CertificationScreen>
                         ),
                       ],
                     ),
+                    const SizedBox(height: 14),
+                    Text(t.attachmentsLabel,
+                        style: Theme.of(sheetContext).textTheme.bodyMedium),
+                    const SizedBox(height: 6),
+                    AttachmentPickerStrip(
+                      attachments: certFiles,
+                      onAdd: (file) =>
+                          setState(() => certFiles = [...certFiles, file]),
+                      onRemove: (index) => setState(
+                          () => certFiles = [...certFiles]..removeAt(index)),
+                    ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
@@ -172,6 +186,7 @@ class _CertificationScreenState extends State<CertificationScreen>
                                     authorityController.text.trim(),
                                 issueDate: issueDate,
                                 expiryDate: expiryDate,
+                                attachments: certFiles,
                               );
                           Navigator.of(sheetContext).pop();
                         },
@@ -195,6 +210,7 @@ class _CertificationScreenState extends State<CertificationScreen>
     DateTime issueDate = DateTime.now();
     DateTime expiryDate = DateTime.now().add(const Duration(days: 365));
     String? photoBase64;
+    List<Attachment> certDocs = [];
 
     showModalBottomSheet(
       context: context,
@@ -230,6 +246,17 @@ class _CertificationScreenState extends State<CertificationScreen>
                       controller: nameController,
                       decoration:
                           InputDecoration(labelText: t.officerNameLabel),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(t.attachmentsLabel,
+                        style: Theme.of(sheetContext).textTheme.bodyMedium),
+                    const SizedBox(height: 6),
+                    AttachmentPickerStrip(
+                      attachments: certDocs,
+                      onAdd: (file) =>
+                          setState(() => certDocs = [...certDocs, file]),
+                      onRemove: (index) => setState(
+                          () => certDocs = [...certDocs]..removeAt(index)),
                     ),
                     const SizedBox(height: 14),
                     TextField(
@@ -315,6 +342,7 @@ class _CertificationScreenState extends State<CertificationScreen>
                                 issueDate: issueDate,
                                 expiryDate: expiryDate,
                                 photoBase64: photoBase64,
+                                attachments: certDocs,
                               );
                           Navigator.of(sheetContext).pop();
                         },
@@ -335,6 +363,55 @@ class _CertificationScreenState extends State<CertificationScreen>
 class _VesselCertsTab extends StatelessWidget {
   final Vessel vessel;
   const _VesselCertsTab({required this.vessel});
+
+  void _showAttachments(
+      BuildContext context, AppLocalizations t, VesselCertificate cert) {
+    final provider = context.read<CertificationProvider>();
+    var files = cert.attachments;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(cert.documentName,
+                  style: Theme.of(sheetContext).textTheme.titleLarge),
+              if (cert.issuingAuthority.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(cert.issuingAuthority,
+                    style: Theme.of(sheetContext).textTheme.bodyMedium),
+              ],
+              const SizedBox(height: 16),
+              Text(t.attachmentsLabel,
+                  style: Theme.of(sheetContext).textTheme.bodyMedium),
+              const SizedBox(height: 6),
+              AttachmentPickerStrip(
+                attachments: files,
+                onAdd: (file) {
+                  provider.addVesselCertAttachment(cert.id, file);
+                  setState(() => files = [...files, file]);
+                },
+                onRemove: (index) {
+                  provider.removeVesselCertAttachment(cert.id, index);
+                  setState(() => files = [...files]..removeAt(index));
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -358,6 +435,7 @@ class _VesselCertsTab extends StatelessWidget {
         final color = reminderColor(cert.reminderStatus);
         return Card(
           child: ListTile(
+            onTap: () => _showAttachments(context, t, cert),
             leading: Container(
                 width: 10,
                 height: 10,
@@ -367,11 +445,21 @@ class _VesselCertsTab extends StatelessWidget {
             subtitle: Text(
                 '${cert.issuingAuthority}\n${t.expiryDateLabel}: ${dateFmt.format(cert.expiryDate)}'),
             isThreeLine: true,
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => context
-                  .read<CertificationProvider>()
-                  .deleteVesselCert(cert.id),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (cert.attachments.isNotEmpty) ...[
+                  const Icon(Icons.attach_file, size: 16),
+                  Text('${cert.attachments.length}'),
+                  const SizedBox(width: 4),
+                ],
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => context
+                      .read<CertificationProvider>()
+                      .deleteVesselCert(cert.id),
+                ),
+              ],
             ),
           ),
         );
@@ -397,6 +485,53 @@ class _CrewCertsTab extends StatelessWidget {
     }
   }
 
+  void _showAttachments(
+      BuildContext context, AppLocalizations t, CrewCertificate cert) {
+    final provider = context.read<CertificationProvider>();
+    var files = cert.attachments;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('${cert.officerName} — ${cert.rank}',
+                  style: Theme.of(sheetContext).textTheme.titleLarge),
+              const SizedBox(height: 4),
+              Text(_typeLabel(t, cert.certType),
+                  style: Theme.of(sheetContext).textTheme.bodyMedium),
+              const SizedBox(height: 16),
+              Text(t.attachmentsLabel,
+                  style: Theme.of(sheetContext).textTheme.bodyMedium),
+              const SizedBox(height: 6),
+              AttachmentPickerStrip(
+                attachments: files,
+                onAdd: (file) {
+                  provider.addCrewCertAttachment(cert.id, file);
+                  setState(() => files = [...files, file]);
+                },
+                onRemove: (index) {
+                  provider.removeCrewCertAttachment(cert.id, index);
+                  setState(() => files = [...files]..removeAt(index));
+                },
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
@@ -419,6 +554,7 @@ class _CrewCertsTab extends StatelessWidget {
         final color = reminderColor(cert.reminderStatus);
         return Card(
           child: ListTile(
+            onTap: () => _showAttachments(context, t, cert),
             leading: cert.photoBase64 != null
                 ? CircleAvatar(
                     backgroundImage:
@@ -431,10 +567,21 @@ class _CrewCertsTab extends StatelessWidget {
               '${_typeLabel(t, cert.certType)}\n${t.expiryDateLabel}: ${dateFmt.format(cert.expiryDate)}',
             ),
             isThreeLine: true,
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () =>
-                  context.read<CertificationProvider>().deleteCrewCert(cert.id),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (cert.attachments.isNotEmpty) ...[
+                  const Icon(Icons.attach_file, size: 16),
+                  Text('${cert.attachments.length}'),
+                  const SizedBox(width: 4),
+                ],
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: () => context
+                      .read<CertificationProvider>()
+                      .deleteCrewCert(cert.id),
+                ),
+              ],
             ),
           ),
         );

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import '../models/attachment.dart';
 import '../models/crew_certificate.dart';
 import '../models/vessel_certificate.dart';
 
@@ -56,6 +57,7 @@ class CertificationProvider extends ChangeNotifier {
     required String issuingAuthority,
     required DateTime issueDate,
     required DateTime expiryDate,
+    List<Attachment> attachments = const [],
   }) async {
     final cert = VesselCertificate(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
@@ -64,8 +66,29 @@ class CertificationProvider extends ChangeNotifier {
       issuingAuthority: issuingAuthority,
       issueDate: issueDate,
       expiryDate: expiryDate,
+      attachments: attachments,
     );
     await vesselCertsBox.put(cert.id, cert.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addVesselCertAttachment(String id, Attachment attachment) async {
+    final raw = vesselCertsBox.get(id);
+    if (raw == null) return;
+    final cert = VesselCertificate.fromMap(raw as Map);
+    await vesselCertsBox.put(
+        id,
+        cert.copyWith(
+            attachments: [...cert.attachments, attachment]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeVesselCertAttachment(String id, int index) async {
+    final raw = vesselCertsBox.get(id);
+    if (raw == null) return;
+    final cert = VesselCertificate.fromMap(raw as Map);
+    final files = [...cert.attachments]..removeAt(index);
+    await vesselCertsBox.put(id, cert.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 
@@ -82,6 +105,7 @@ class CertificationProvider extends ChangeNotifier {
     required DateTime issueDate,
     required DateTime expiryDate,
     String? photoBase64,
+    List<Attachment> attachments = const [],
   }) async {
     final cert = CrewCertificate(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
@@ -92,8 +116,29 @@ class CertificationProvider extends ChangeNotifier {
       issueDate: issueDate,
       expiryDate: expiryDate,
       photoBase64: photoBase64,
+      attachments: attachments,
     );
     await crewCertsBox.put(cert.id, cert.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addCrewCertAttachment(String id, Attachment attachment) async {
+    final raw = crewCertsBox.get(id);
+    if (raw == null) return;
+    final cert = CrewCertificate.fromMap(raw as Map);
+    await crewCertsBox.put(
+        id,
+        cert.copyWith(
+            attachments: [...cert.attachments, attachment]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeCrewCertAttachment(String id, int index) async {
+    final raw = crewCertsBox.get(id);
+    if (raw == null) return;
+    final cert = CrewCertificate.fromMap(raw as Map);
+    final files = [...cert.attachments]..removeAt(index);
+    await crewCertsBox.put(id, cert.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 

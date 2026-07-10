@@ -4,7 +4,7 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/daily_task.dart';
 import '../state/daily_tasks_provider.dart';
 import '../theme/app_colors.dart';
-import '../widgets/photo_picker.dart';
+import '../widgets/attachment_picker.dart';
 import 'daily_tasks_list_screen.dart';
 
 class DailyTaskDetailScreen extends StatelessWidget {
@@ -85,16 +85,17 @@ class DailyTaskDetailScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text(t.evidencePhotosLabel,
+          Text(t.attachmentsLabel,
               style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
-          PhotoPickerStrip(
-            photosBase64: current.photosBase64,
-            onAdd: (encoded) => context
+          AttachmentPickerStrip(
+            attachments: current.attachments,
+            onAdd: (file) => context
                 .read<DailyTasksProvider>()
-                .addPhoto(current.id, encoded),
-            onRemove: (i) =>
-                context.read<DailyTasksProvider>().removePhoto(current.id, i),
+                .addAttachment(current.id, file),
+            onRemove: (i) => context
+                .read<DailyTasksProvider>()
+                .removeAttachment(current.id, i),
           ),
           const SizedBox(height: 24),
           Wrap(

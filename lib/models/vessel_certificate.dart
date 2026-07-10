@@ -1,3 +1,5 @@
+import 'attachment.dart';
+
 enum CertReminderStatus { green, amber, red }
 
 class VesselCertificate {
@@ -7,6 +9,7 @@ class VesselCertificate {
   final String issuingAuthority;
   final DateTime issueDate;
   final DateTime expiryDate;
+  final List<Attachment> attachments;
 
   const VesselCertificate({
     required this.id,
@@ -15,7 +18,19 @@ class VesselCertificate {
     required this.issuingAuthority,
     required this.issueDate,
     required this.expiryDate,
+    this.attachments = const [],
   });
+
+  VesselCertificate copyWith({List<Attachment>? attachments}) =>
+      VesselCertificate(
+        id: id,
+        vesselId: vesselId,
+        documentName: documentName,
+        issuingAuthority: issuingAuthority,
+        issueDate: issueDate,
+        expiryDate: expiryDate,
+        attachments: attachments ?? this.attachments,
+      );
 
   CertReminderStatus get reminderStatus {
     final daysLeft = expiryDate.difference(DateTime.now()).inDays;
@@ -31,6 +46,7 @@ class VesselCertificate {
         'issuingAuthority': issuingAuthority,
         'issueDate': issueDate.toIso8601String(),
         'expiryDate': expiryDate.toIso8601String(),
+        'attachments': Attachment.listToMap(attachments),
       };
 
   factory VesselCertificate.fromMap(Map<dynamic, dynamic> map) =>
@@ -41,5 +57,6 @@ class VesselCertificate {
         issuingAuthority: (map['issuingAuthority'] as String?) ?? '',
         issueDate: DateTime.parse(map['issueDate'] as String),
         expiryDate: DateTime.parse(map['expiryDate'] as String),
+        attachments: Attachment.listFromMap(map),
       );
 }

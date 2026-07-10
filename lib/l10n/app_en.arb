@@ -241,6 +241,8 @@
   "certTypeOther": "Other",
   "noCertificates": "No certificates recorded",
   "addPhoto": "Add Photo",
+  "addFile": "Add File",
+  "attachmentsLabel": "Attachments",
 
   "urgentNotifications": "Urgent Notifications",
   "noUrgentNotifications": "No urgent notifications",

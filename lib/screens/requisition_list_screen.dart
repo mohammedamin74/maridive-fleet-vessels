@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../models/attachment.dart';
 import '../models/requisition.dart';
 import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
-import '../widgets/photo_picker.dart';
+import '../widgets/attachment_picker.dart';
 
 class RequisitionListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -154,16 +155,16 @@ class RequisitionListScreen extends StatelessWidget {
                                 _departmentLabel(t, req.department),
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
-                              if (req.photosBase64.isNotEmpty) ...[
+                              if (req.attachments.isNotEmpty) ...[
                                 const SizedBox(width: 10),
-                                Icon(Icons.photo_camera,
+                                Icon(Icons.attach_file,
                                     size: 14,
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
                                         .withValues(alpha: 0.5)),
                                 const SizedBox(width: 2),
-                                Text('${req.photosBase64.length}',
+                                Text('${req.attachments.length}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                               ],
@@ -189,7 +190,7 @@ class RequisitionListScreen extends StatelessWidget {
     final data = context.read<TankDataProvider>();
     final locale = Localizations.localeOf(context).languageCode;
     final dateFmt = DateFormat.yMMMd(locale);
-    var photos = req.photosBase64;
+    var files = req.attachments;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -246,18 +247,18 @@ class RequisitionListScreen extends StatelessWidget {
                           style: Theme.of(sheetContext).textTheme.bodyLarge),
                     ],
                     const SizedBox(height: 14),
-                    Text(t.evidencePhotosLabel,
+                    Text(t.attachmentsLabel,
                         style: Theme.of(sheetContext).textTheme.bodyMedium),
                     const SizedBox(height: 6),
-                    PhotoPickerStrip(
-                      photosBase64: photos,
-                      onAdd: (encoded) {
-                        data.addRequisitionPhoto(req.id, encoded);
-                        setState(() => photos = [...photos, encoded]);
+                    AttachmentPickerStrip(
+                      attachments: files,
+                      onAdd: (file) {
+                        data.addRequisitionAttachment(req.id, file);
+                        setState(() => files = [...files, file]);
                       },
                       onRemove: (index) {
-                        data.removeRequisitionPhoto(req.id, index);
-                        setState(() => photos = [...photos]..removeAt(index));
+                        data.removeRequisitionAttachment(req.id, index);
+                        setState(() => files = [...files]..removeAt(index));
                       },
                     ),
                     const SizedBox(height: 20),
@@ -373,6 +374,7 @@ class RequisitionListScreen extends StatelessWidget {
     RequisitionPriority priority = RequisitionPriority.normal;
     RequisitionDepartment department = RequisitionDepartment.deck;
     DateTime? requiredDeliveryDate;
+    List<Attachment> newFiles = [];
 
     showModalBottomSheet(
       context: context,
@@ -509,6 +511,17 @@ class RequisitionListScreen extends StatelessWidget {
                       decoration: InputDecoration(labelText: t.notesLabel),
                     ),
                     const SizedBox(height: 14),
+                    Text(t.attachmentsLabel,
+                        style: Theme.of(sheetContext).textTheme.bodyMedium),
+                    const SizedBox(height: 6),
+                    AttachmentPickerStrip(
+                      attachments: newFiles,
+                      onAdd: (file) =>
+                          setState(() => newFiles = [...newFiles, file]),
+                      onRemove: (index) => setState(
+                          () => newFiles = [...newFiles]..removeAt(index)),
+                    ),
+                    const SizedBox(height: 14),
                     Text(t.priorityLabel,
                         style: Theme.of(sheetContext).textTheme.bodyMedium),
                     const SizedBox(height: 8),
@@ -554,6 +567,7 @@ class RequisitionListScreen extends StatelessWidget {
                                 priority: priority,
                                 requiredDeliveryDate: requiredDeliveryDate,
                                 notes: notesController.text.trim(),
+                                attachments: newFiles,
                               );
                           Navigator.of(sheetContext).pop();
                         },

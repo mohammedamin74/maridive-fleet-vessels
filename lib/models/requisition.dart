@@ -1,3 +1,5 @@
+import 'attachment.dart';
+
 enum RequisitionPriority { low, normal, urgent }
 
 /// Approval chain followed by fulfillment: pending -> hodApproval ->
@@ -31,7 +33,7 @@ class Requisition {
   final RequisitionStatus status;
   final DateTime? requiredDeliveryDate;
   final String notes;
-  final List<String> photosBase64;
+  final List<Attachment> attachments;
   final DateTime requestedAt;
 
   const Requisition({
@@ -50,12 +52,12 @@ class Requisition {
     required this.status,
     required this.requiredDeliveryDate,
     required this.notes,
-    required this.photosBase64,
+    required this.attachments,
     required this.requestedAt,
   });
 
   Requisition copyWith(
-          {RequisitionStatus? status, List<String>? photosBase64}) =>
+          {RequisitionStatus? status, List<Attachment>? attachments}) =>
       Requisition(
         id: id,
         vesselId: vesselId,
@@ -72,7 +74,7 @@ class Requisition {
         status: status ?? this.status,
         requiredDeliveryDate: requiredDeliveryDate,
         notes: notes,
-        photosBase64: photosBase64 ?? this.photosBase64,
+        attachments: attachments ?? this.attachments,
         requestedAt: requestedAt,
       );
 
@@ -92,7 +94,7 @@ class Requisition {
         'status': status.name,
         'requiredDeliveryDate': requiredDeliveryDate?.toIso8601String(),
         'notes': notes,
-        'photosBase64': photosBase64,
+        'attachments': Attachment.listToMap(attachments),
         'requestedAt': requestedAt.toIso8601String(),
       };
 
@@ -115,7 +117,7 @@ class Requisition {
             ? DateTime.parse(map['requiredDeliveryDate'] as String)
             : null,
         notes: (map['notes'] as String?) ?? '',
-        photosBase64: ((map['photosBase64'] as List?) ?? []).cast<String>(),
+        attachments: Attachment.listFromMap(map),
         requestedAt: DateTime.parse(map['requestedAt'] as String),
       );
 }

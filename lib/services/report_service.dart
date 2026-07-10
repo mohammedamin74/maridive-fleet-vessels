@@ -129,10 +129,9 @@ class ReportService {
 
     final rows = tasks.map((task) {
       final checkedCount = task.checklistItems.where((c) => c.checked).length;
-      final photoNames = task.photosBase64.isEmpty
+      final fileNames = task.attachments.isEmpty
           ? '—'
-          : List.generate(task.photosBase64.length, (i) => 'Photo_${i + 1}.jpg')
-              .join(', ');
+          : task.attachments.map((a) => a.name).join(', ');
       return [
         task.title,
         _taskCategoryLabel(task.category),
@@ -140,7 +139,7 @@ class ReportService {
         dateFmt.format(task.scheduledTime),
         task.isOverdue ? 'Overdue' : _taskStatusLabel(task.status),
         '$checkedCount/${task.checklistItems.length}',
-        photoNames,
+        fileNames,
       ];
     }).toList();
 
@@ -179,7 +178,7 @@ class ReportService {
               'Scheduled',
               'Status',
               'Checklist',
-              'Photos'
+              'Files'
             ],
             data: rows,
             headerStyle: pw.TextStyle(
@@ -220,18 +219,16 @@ class ReportService {
     final dateFmt = DateFormat('yyyy-MM-dd');
 
     final rows = defects.map((defect) {
-      final photoNames = defect.photosBase64.isEmpty
+      final fileNames = defect.attachments.isEmpty
           ? '—'
-          : List.generate(
-                  defect.photosBase64.length, (i) => 'Photo_${i + 1}.jpg')
-              .join(', ');
+          : defect.attachments.map((a) => a.name).join(', ');
       return [
         defect.title,
         _defectLocationLabel(defect.location),
         _defectPriorityLabel(defect.priority),
         _defectStatusLabel(defect.status),
         dateFmt.format(defect.reportedAt),
-        photoNames,
+        fileNames,
       ];
     }).toList();
 
@@ -269,7 +266,7 @@ class ReportService {
               'Priority',
               'Status',
               'Reported',
-              'Photos'
+              'Files'
             ],
             data: rows,
             headerStyle: pw.TextStyle(

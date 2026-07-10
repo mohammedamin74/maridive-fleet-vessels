@@ -1220,6 +1220,18 @@ abstract class AppLocalizations {
   /// **'Add Photo'**
   String get addPhoto;
 
+  /// No description provided for @addFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Add File'**
+  String get addFile;
+
+  /// No description provided for @attachmentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachmentsLabel;
+
   /// No description provided for @urgentNotifications.
   ///
   /// In en, this message translates to:
