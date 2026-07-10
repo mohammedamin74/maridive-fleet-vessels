@@ -21,6 +21,14 @@ class TankStatusChip extends StatelessWidget {
         color = AppColors.amber400;
         label = t.warningLevel;
         break;
+      case TankLevelStatus.highCritical:
+        color = AppColors.statusMaintenance;
+        label = t.overfillCritical;
+        break;
+      case TankLevelStatus.highWarning:
+        color = AppColors.amber400;
+        label = t.overfillWarning;
+        break;
       case TankLevelStatus.noData:
       case TankLevelStatus.normal:
         color = AppColors.slate400;
@@ -36,7 +44,8 @@ class TankStatusChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700),
+        style:
+            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700),
       ),
     );
   }

@@ -32,7 +32,8 @@ class AlertsPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.statusMaintenance.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.statusMaintenance.withValues(alpha: 0.3)),
+        border: Border.all(
+            color: AppColors.statusMaintenance.withValues(alpha: 0.3)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -40,7 +41,8 @@ class AlertsPanel extends StatelessWidget {
           initiallyExpanded: false,
           tilePadding: const EdgeInsets.symmetric(horizontal: 14),
           childrenPadding: const EdgeInsets.only(bottom: 8),
-          leading: const Icon(Icons.warning_amber_rounded, color: AppColors.statusMaintenance),
+          leading: const Icon(Icons.warning_amber_rounded,
+              color: AppColors.statusMaintenance),
           title: Text(
             t.alertsTitle(alerts.length),
             style: TextStyle(
@@ -52,7 +54,8 @@ class AlertsPanel extends StatelessWidget {
           iconColor: AppColors.statusMaintenance,
           collapsedIconColor: AppColors.statusMaintenance,
           children: alerts.map((alert) {
-            final color = alert.status == TankLevelStatus.critical
+            final color = (alert.status == TankLevelStatus.critical ||
+                    alert.status == TankLevelStatus.highCritical)
                 ? AppColors.statusMaintenance
                 : AppColors.amber400;
             return ListTile(
@@ -65,7 +68,8 @@ class AlertsPanel extends StatelessWidget {
               ),
               title: Text(
                 '${alert.tank.name} · ${alert.vessel.name}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

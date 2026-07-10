@@ -799,6 +799,690 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reject'**
   String get markRejected;
+
+  /// No description provided for @priorityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get priorityMedium;
+
+  /// No description provided for @priorityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get priorityHigh;
+
+  /// No description provided for @locationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get locationLabel;
+
+  /// No description provided for @locationEngineRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine Room'**
+  String get locationEngineRoom;
+
+  /// No description provided for @locationDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Deck'**
+  String get locationDeck;
+
+  /// No description provided for @locationBridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Bridge'**
+  String get locationBridge;
+
+  /// No description provided for @locationAccommodation.
+  ///
+  /// In en, this message translates to:
+  /// **'Accommodation'**
+  String get locationAccommodation;
+
+  /// No description provided for @locationGalley.
+  ///
+  /// In en, this message translates to:
+  /// **'Galley'**
+  String get locationGalley;
+
+  /// No description provided for @locationOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get locationOther;
+
+  /// No description provided for @assignedOfficerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Officer'**
+  String get assignedOfficerLabel;
+
+  /// No description provided for @requiredSparePartsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Spare Parts'**
+  String get requiredSparePartsLabel;
+
+  /// No description provided for @actionTakenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Taken'**
+  String get actionTakenLabel;
+
+  /// No description provided for @partNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Part Number'**
+  String get partNumberLabel;
+
+  /// No description provided for @oemLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OEM / Manufacturer'**
+  String get oemLabel;
+
+  /// No description provided for @stockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity in Stock'**
+  String get stockLabel;
+
+  /// No description provided for @unitPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price'**
+  String get unitPriceLabel;
+
+  /// No description provided for @departmentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get departmentLabel;
+
+  /// No description provided for @departmentEngine.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine'**
+  String get departmentEngine;
+
+  /// No description provided for @departmentDeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Deck'**
+  String get departmentDeck;
+
+  /// No description provided for @departmentSteward.
+  ///
+  /// In en, this message translates to:
+  /// **'Steward'**
+  String get departmentSteward;
+
+  /// No description provided for @requiredDeliveryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Delivery Date'**
+  String get requiredDeliveryLabel;
+
+  /// No description provided for @reqStatusHod.
+  ///
+  /// In en, this message translates to:
+  /// **'HOD Approval'**
+  String get reqStatusHod;
+
+  /// No description provided for @reqStatusTechSup.
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Superintendent Approval'**
+  String get reqStatusTechSup;
+
+  /// No description provided for @markHodApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark HOD Approved'**
+  String get markHodApproval;
+
+  /// No description provided for @markTechSupApproval.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Tech. Sup. Approved'**
+  String get markTechSupApproval;
+
+  /// No description provided for @temperatureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Temperature (°C)'**
+  String get temperatureLabel;
+
+  /// No description provided for @lastSounding.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sounding'**
+  String get lastSounding;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 minute ago} other{{count} minutes ago}}'**
+  String minutesAgo(int count);
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 hour ago} other{{count} hours ago}}'**
+  String hoursAgo(int count);
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 day ago} other{{count} days ago}}'**
+  String daysAgo(int count);
+
+  /// No description provided for @soundingHistory24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Sounding History'**
+  String get soundingHistory24h;
+
+  /// No description provided for @overfillCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical (Overfill)'**
+  String get overfillCritical;
+
+  /// No description provided for @overfillWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning (Overfill)'**
+  String get overfillWarning;
+
+  /// No description provided for @portCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'Port Calls'**
+  String get portCalls;
+
+  /// No description provided for @noPortCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'No port calls scheduled'**
+  String get noPortCalls;
+
+  /// No description provided for @addPortCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Port Call'**
+  String get addPortCall;
+
+  /// No description provided for @portNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Port Name'**
+  String get portNameLabel;
+
+  /// No description provided for @arrivalEtaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival ETA'**
+  String get arrivalEtaLabel;
+
+  /// No description provided for @pilotBoardingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pilot Boarding Time'**
+  String get pilotBoardingLabel;
+
+  /// No description provided for @agentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Name'**
+  String get agentLabel;
+
+  /// No description provided for @agentContactLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Contact'**
+  String get agentContactLabel;
+
+  /// No description provided for @mgoRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MGO Required (m³)'**
+  String get mgoRequiredLabel;
+
+  /// No description provided for @hfoRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'HFO Required (m³)'**
+  String get hfoRequiredLabel;
+
+  /// No description provided for @freshWaterRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fresh Water Required (m³)'**
+  String get freshWaterRequiredLabel;
+
+  /// No description provided for @provisionsRequiredLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provisions Required'**
+  String get provisionsRequiredLabel;
+
+  /// No description provided for @sludgeDisposalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sludge Disposal Required'**
+  String get sludgeDisposalLabel;
+
+  /// No description provided for @sludgeQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sludge Quantity (m³)'**
+  String get sludgeQuantityLabel;
+
+  /// No description provided for @portStatusUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get portStatusUpcoming;
+
+  /// No description provided for @portStatusArrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get portStatusArrived;
+
+  /// No description provided for @portStatusDeparted.
+  ///
+  /// In en, this message translates to:
+  /// **'Departed'**
+  String get portStatusDeparted;
+
+  /// No description provided for @customsChecklistLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Customs & Documentation Checklist'**
+  String get customsChecklistLabel;
+
+  /// No description provided for @certification.
+  ///
+  /// In en, this message translates to:
+  /// **'Certification'**
+  String get certification;
+
+  /// No description provided for @vesselCerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Vessel Certificates'**
+  String get vesselCerts;
+
+  /// No description provided for @crewCerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew Certificates'**
+  String get crewCerts;
+
+  /// No description provided for @addVesselCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Vessel Certificate'**
+  String get addVesselCert;
+
+  /// No description provided for @addCrewCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Crew Certificate'**
+  String get addCrewCert;
+
+  /// No description provided for @documentNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Name'**
+  String get documentNameLabel;
+
+  /// No description provided for @issuingAuthorityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issuing Authority'**
+  String get issuingAuthorityLabel;
+
+  /// No description provided for @issueDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Date'**
+  String get issueDateLabel;
+
+  /// No description provided for @expiryDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiry Date'**
+  String get expiryDateLabel;
+
+  /// No description provided for @officerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Officer Name'**
+  String get officerNameLabel;
+
+  /// No description provided for @rankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rank'**
+  String get rankLabel;
+
+  /// No description provided for @certTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Type'**
+  String get certTypeLabel;
+
+  /// No description provided for @certTypeCoc.
+  ///
+  /// In en, this message translates to:
+  /// **'COC'**
+  String get certTypeCoc;
+
+  /// No description provided for @certTypeStcw.
+  ///
+  /// In en, this message translates to:
+  /// **'STCW'**
+  String get certTypeStcw;
+
+  /// No description provided for @certTypeMedical.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical'**
+  String get certTypeMedical;
+
+  /// No description provided for @certTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get certTypeOther;
+
+  /// No description provided for @noCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'No certificates recorded'**
+  String get noCertificates;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @urgentNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent Notifications'**
+  String get urgentNotifications;
+
+  /// No description provided for @noUrgentNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No urgent notifications'**
+  String get noUrgentNotifications;
+
+  /// No description provided for @addUrgentNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise Urgent Notification'**
+  String get addUrgentNotification;
+
+  /// No description provided for @alertTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Type'**
+  String get alertTypeLabel;
+
+  /// No description provided for @alertTypeFire.
+  ///
+  /// In en, this message translates to:
+  /// **'Fire'**
+  String get alertTypeFire;
+
+  /// No description provided for @alertTypeFlooding.
+  ///
+  /// In en, this message translates to:
+  /// **'Flooding'**
+  String get alertTypeFlooding;
+
+  /// No description provided for @alertTypeEngineFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine Failure'**
+  String get alertTypeEngineFailure;
+
+  /// No description provided for @alertTypeRouting.
+  ///
+  /// In en, this message translates to:
+  /// **'Routing'**
+  String get alertTypeRouting;
+
+  /// No description provided for @alertTypeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get alertTypeOther;
+
+  /// No description provided for @locationOnVesselLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Location on Vessel'**
+  String get locationOnVesselLabel;
+
+  /// No description provided for @escalationNotAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Acknowledged'**
+  String get escalationNotAcknowledged;
+
+  /// No description provided for @escalationAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledged'**
+  String get escalationAcknowledged;
+
+  /// No description provided for @escalationResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get escalationResolved;
+
+  /// No description provided for @markAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Acknowledged'**
+  String get markAcknowledged;
+
+  /// No description provided for @markResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Resolved'**
+  String get markResolved;
+
+  /// No description provided for @raiseAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise Alert'**
+  String get raiseAlert;
+
+  /// No description provided for @urgentAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 urgent notification} other{{count} urgent notifications}}'**
+  String urgentAlertsTitle(int count);
+
+  /// No description provided for @dailyTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Tasks'**
+  String get dailyTasks;
+
+  /// No description provided for @noDailyTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No daily tasks yet'**
+  String get noDailyTasks;
+
+  /// No description provided for @addDailyTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Daily Task'**
+  String get addDailyTask;
+
+  /// No description provided for @taskCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Category'**
+  String get taskCategoryLabel;
+
+  /// No description provided for @categoryEngineRoomRounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine Room Rounds'**
+  String get categoryEngineRoomRounds;
+
+  /// No description provided for @categoryDeckRounds.
+  ///
+  /// In en, this message translates to:
+  /// **'Deck Rounds'**
+  String get categoryDeckRounds;
+
+  /// No description provided for @categorySafetyEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Equipment Checks'**
+  String get categorySafetyEquipment;
+
+  /// No description provided for @categoryNavigationEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation Equipment Tests'**
+  String get categoryNavigationEquipment;
+
+  /// No description provided for @categoryGalleyHygiene.
+  ///
+  /// In en, this message translates to:
+  /// **'Galley Hygiene Inspections'**
+  String get categoryGalleyHygiene;
+
+  /// No description provided for @taskTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Title'**
+  String get taskTitleLabel;
+
+  /// No description provided for @assignedToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned To'**
+  String get assignedToLabel;
+
+  /// No description provided for @frequencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get frequencyLabel;
+
+  /// No description provided for @frequencyDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get frequencyDaily;
+
+  /// No description provided for @frequencyEveryWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Every Watch'**
+  String get frequencyEveryWatch;
+
+  /// No description provided for @frequencyWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get frequencyWeekly;
+
+  /// No description provided for @scheduledTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Time'**
+  String get scheduledTimeLabel;
+
+  /// No description provided for @checklistItemsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist Items'**
+  String get checklistItemsLabel;
+
+  /// No description provided for @checklistItemsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'One item per line'**
+  String get checklistItemsHint;
+
+  /// No description provided for @taskStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get taskStatusPending;
+
+  /// No description provided for @taskStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get taskStatusCompleted;
+
+  /// No description provided for @taskStatusOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get taskStatusOverdue;
+
+  /// No description provided for @commentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Comment (optional)'**
+  String get commentHint;
+
+  /// No description provided for @evidencePhotosLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence Photos'**
+  String get evidencePhotosLabel;
+
+  /// No description provided for @markCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Completed'**
+  String get markCompleted;
+
+  /// No description provided for @upcomingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 upcoming} other{{count} upcoming}}'**
+  String upcomingCount(int count);
+
+  /// No description provided for @unacknowledgedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 unacknowledged} other{{count} unacknowledged}}'**
+  String unacknowledgedCount(int count);
+
+  /// No description provided for @overdueCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 overdue} other{{count} overdue}}'**
+  String overdueCount(int count);
 }
 
 class _AppLocalizationsDelegate

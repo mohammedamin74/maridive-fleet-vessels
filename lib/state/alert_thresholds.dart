@@ -4,15 +4,29 @@
 class AlertThresholds {
   AlertThresholds._();
 
-  static const double critical = 0.15;
-  static const double warning = 0.30;
+  static const double lowCritical = 0.15;
+  static const double lowWarning = 0.30;
+  static const double highWarning = 0.90;
+  static const double highCritical = 0.97;
 }
 
-enum TankLevelStatus { noData, critical, warning, normal }
+enum TankLevelStatus {
+  noData,
+  critical,
+  warning,
+  normal,
+  highWarning,
+  highCritical
+}
 
-TankLevelStatus levelStatusFor({required bool hasReading, required double percent}) {
+TankLevelStatus levelStatusFor(
+    {required bool hasReading, required double percent}) {
   if (!hasReading) return TankLevelStatus.noData;
-  if (percent < AlertThresholds.critical) return TankLevelStatus.critical;
-  if (percent < AlertThresholds.warning) return TankLevelStatus.warning;
+  if (percent < AlertThresholds.lowCritical) return TankLevelStatus.critical;
+  if (percent < AlertThresholds.lowWarning) return TankLevelStatus.warning;
+  if (percent >= AlertThresholds.highCritical)
+    return TankLevelStatus.highCritical;
+  if (percent >= AlertThresholds.highWarning)
+    return TankLevelStatus.highWarning;
   return TankLevelStatus.normal;
 }

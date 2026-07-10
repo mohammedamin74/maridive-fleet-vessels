@@ -102,8 +102,9 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: scheme.primary,
-          foregroundColor:
-              scheme.brightness == Brightness.dark ? AppColors.navy900 : Colors.white,
+          foregroundColor: scheme.brightness == Brightness.dark
+              ? AppColors.navy900
+              : Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -120,8 +121,9 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor:
-            scheme.brightness == Brightness.dark ? AppColors.navy700 : AppColors.slate100,
+        backgroundColor: scheme.brightness == Brightness.dark
+            ? AppColors.navy700
+            : AppColors.slate100,
         labelStyle: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -158,7 +160,8 @@ class AppTheme {
         color: scheme.onSurface,
       ),
       bodyLarge: TextStyle(fontSize: 15, color: scheme.onSurface),
-      bodyMedium: TextStyle(fontSize: 13.5, color: scheme.onSurface.withValues(alpha: 0.72)),
+      bodyMedium: TextStyle(
+          fontSize: 13.5, color: scheme.onSurface.withValues(alpha: 0.72)),
       labelLarge: TextStyle(
         fontSize: 13,
         fontWeight: FontWeight.w700,

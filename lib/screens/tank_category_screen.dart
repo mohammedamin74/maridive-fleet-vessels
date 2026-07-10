@@ -56,7 +56,8 @@ class TankCategoryScreen extends StatelessWidget {
             child: InkWell(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => TankCalculatorScreen(vesselId: vessel.id, tank: tank, accent: color),
+                  builder: (_) => TankCalculatorScreen(
+                      vesselId: vessel.id, tank: tank, accent: color),
                 ),
               ),
               child: Padding(
@@ -81,11 +82,13 @@ class TankCategoryScreen extends StatelessWidget {
                               Flexible(
                                 child: Text(
                                   tank.name,
-                                  style: Theme.of(context).textTheme.titleMedium,
+                                  style:
+                                      Theme.of(context).textTheme.titleMedium,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (status == TankLevelStatus.critical || status == TankLevelStatus.warning) ...[
+                              if (status != TankLevelStatus.normal &&
+                                  status != TankLevelStatus.noData) ...[
                                 const SizedBox(width: 8),
                                 TankStatusChip(status: status),
                               ],
@@ -101,10 +104,17 @@ class TankCategoryScreen extends StatelessWidget {
                     ),
                     Text(
                       '${(percent * 100).round()}%',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(color: color),
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(color: color),
                     ),
                     const SizedBox(width: 4),
-                    Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35)),
+                    Icon(Icons.chevron_right,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.35)),
                   ],
                 ),
               ),

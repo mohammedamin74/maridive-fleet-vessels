@@ -4,10 +4,12 @@ import '../data/fleet_data.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
+import '../state/urgent_notification_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/alerts_panel.dart';
 import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
+import '../widgets/urgent_alerts_banner.dart';
 import '../widgets/vessel_card.dart';
 import 'settings_screen.dart';
 import 'vessel_detail_screen.dart';
@@ -35,17 +37,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final data = context.watch<TankDataProvider>();
     final vessels = FleetData.vessels;
     final filtered = vessels
-        .where((v) => v.name.toLowerCase().contains(_query.toLowerCase()) ||
+        .where((v) =>
+            v.name.toLowerCase().contains(_query.toLowerCase()) ||
             v.homePort.toLowerCase().contains(_query.toLowerCase()))
         .toList();
 
-    final activeCount = vessels.where((v) => v.status == VesselStatus.active).length;
-    final portCount = vessels.where((v) => v.status == VesselStatus.port).length;
+    final activeCount =
+        vessels.where((v) => v.status == VesselStatus.active).length;
+    final portCount =
+        vessels.where((v) => v.status == VesselStatus.port).length;
     final avgFuel = vessels.isEmpty
         ? 0.0
-        : vessels.fold<double>(0, (sum, v) => sum + data.avgFuelPercent(v)) / vessels.length;
+        : vessels.fold<double>(0, (sum, v) => sum + data.avgFuelPercent(v)) /
+            vessels.length;
     final alerts = data.alertsFor(vessels);
     final criticalDefects = data.criticalOpenDefects(vessels);
+    final urgentNotifications = context
+        .watch<UrgentNotificationProvider>()
+        .unacknowledgedFleetWide(vessels.map((v) => v.id).toList());
 
     return Scaffold(
       body: SafeArea(
@@ -96,16 +105,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ),
-            if (alerts.isNotEmpty)
+            if (urgentNotifications.isNotEmpty)
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: UrgentAlertsBanner(
+                      notifications: urgentNotifications, vessels: vessels),
+                ),
+              ),
+            if (alerts.isNotEmpty)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 sliver: SliverToBoxAdapter(child: AlertsPanel(alerts: alerts)),
               ),
             if (criticalDefects.isNotEmpty)
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                 sliver: SliverToBoxAdapter(
-                  child: DefectsPanel(defects: criticalDefects, vessels: vessels),
+                  child:
+                      DefectsPanel(defects: criticalDefects, vessels: vessels),
                 ),
               ),
             SliverPadding(
@@ -125,7 +143,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
-                  child: Text(t.noResults, style: Theme.of(context).textTheme.bodyMedium),
+                  child: Text(t.noResults,
+                      style: Theme.of(context).textTheme.bodyMedium),
                 ),
               )
             else
@@ -181,7 +200,9 @@ class _Header extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   t.dashboardSubtitle,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 13),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.75),
+                      fontSize: 13),
                 ),
               ],
             ),

@@ -25,11 +25,13 @@ class SoundingTableScreen extends StatelessWidget {
                 color: scheme.brightness == Brightness.dark
                     ? AppColors.navy700.withValues(alpha: 0.5)
                     : AppColors.slate100,
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Text(t.levelCm, style: Theme.of(context).textTheme.titleMedium),
+                      child: Text(t.levelCm,
+                          style: Theme.of(context).textTheme.titleMedium),
                     ),
                     Expanded(
                       child: Text(
@@ -45,11 +47,13 @@ class SoundingTableScreen extends StatelessWidget {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: rows.length,
-                  separatorBuilder: (_, __) => Divider(height: 1, color: Theme.of(context).dividerColor),
+                  separatorBuilder: (_, __) =>
+                      Divider(height: 1, color: Theme.of(context).dividerColor),
                   itemBuilder: (context, index) {
                     final row = rows[rows.length - 1 - index];
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 20),
                       child: Row(
                         children: [
                           Expanded(child: Text('${row.levelCm}')),

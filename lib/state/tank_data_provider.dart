@@ -73,11 +73,13 @@ class TankDataProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> addReading(String vesselId, String tankId, double levelM3) async {
+  Future<void> addReading(String vesselId, String tankId, double levelM3,
+      {double? temperatureC}) async {
     final reading = TankReading(
       vesselId: vesselId,
       tankId: tankId,
       levelM3: levelM3,
+      temperatureC: temperatureC,
       timestamp: DateTime.now(),
     );
     await readingsBox.put(reading.storageKey, reading.toMap());
@@ -87,7 +89,8 @@ class TankDataProvider extends ChangeNotifier {
   double avgFuelPercent(Vessel vessel) {
     final fuelTanks = vessel.tanksOf(TankCategory.fuelOil);
     if (fuelTanks.isEmpty) return 0;
-    final total = fuelTanks.fold<double>(0, (sum, t) => sum + percentFor(vessel.id, t));
+    final total =
+        fuelTanks.fold<double>(0, (sum, t) => sum + percentFor(vessel.id, t));
     return total / fuelTanks.length;
   }
 
@@ -96,7 +99,10 @@ class TankDataProvider extends ChangeNotifier {
     for (final vessel in vessels) {
       for (final tank in vessel.tanks) {
         final status = statusFor(vessel.id, tank);
-        if (status == TankLevelStatus.critical || status == TankLevelStatus.warning) {
+        if (status == TankLevelStatus.critical ||
+            status == TankLevelStatus.warning ||
+            status == TankLevelStatus.highWarning ||
+            status == TankLevelStatus.highCritical) {
           alerts.add(TankAlert(
             vessel: vessel,
             tank: tank,
@@ -153,9 +159,10 @@ class TankDataProvider extends ChangeNotifier {
         .where((d) =>
             vesselIds.contains(d.vesselId) &&
             d.status != DefectStatus.closed &&
-            (d.severity == DefectSeverity.critical || d.severity == DefectSeverity.major))
+            (d.priority == DefectPriority.critical ||
+                d.priority == DefectPriority.high))
         .toList();
-    list.sort((a, b) => b.severity.index.compareTo(a.severity.index));
+    list.sort((a, b) => b.priority.index.compareTo(a.priority.index));
     return list;
   }
 
@@ -163,15 +170,23 @@ class TankDataProvider extends ChangeNotifier {
     required String vesselId,
     required String title,
     required String description,
-    required DefectSeverity severity,
+    required DefectLocation location,
+    required DefectPriority priority,
+    String assignedOfficer = '',
+    String requiredSpareParts = '',
   }) async {
     final defect = Defect(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
       title: title,
       description: description,
-      severity: severity,
+      location: location,
+      priority: priority,
       status: DefectStatus.open,
+      assignedOfficer: assignedOfficer,
+      requiredSpareParts: requiredSpareParts,
+      actionTaken: '',
+      photosBase64: const [],
       reportedAt: DateTime.now(),
     );
     await defectsBox.put(defect.id, defect.toMap());
@@ -183,6 +198,35 @@ class TankDataProvider extends ChangeNotifier {
     if (raw == null) return;
     final defect = Defect.fromMap(raw as Map).copyWith(status: status);
     await defectsBox.put(id, defect.toMap());
+    notifyListeners();
+  }
+
+  Future<void> updateDefectActionTaken(String id, String actionTaken) async {
+    final raw = defectsBox.get(id);
+    if (raw == null) return;
+    final defect =
+        Defect.fromMap(raw as Map).copyWith(actionTaken: actionTaken);
+    await defectsBox.put(id, defect.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addDefectPhoto(String id, String photoBase64) async {
+    final raw = defectsBox.get(id);
+    if (raw == null) return;
+    final defect = Defect.fromMap(raw as Map);
+    await defectsBox.put(
+        id,
+        defect.copyWith(
+            photosBase64: [...defect.photosBase64, photoBase64]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeDefectPhoto(String id, int index) async {
+    final raw = defectsBox.get(id);
+    if (raw == null) return;
+    final defect = Defect.fromMap(raw as Map);
+    final photos = [...defect.photosBase64]..removeAt(index);
+    await defectsBox.put(id, defect.copyWith(photosBase64: photos).toMap());
     notifyListeners();
   }
 
@@ -204,32 +248,77 @@ class TankDataProvider extends ChangeNotifier {
 
   Future<void> addRequisition({
     required String vesselId,
+    required String vesselName,
     required String itemName,
+    required String partNumber,
+    required String oemManufacturer,
     required double quantity,
+    required double quantityInStock,
     required String unit,
+    required double unitPrice,
+    required RequisitionDepartment department,
     required RequisitionPriority priority,
+    DateTime? requiredDeliveryDate,
     String notes = '',
   }) async {
+    final seq = requisitionsBox.values
+            .map((e) => Requisition.fromMap(e as Map))
+            .where((r) => r.vesselId == vesselId)
+            .length +
+        1;
+    final requisitionNumber =
+        'REQ-${vesselName.replaceAll(RegExp(r'[^A-Za-z0-9]'), '')}-${seq.toString().padLeft(4, '0')}';
     final requisition = Requisition(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
+      requisitionNumber: requisitionNumber,
       itemName: itemName,
+      partNumber: partNumber,
+      oemManufacturer: oemManufacturer,
       quantity: quantity,
+      quantityInStock: quantityInStock,
       unit: unit,
+      unitPrice: unitPrice,
+      department: department,
       priority: priority,
       status: RequisitionStatus.pending,
+      requiredDeliveryDate: requiredDeliveryDate,
       notes: notes,
+      photosBase64: const [],
       requestedAt: DateTime.now(),
     );
     await requisitionsBox.put(requisition.id, requisition.toMap());
     notifyListeners();
   }
 
-  Future<void> updateRequisitionStatus(String id, RequisitionStatus status) async {
+  Future<void> updateRequisitionStatus(
+      String id, RequisitionStatus status) async {
     final raw = requisitionsBox.get(id);
     if (raw == null) return;
-    final requisition = Requisition.fromMap(raw as Map).copyWith(status: status);
+    final requisition =
+        Requisition.fromMap(raw as Map).copyWith(status: status);
     await requisitionsBox.put(id, requisition.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addRequisitionPhoto(String id, String photoBase64) async {
+    final raw = requisitionsBox.get(id);
+    if (raw == null) return;
+    final requisition = Requisition.fromMap(raw as Map);
+    await requisitionsBox.put(
+        id,
+        requisition.copyWith(
+            photosBase64: [...requisition.photosBase64, photoBase64]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeRequisitionPhoto(String id, int index) async {
+    final raw = requisitionsBox.get(id);
+    if (raw == null) return;
+    final requisition = Requisition.fromMap(raw as Map);
+    final photos = [...requisition.photosBase64]..removeAt(index);
+    await requisitionsBox.put(
+        id, requisition.copyWith(photosBase64: photos).toMap());
     notifyListeners();
   }
 

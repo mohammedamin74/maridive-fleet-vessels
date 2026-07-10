@@ -9,7 +9,8 @@ class AppState extends ChangeNotifier {
 
   AppState({required this.settingsBox}) {
     final localeCode = settingsBox.get('locale', defaultValue: 'en') as String;
-    final themeModeName = settingsBox.get('themeMode', defaultValue: 'dark') as String;
+    final themeModeName =
+        settingsBox.get('themeMode', defaultValue: 'dark') as String;
     _locale = Locale(localeCode);
     _themeMode = themeModeName == 'light' ? ThemeMode.light : ThemeMode.dark;
   }
@@ -25,7 +26,8 @@ class AppState extends ChangeNotifier {
   }
 
   void toggleLocale() {
-    setLocale(_locale.languageCode == 'en' ? const Locale('ar') : const Locale('en'));
+    setLocale(
+        _locale.languageCode == 'en' ? const Locale('ar') : const Locale('en'));
   }
 
   void setThemeMode(ThemeMode mode) {
@@ -36,6 +38,7 @@ class AppState extends ChangeNotifier {
   }
 
   void toggleTheme() {
-    setThemeMode(_themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
+    setThemeMode(
+        _themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);
   }
 }

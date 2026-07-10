@@ -24,7 +24,10 @@ class Tank {
     return List.generate(steps + 1, (i) {
       final levelCm = (maxHeightCm / steps * i).round();
       final volume = capacityM3 * (levelCm / maxHeightCm);
-      return (levelCm: levelCm, volumeM3: double.parse(volume.toStringAsFixed(1)));
+      return (
+        levelCm: levelCm,
+        volumeM3: double.parse(volume.toStringAsFixed(1))
+      );
     });
   }
 }

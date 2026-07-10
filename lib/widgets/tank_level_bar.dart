@@ -56,7 +56,8 @@ class TankLevelBarHorizontal extends StatelessWidget {
   final double percent;
   final Color color;
 
-  const TankLevelBarHorizontal({super.key, required this.percent, required this.color});
+  const TankLevelBarHorizontal(
+      {super.key, required this.percent, required this.color});
 
   @override
   Widget build(BuildContext context) {

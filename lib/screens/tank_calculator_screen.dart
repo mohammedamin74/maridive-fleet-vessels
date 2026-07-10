@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/tank.dart';
 import '../state/alert_thresholds.dart';
 import '../state/tank_data_provider.dart';
+import '../widgets/tank_history_chart.dart';
 import '../widgets/tank_level_bar.dart';
 import '../widgets/tank_status_chip.dart';
 import 'sounding_table_screen.dart';
@@ -30,6 +30,7 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
   final _pumpQtyController = TextEditingController();
   final _stopLevelController = TextEditingController();
   final _newReadingController = TextEditingController();
+  final _temperatureController = TextEditingController();
 
   double? _remainingAfterPumping;
   double? _quantityToReachLevel;
@@ -39,14 +40,16 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
     _pumpQtyController.dispose();
     _stopLevelController.dispose();
     _newReadingController.dispose();
+    _temperatureController.dispose();
     super.dispose();
   }
 
   void _onPumpQtyChanged(String value, double currentM3) {
     final qty = double.tryParse(value);
     setState(() {
-      _remainingAfterPumping =
-          qty == null ? null : (currentM3 - qty).clamp(0, widget.tank.capacityM3);
+      _remainingAfterPumping = qty == null
+          ? null
+          : (currentM3 - qty).clamp(0, widget.tank.capacityM3);
     });
   }
 
@@ -58,7 +61,8 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
         return;
       }
       final targetVolume = widget.tank.capacityM3 * (level / 100);
-      _quantityToReachLevel = (currentM3 - targetVolume).clamp(0, widget.tank.capacityM3);
+      _quantityToReachLevel =
+          (currentM3 - targetVolume).clamp(0, widget.tank.capacityM3);
     });
   }
 
@@ -66,11 +70,23 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
     final value = double.tryParse(_newReadingController.text);
     if (value == null) return;
     final clamped = value.clamp(0, widget.tank.capacityM3).toDouble();
-    await context.read<TankDataProvider>().addReading(widget.vesselId, widget.tank.id, clamped);
+    final temperature = double.tryParse(_temperatureController.text);
+    await context.read<TankDataProvider>().addReading(
+        widget.vesselId, widget.tank.id, clamped,
+        temperatureC: temperature);
     if (!mounted) return;
     _newReadingController.clear();
+    _temperatureController.clear();
     setState(() {});
     FocusScope.of(context).unfocus();
+  }
+
+  String _relativeTime(AppLocalizations t, DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return t.justNow;
+    if (diff.inMinutes < 60) return t.minutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return t.hoursAgo(diff.inHours);
+    return t.daysAgo(diff.inDays);
   }
 
   @override
@@ -105,23 +121,44 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
                           children: [
                             Text(
                               '${(percent * 100).round()}%',
-                              style: Theme.of(context).textTheme.displaySmall?.copyWith(color: accent),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall
+                                  ?.copyWith(color: accent),
                             ),
                             const SizedBox(width: 10),
-                            if (status != TankLevelStatus.normal) TankStatusChip(status: status),
+                            if (status != TankLevelStatus.normal)
+                              TankStatusChip(status: status),
                           ],
                         ),
-                        Text(t.tankPercent, style: Theme.of(context).textTheme.bodyMedium),
+                        Text(t.tankPercent,
+                            style: Theme.of(context).textTheme.bodyMedium),
                         const SizedBox(height: 16),
-                        _MetricRow(label: t.currentVolume, value: '${currentM3.toStringAsFixed(1)} m³'),
+                        _MetricRow(
+                            label: t.currentVolume,
+                            value: '${currentM3.toStringAsFixed(1)} m³'),
                         const SizedBox(height: 8),
-                        _MetricRow(label: t.capacity, value: '${tank.capacityM3.toStringAsFixed(0)} m³'),
+                        _MetricRow(
+                            label: t.capacity,
+                            value: '${tank.capacityM3.toStringAsFixed(0)} m³'),
+                        if (readings.isNotEmpty &&
+                            readings.first.temperatureC != null) ...[
+                          const SizedBox(height: 8),
+                          _MetricRow(
+                            label: t.temperatureLabel,
+                            value:
+                                '${readings.first.temperatureC!.toStringAsFixed(1)} °C',
+                          ),
+                        ],
                         const SizedBox(height: 8),
                         Text(
                           readings.isEmpty
                               ? t.noReadingsYet
-                              : '${t.lastUpdated}: ${_formatTimestamp(readings.first.timestamp)}',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 11.5),
+                              : '${t.lastSounding}: ${_relativeTime(t, readings.first.timestamp)}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(fontSize: 11.5),
                         ),
                       ],
                     ),
@@ -139,7 +176,8 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
               Expanded(
                 child: TextField(
                   controller: _newReadingController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                   decoration: InputDecoration(
                     labelText: t.newReading,
                     suffixText: t.cubicMeters,
@@ -147,21 +185,44 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              SizedBox(
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _saveReading,
-                  style: ElevatedButton.styleFrom(backgroundColor: accent, foregroundColor: Colors.white),
-                  child: Text(t.saveReading),
+              Expanded(
+                child: TextField(
+                  controller: _temperatureController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true, signed: true),
+                  decoration: InputDecoration(
+                    labelText: t.temperatureLabel,
+                    suffixText: '°C',
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: _saveReading,
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: accent, foregroundColor: Colors.white),
+              child: Text(t.saveReading),
+            ),
+          ),
+          if (readings.length > 1) ...[
+            const SizedBox(height: 16),
+            Text(t.soundingHistory24h,
+                style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 8),
+            TankHistoryChart(
+                readings: readings, color: accent, capacityM3: tank.capacityM3),
+          ],
+          const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (_) => TankHistoryScreen(vesselId: widget.vesselId, tank: tank, accent: accent),
+                builder: (_) => TankHistoryScreen(
+                    vesselId: widget.vesselId, tank: tank, accent: accent),
               ),
             ),
             icon: const Icon(Icons.history),
@@ -208,7 +269,8 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
           const SizedBox(height: 28),
           OutlinedButton.icon(
             onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => SoundingTableScreen(tank: tank)),
+              MaterialPageRoute(
+                  builder: (_) => SoundingTableScreen(tank: tank)),
             ),
             icon: const Icon(Icons.table_chart_outlined),
             label: Text(t.categorySoundingTables),
@@ -216,11 +278,6 @@ class _TankCalculatorScreenState extends State<TankCalculatorScreen> {
         ],
       ),
     );
-  }
-
-  String _formatTimestamp(DateTime dt) {
-    final locale = Localizations.localeOf(context).languageCode;
-    return DateFormat.yMMMd(locale).add_Hm().format(dt);
   }
 }
 
@@ -245,7 +302,8 @@ class _ResultBanner extends StatelessWidget {
   final String label;
   final String value;
   final Color color;
-  const _ResultBanner({required this.label, required this.value, required this.color});
+  const _ResultBanner(
+      {required this.label, required this.value, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +320,8 @@ class _ResultBanner extends StatelessWidget {
           Text(label, style: Theme.of(context).textTheme.bodyMedium),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
+            style:
+                Theme.of(context).textTheme.titleMedium?.copyWith(color: color),
           ),
         ],
       ),

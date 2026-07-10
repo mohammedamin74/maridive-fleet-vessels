@@ -2,21 +2,25 @@ class TankReading {
   final String vesselId;
   final String tankId;
   final double levelM3;
+  final double? temperatureC;
   final DateTime timestamp;
 
   const TankReading({
     required this.vesselId,
     required this.tankId,
     required this.levelM3,
+    this.temperatureC,
     required this.timestamp,
   });
 
-  String get storageKey => '$vesselId|$tankId|${timestamp.microsecondsSinceEpoch}';
+  String get storageKey =>
+      '$vesselId|$tankId|${timestamp.microsecondsSinceEpoch}';
 
   Map<String, dynamic> toMap() => {
         'vesselId': vesselId,
         'tankId': tankId,
         'levelM3': levelM3,
+        'temperatureC': temperatureC,
         'timestamp': timestamp.toIso8601String(),
       };
 
@@ -24,6 +28,7 @@ class TankReading {
         vesselId: map['vesselId'] as String,
         tankId: map['tankId'] as String,
         levelM3: (map['levelM3'] as num).toDouble(),
+        temperatureC: (map['temperatureC'] as num?)?.toDouble(),
         timestamp: DateTime.parse(map['timestamp'] as String),
       );
 }

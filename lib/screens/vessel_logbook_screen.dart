@@ -70,7 +70,8 @@ class _VesselLogbookScreenState extends State<VesselLogbookScreen> {
           Expanded(
             child: notes.isEmpty
                 ? Center(
-                    child: Text(t.noNotes, style: Theme.of(context).textTheme.bodyMedium),
+                    child: Text(t.noNotes,
+                        style: Theme.of(context).textTheme.bodyMedium),
                   )
                 : ListView.separated(
                     padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
@@ -85,24 +86,32 @@ class _VesselLogbookScreenState extends State<VesselLogbookScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     dateFmt.format(note.timestamp),
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
                                   ),
                                   InkWell(
-                                    onTap: () => context.read<TankDataProvider>().deleteNote(note.id),
+                                    onTap: () => context
+                                        .read<TankDataProvider>()
+                                        .deleteNote(note.id),
                                     child: Icon(
                                       Icons.delete_outline,
                                       size: 18,
-                                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurface
+                                          .withValues(alpha: 0.4),
                                     ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              Text(note.text, style: Theme.of(context).textTheme.bodyLarge),
+                              Text(note.text,
+                                  style: Theme.of(context).textTheme.bodyLarge),
                             ],
                           ),
                         ),

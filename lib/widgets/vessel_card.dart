@@ -15,7 +15,8 @@ class VesselCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fuelPercent = context.watch<TankDataProvider>().avgFuelPercent(vessel);
+    final fuelPercent =
+        context.watch<TankDataProvider>().avgFuelPercent(vessel);
     final fuelColor = fuelPercent < 0.25
         ? AppColors.statusMaintenance
         : (fuelPercent < 0.5 ? AppColors.amber400 : AppColors.teal400);
@@ -37,7 +38,8 @@ class VesselCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
-                child: const Icon(Icons.directions_boat_filled, color: Colors.white, size: 22),
+                child: const Icon(Icons.directions_boat_filled,
+                    color: Colors.white, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -67,13 +69,20 @@ class VesselCard extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(Icons.local_gas_station, size: 13, color: scheme.onSurface.withValues(alpha: 0.5)),
+                        Icon(Icons.local_gas_station,
+                            size: 13,
+                            color: scheme.onSurface.withValues(alpha: 0.5)),
                         const SizedBox(width: 6),
-                        Expanded(child: TankLevelBarHorizontal(percent: fuelPercent, color: fuelColor)),
+                        Expanded(
+                            child: TankLevelBarHorizontal(
+                                percent: fuelPercent, color: fuelColor)),
                         const SizedBox(width: 8),
                         Text(
                           '${(fuelPercent * 100).round()}%',
-                          style: Theme.of(context).textTheme.labelLarge?.copyWith(color: fuelColor),
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelLarge
+                              ?.copyWith(color: fuelColor),
                         ),
                       ],
                     ),

@@ -4,15 +4,23 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/defect.dart';
 import '../models/requisition.dart';
 import '../models/tank.dart';
+import '../models/urgent_notification.dart';
 import '../models/vessel.dart';
 import '../services/report_service.dart';
+import '../state/daily_tasks_provider.dart';
+import '../state/port_call_provider.dart';
 import '../state/tank_data_provider.dart';
+import '../state/urgent_notification_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
+import 'certification_screen.dart';
+import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
+import 'port_call_list_screen.dart';
 import 'requisition_list_screen.dart';
 import 'tank_category_screen.dart';
+import 'urgent_notifications_screen.dart';
 import 'vessel_logbook_screen.dart';
 
 class VesselDetailScreen extends StatelessWidget {
@@ -23,8 +31,23 @@ class VesselDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final data = context.watch<TankDataProvider>();
-    final openDefects = data.defectsFor(vessel.id).where((d) => d.status != DefectStatus.closed).length;
-    final pendingReqs = data.requisitionsFor(vessel.id).where((r) => r.status == RequisitionStatus.pending).length;
+    final openDefects = data
+        .defectsFor(vessel.id)
+        .where((d) => d.status != DefectStatus.closed)
+        .length;
+    final pendingReqs = data
+        .requisitionsFor(vessel.id)
+        .where((r) => r.status == RequisitionStatus.pending)
+        .length;
+    final unackAlerts = context
+        .watch<UrgentNotificationProvider>()
+        .forVessel(vessel.id)
+        .where((n) => n.escalationStatus == EscalationStatus.notAcknowledged)
+        .length;
+    final overdueTasks =
+        context.watch<DailyTasksProvider>().overdueCountFor(vessel.id);
+    final upcomingPortCalls =
+        context.watch<PortCallProvider>().forVessel(vessel.id).length;
 
     return Scaffold(
       body: SafeArea(
@@ -34,7 +57,8 @@ class VesselDetailScreen extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               sliver: SliverToBoxAdapter(
-                child: Text(t.tankSystems, style: Theme.of(context).textTheme.titleLarge),
+                child: Text(t.tankSystems,
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
             ),
             SliverPadding(
@@ -50,30 +74,38 @@ class VesselDetailScreen extends StatelessWidget {
                   CategoryTile(
                     icon: Icons.local_gas_station,
                     title: t.categoryFuelOil,
-                    subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.fuelOil).length),
+                    subtitle: t.tanksInCategory(
+                        vessel.tanksOf(TankCategory.fuelOil).length),
                     color: AppColors.amber400,
-                    onTap: () => _openCategory(context, TankCategory.fuelOil, t.categoryFuelOil),
+                    onTap: () => _openCategory(
+                        context, TankCategory.fuelOil, t.categoryFuelOil),
                   ),
                   CategoryTile(
                     icon: Icons.water_drop,
                     title: t.categoryBrineMud,
-                    subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.brineMud).length),
+                    subtitle: t.tanksInCategory(
+                        vessel.tanksOf(TankCategory.brineMud).length),
                     color: AppColors.navy500,
-                    onTap: () => _openCategory(context, TankCategory.brineMud, t.categoryBrineMud),
+                    onTap: () => _openCategory(
+                        context, TankCategory.brineMud, t.categoryBrineMud),
                   ),
                   CategoryTile(
                     icon: Icons.oil_barrel,
                     title: t.categoryLubeHydraulic,
-                    subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.lubeHydraulic).length),
+                    subtitle: t.tanksInCategory(
+                        vessel.tanksOf(TankCategory.lubeHydraulic).length),
                     color: AppColors.teal500,
-                    onTap: () => _openCategory(context, TankCategory.lubeHydraulic, t.categoryLubeHydraulic),
+                    onTap: () => _openCategory(context,
+                        TankCategory.lubeHydraulic, t.categoryLubeHydraulic),
                   ),
                   CategoryTile(
                     icon: Icons.layers,
                     title: t.categoryOther,
-                    subtitle: t.tanksInCategory(vessel.tanksOf(TankCategory.other).length),
+                    subtitle: t.tanksInCategory(
+                        vessel.tanksOf(TankCategory.other).length),
                     color: AppColors.statusPort,
-                    onTap: () => _openCategory(context, TankCategory.other, t.categoryOther),
+                    onTap: () => _openCategory(
+                        context, TankCategory.other, t.categoryOther),
                   ),
                 ]),
               ),
@@ -81,7 +113,8 @@ class VesselDetailScreen extends StatelessWidget {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
               sliver: SliverToBoxAdapter(
-                child: Text(t.vesselOperations, style: Theme.of(context).textTheme.titleLarge),
+                child: Text(t.vesselOperations,
+                    style: Theme.of(context).textTheme.titleLarge),
               ),
             ),
             SliverPadding(
@@ -100,16 +133,20 @@ class VesselDetailScreen extends StatelessWidget {
                     subtitle: t.viewEntries,
                     color: AppColors.teal500,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => VesselLogbookScreen(vessel: vessel)),
+                      MaterialPageRoute(
+                          builder: (_) => VesselLogbookScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(
                     icon: Icons.report_problem_outlined,
                     title: t.defects,
                     subtitle: t.openCount(openDefects),
-                    color: openDefects > 0 ? AppColors.statusMaintenance : AppColors.statusPort,
+                    color: openDefects > 0
+                        ? AppColors.statusMaintenance
+                        : AppColors.statusPort,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => DefectListScreen(vessel: vessel)),
+                      MaterialPageRoute(
+                          builder: (_) => DefectListScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(
@@ -118,7 +155,54 @@ class VesselDetailScreen extends StatelessWidget {
                     subtitle: t.pendingCount(pendingReqs),
                     color: AppColors.amber400,
                     onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => RequisitionListScreen(vessel: vessel)),
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              RequisitionListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.local_shipping_outlined,
+                    title: t.portCalls,
+                    subtitle: t.upcomingCount(upcomingPortCalls),
+                    color: AppColors.teal500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => PortCallListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.verified_outlined,
+                    title: t.certification,
+                    subtitle: t.viewEntries,
+                    color: AppColors.navy500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => CertificationScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.crisis_alert,
+                    title: t.urgentNotifications,
+                    subtitle: t.unacknowledgedCount(unackAlerts),
+                    color: unackAlerts > 0
+                        ? AppColors.statusMaintenance
+                        : AppColors.statusPort,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              UrgentNotificationsScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.checklist_outlined,
+                    title: t.dailyTasks,
+                    subtitle: t.overdueCount(overdueTasks),
+                    color: overdueTasks > 0
+                        ? AppColors.statusMaintenance
+                        : AppColors.amber400,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => DailyTasksListScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(
@@ -127,7 +211,8 @@ class VesselDetailScreen extends StatelessWidget {
                     subtitle: t.tankStatusPdf,
                     color: AppColors.navy500,
                     onTap: () async {
-                      await ReportService.exportVesselReport(vessel: vessel, data: data);
+                      await ReportService.exportVesselReport(
+                          vessel: vessel, data: data);
                     },
                   ),
                 ]),
@@ -139,10 +224,12 @@ class VesselDetailScreen extends StatelessWidget {
     );
   }
 
-  void _openCategory(BuildContext context, TankCategory category, String title) {
+  void _openCategory(
+      BuildContext context, TankCategory category, String title) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => TankCategoryScreen(vessel: vessel, category: category, title: title),
+        builder: (_) => TankCategoryScreen(
+            vessel: vessel, category: category, title: title),
       ),
     );
   }
@@ -180,21 +267,33 @@ class _VesselHeader extends StatelessWidget {
               children: [
                 Text(
                   vessel.name,
-                  style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800),
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   vessel.type,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.75), fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.75),
+                      fontSize: 14),
                 ),
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    _InfoChip(icon: Icons.tag, label: t.imoNumber, value: vessel.imo),
+                    _InfoChip(
+                        icon: Icons.tag, label: t.imoNumber, value: vessel.imo),
                     const SizedBox(width: 10),
-                    _InfoChip(icon: Icons.location_on, label: t.homePort, value: vessel.homePort),
+                    _InfoChip(
+                        icon: Icons.location_on,
+                        label: t.homePort,
+                        value: vessel.homePort),
                     const SizedBox(width: 10),
-                    _InfoChip(icon: Icons.groups, label: t.crewOnBoard, value: '${vessel.crew}'),
+                    _InfoChip(
+                        icon: Icons.groups,
+                        label: t.crewOnBoard,
+                        value: '${vessel.crew}'),
                   ],
                 ),
               ],
@@ -210,7 +309,8 @@ class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  const _InfoChip({required this.icon, required this.label, required this.value});
+  const _InfoChip(
+      {required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -228,13 +328,17 @@ class _InfoChip extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               value,
-              style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               label,
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.65), fontSize: 10),
+              style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.65), fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

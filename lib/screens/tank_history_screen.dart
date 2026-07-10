@@ -5,6 +5,7 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/tank.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/tank_history_chart.dart';
 
 class TankHistoryScreen extends StatelessWidget {
   final String vesselId;
@@ -30,17 +31,29 @@ class TankHistoryScreen extends StatelessWidget {
       appBar: AppBar(title: Text('${t.readingHistory} — ${tank.name}')),
       body: readings.isEmpty
           ? Center(
-              child: Text(t.noHistory, style: Theme.of(context).textTheme.bodyMedium),
+              child: Text(t.noHistory,
+                  style: Theme.of(context).textTheme.bodyMedium),
             )
           : ListView.separated(
               padding: const EdgeInsets.all(20),
-              itemCount: readings.length,
+              itemCount: readings.length + (readings.length > 1 ? 1 : 0),
               separatorBuilder: (_, __) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
+                if (readings.length > 1 && index == 0) {
+                  return TankHistoryChart(
+                      readings: readings,
+                      color: accent,
+                      capacityM3: tank.capacityM3);
+                }
+                index = readings.length > 1 ? index - 1 : index;
                 final reading = readings[index];
-                final percent = tank.capacityM3 <= 0 ? 0.0 : (reading.levelM3 / tank.capacityM3).clamp(0, 1);
-                final prev = index + 1 < readings.length ? readings[index + 1] : null;
-                final delta = prev == null ? null : reading.levelM3 - prev.levelM3;
+                final percent = tank.capacityM3 <= 0
+                    ? 0.0
+                    : (reading.levelM3 / tank.capacityM3).clamp(0, 1);
+                final prev =
+                    index + 1 < readings.length ? readings[index + 1] : null;
+                final delta =
+                    prev == null ? null : reading.levelM3 - prev.levelM3;
 
                 return Card(
                   child: Padding(
@@ -61,7 +74,9 @@ class TankHistoryScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '${reading.levelM3.toStringAsFixed(1)} m³ · ${(percent * 100).round()}%',
+                                reading.temperatureC != null
+                                    ? '${reading.levelM3.toStringAsFixed(1)} m³ · ${(percent * 100).round()}% · ${reading.temperatureC!.toStringAsFixed(1)}°C'
+                                    : '${reading.levelM3.toStringAsFixed(1)} m³ · ${(percent * 100).round()}%',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                               const SizedBox(height: 2),
@@ -76,9 +91,13 @@ class TankHistoryScreen extends StatelessWidget {
                           Row(
                             children: [
                               Icon(
-                                delta > 0 ? Icons.arrow_upward : Icons.arrow_downward,
+                                delta > 0
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward,
                                 size: 14,
-                                color: delta > 0 ? AppColors.statusActive : AppColors.statusMaintenance,
+                                color: delta > 0
+                                    ? AppColors.statusActive
+                                    : AppColors.statusMaintenance,
                               ),
                               const SizedBox(width: 2),
                               Text(
@@ -86,7 +105,9 @@ class TankHistoryScreen extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: delta > 0 ? AppColors.statusActive : AppColors.statusMaintenance,
+                                  color: delta > 0
+                                      ? AppColors.statusActive
+                                      : AppColors.statusMaintenance,
                                 ),
                               ),
                             ],

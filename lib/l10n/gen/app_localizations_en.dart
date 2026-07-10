@@ -401,4 +401,402 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markRejected => 'Reject';
+
+  @override
+  String get priorityMedium => 'Medium';
+
+  @override
+  String get priorityHigh => 'High';
+
+  @override
+  String get locationLabel => 'Location';
+
+  @override
+  String get locationEngineRoom => 'Engine Room';
+
+  @override
+  String get locationDeck => 'Deck';
+
+  @override
+  String get locationBridge => 'Bridge';
+
+  @override
+  String get locationAccommodation => 'Accommodation';
+
+  @override
+  String get locationGalley => 'Galley';
+
+  @override
+  String get locationOther => 'Other';
+
+  @override
+  String get assignedOfficerLabel => 'Assigned Officer';
+
+  @override
+  String get requiredSparePartsLabel => 'Required Spare Parts';
+
+  @override
+  String get actionTakenLabel => 'Action Taken';
+
+  @override
+  String get partNumberLabel => 'Part Number';
+
+  @override
+  String get oemLabel => 'OEM / Manufacturer';
+
+  @override
+  String get stockLabel => 'Quantity in Stock';
+
+  @override
+  String get unitPriceLabel => 'Unit Price';
+
+  @override
+  String get departmentLabel => 'Department';
+
+  @override
+  String get departmentEngine => 'Engine';
+
+  @override
+  String get departmentDeck => 'Deck';
+
+  @override
+  String get departmentSteward => 'Steward';
+
+  @override
+  String get requiredDeliveryLabel => 'Required Delivery Date';
+
+  @override
+  String get reqStatusHod => 'HOD Approval';
+
+  @override
+  String get reqStatusTechSup => 'Technical Superintendent Approval';
+
+  @override
+  String get markHodApproval => 'Mark HOD Approved';
+
+  @override
+  String get markTechSupApproval => 'Mark Tech. Sup. Approved';
+
+  @override
+  String get temperatureLabel => 'Temperature (°C)';
+
+  @override
+  String get lastSounding => 'Last sounding';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String minutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String daysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get soundingHistory24h => 'Sounding History';
+
+  @override
+  String get overfillCritical => 'Critical (Overfill)';
+
+  @override
+  String get overfillWarning => 'Warning (Overfill)';
+
+  @override
+  String get portCalls => 'Port Calls';
+
+  @override
+  String get noPortCalls => 'No port calls scheduled';
+
+  @override
+  String get addPortCall => 'Add Port Call';
+
+  @override
+  String get portNameLabel => 'Port Name';
+
+  @override
+  String get arrivalEtaLabel => 'Arrival ETA';
+
+  @override
+  String get pilotBoardingLabel => 'Pilot Boarding Time';
+
+  @override
+  String get agentLabel => 'Agent Name';
+
+  @override
+  String get agentContactLabel => 'Agent Contact';
+
+  @override
+  String get mgoRequiredLabel => 'MGO Required (m³)';
+
+  @override
+  String get hfoRequiredLabel => 'HFO Required (m³)';
+
+  @override
+  String get freshWaterRequiredLabel => 'Fresh Water Required (m³)';
+
+  @override
+  String get provisionsRequiredLabel => 'Provisions Required';
+
+  @override
+  String get sludgeDisposalLabel => 'Sludge Disposal Required';
+
+  @override
+  String get sludgeQuantityLabel => 'Sludge Quantity (m³)';
+
+  @override
+  String get portStatusUpcoming => 'Upcoming';
+
+  @override
+  String get portStatusArrived => 'Arrived';
+
+  @override
+  String get portStatusDeparted => 'Departed';
+
+  @override
+  String get customsChecklistLabel => 'Customs & Documentation Checklist';
+
+  @override
+  String get certification => 'Certification';
+
+  @override
+  String get vesselCerts => 'Vessel Certificates';
+
+  @override
+  String get crewCerts => 'Crew Certificates';
+
+  @override
+  String get addVesselCert => 'Add Vessel Certificate';
+
+  @override
+  String get addCrewCert => 'Add Crew Certificate';
+
+  @override
+  String get documentNameLabel => 'Document Name';
+
+  @override
+  String get issuingAuthorityLabel => 'Issuing Authority';
+
+  @override
+  String get issueDateLabel => 'Issue Date';
+
+  @override
+  String get expiryDateLabel => 'Expiry Date';
+
+  @override
+  String get officerNameLabel => 'Officer Name';
+
+  @override
+  String get rankLabel => 'Rank';
+
+  @override
+  String get certTypeLabel => 'Certificate Type';
+
+  @override
+  String get certTypeCoc => 'COC';
+
+  @override
+  String get certTypeStcw => 'STCW';
+
+  @override
+  String get certTypeMedical => 'Medical';
+
+  @override
+  String get certTypeOther => 'Other';
+
+  @override
+  String get noCertificates => 'No certificates recorded';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get urgentNotifications => 'Urgent Notifications';
+
+  @override
+  String get noUrgentNotifications => 'No urgent notifications';
+
+  @override
+  String get addUrgentNotification => 'Raise Urgent Notification';
+
+  @override
+  String get alertTypeLabel => 'Alert Type';
+
+  @override
+  String get alertTypeFire => 'Fire';
+
+  @override
+  String get alertTypeFlooding => 'Flooding';
+
+  @override
+  String get alertTypeEngineFailure => 'Engine Failure';
+
+  @override
+  String get alertTypeRouting => 'Routing';
+
+  @override
+  String get alertTypeOther => 'Other';
+
+  @override
+  String get locationOnVesselLabel => 'Location on Vessel';
+
+  @override
+  String get escalationNotAcknowledged => 'Not Acknowledged';
+
+  @override
+  String get escalationAcknowledged => 'Acknowledged';
+
+  @override
+  String get escalationResolved => 'Resolved';
+
+  @override
+  String get markAcknowledged => 'Mark Acknowledged';
+
+  @override
+  String get markResolved => 'Mark Resolved';
+
+  @override
+  String get raiseAlert => 'Raise Alert';
+
+  @override
+  String urgentAlertsTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count urgent notifications',
+      one: '1 urgent notification',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dailyTasks => 'Daily Tasks';
+
+  @override
+  String get noDailyTasks => 'No daily tasks yet';
+
+  @override
+  String get addDailyTask => 'Add Daily Task';
+
+  @override
+  String get taskCategoryLabel => 'Task Category';
+
+  @override
+  String get categoryEngineRoomRounds => 'Engine Room Rounds';
+
+  @override
+  String get categoryDeckRounds => 'Deck Rounds';
+
+  @override
+  String get categorySafetyEquipment => 'Safety Equipment Checks';
+
+  @override
+  String get categoryNavigationEquipment => 'Navigation Equipment Tests';
+
+  @override
+  String get categoryGalleyHygiene => 'Galley Hygiene Inspections';
+
+  @override
+  String get taskTitleLabel => 'Task Title';
+
+  @override
+  String get assignedToLabel => 'Assigned To';
+
+  @override
+  String get frequencyLabel => 'Frequency';
+
+  @override
+  String get frequencyDaily => 'Daily';
+
+  @override
+  String get frequencyEveryWatch => 'Every Watch';
+
+  @override
+  String get frequencyWeekly => 'Weekly';
+
+  @override
+  String get scheduledTimeLabel => 'Scheduled Time';
+
+  @override
+  String get checklistItemsLabel => 'Checklist Items';
+
+  @override
+  String get checklistItemsHint => 'One item per line';
+
+  @override
+  String get taskStatusPending => 'Pending';
+
+  @override
+  String get taskStatusCompleted => 'Completed';
+
+  @override
+  String get taskStatusOverdue => 'Overdue';
+
+  @override
+  String get commentHint => 'Comment (optional)';
+
+  @override
+  String get evidencePhotosLabel => 'Evidence Photos';
+
+  @override
+  String get markCompleted => 'Mark Completed';
+
+  @override
+  String upcomingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count upcoming',
+      one: '1 upcoming',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unacknowledgedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unacknowledged',
+      one: '1 unacknowledged',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String overdueCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count overdue',
+      one: '1 overdue',
+    );
+    return '$_temp0';
+  }
 }

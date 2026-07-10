@@ -27,17 +27,22 @@ class DefectsPanel extends StatelessWidget {
           initiallyExpanded: false,
           tilePadding: const EdgeInsets.symmetric(horizontal: 14),
           childrenPadding: const EdgeInsets.only(bottom: 8),
-          leading: const Icon(Icons.report_problem_outlined, color: AppColors.amber400),
+          leading: const Icon(Icons.report_problem_outlined,
+              color: AppColors.amber400),
           title: Text(
             t.criticalDefectsTitle(defects.length),
-            style: const TextStyle(color: AppColors.amber400, fontWeight: FontWeight.w700, fontSize: 14),
+            style: const TextStyle(
+                color: AppColors.amber400,
+                fontWeight: FontWeight.w700,
+                fontSize: 14),
           ),
           iconColor: AppColors.amber400,
           collapsedIconColor: AppColors.amber400,
           children: defects.map((defect) {
             final vessel = vessels.firstWhere((v) => v.id == defect.vesselId);
-            final color =
-                defect.severity == DefectSeverity.critical ? AppColors.statusMaintenance : AppColors.amber400;
+            final color = defect.priority == DefectPriority.critical
+                ? AppColors.statusMaintenance
+                : AppColors.amber400;
             return ListTile(
               dense: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
@@ -48,12 +53,14 @@ class DefectsPanel extends StatelessWidget {
               ),
               title: Text(
                 '${defect.title} · ${vessel.name}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => DefectListScreen(vessel: vessel)),
+                MaterialPageRoute(
+                    builder: (_) => DefectListScreen(vessel: vessel)),
               ),
             );
           }).toList(),
