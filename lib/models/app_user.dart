@@ -34,4 +34,17 @@ class AppUser {
         isAdmin: (map['isAdmin'] as bool?) ?? false,
         createdAt: DateTime.parse(map['createdAt'] as String),
       );
+
+  /// Builds a user from a Supabase `profiles` row (cloud backend). Password
+  /// fields are unused in cloud mode — auth is handled by Supabase.
+  factory AppUser.fromProfile(Map<String, dynamic> row) => AppUser(
+        username: row['username'] as String,
+        displayName: (row['display_name'] as String?) ?? '',
+        passwordHash: '',
+        salt: '',
+        isAdmin: (row['is_admin'] as bool?) ?? false,
+        createdAt: row['created_at'] != null
+            ? DateTime.parse(row['created_at'] as String)
+            : DateTime.fromMillisecondsSinceEpoch(0),
+      );
 }

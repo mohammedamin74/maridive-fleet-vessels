@@ -129,7 +129,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidCredentials => 'اسم المستخدم أو كلمة المرور غير صحيحة';
 
   @override
-  String get offlineAuthNote => 'يتم حفظ الحسابات بأمان على هذا الجهاز.';
+  String get offlineAuthNote => 'حساب أسطول مشترك — سجّل الدخول باسم المستخدم.';
 
   @override
   String get account => 'الحساب';
@@ -169,6 +169,15 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fieldsRequired => 'اسم المستخدم وكلمة المرور مطلوبان';
+
+  @override
+  String get noUsersYet => 'لا يوجد مستخدمون بعد';
+
+  @override
+  String get adminOnlyAction => 'يتطلب صلاحية المدير';
+
+  @override
+  String get actionFailed => 'فشل الإجراء — تحقق من الاتصال وحاول مرة أخرى';
 
   @override
   String filesCount(int count) {

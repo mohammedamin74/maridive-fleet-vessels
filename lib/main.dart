@@ -33,7 +33,6 @@ Future<void> main() async {
   final maintenanceBox = await Hive.openBox('maintenance_records');
   final vesselProfilesBox = await Hive.openBox('vessel_profiles');
   final vesselSpecsBox = await Hive.openBox('vessel_specs');
-  final usersBox = await Hive.openBox('app_users');
 
   await seedVesselSpecs(specsBox: vesselSpecsBox, settingsBox: settingsBox);
 
@@ -67,7 +66,7 @@ Future<void> main() async {
             create: (_) => VesselProfileProvider(box: vesselProfilesBox)),
         ChangeNotifierProvider(
             create: (_) => VesselSpecProvider(box: vesselSpecsBox)),
-        ChangeNotifierProvider(create: (_) => AuthProvider(box: usersBox)),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const MaridiveFleetApp(),
     ),

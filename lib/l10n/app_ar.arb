@@ -44,7 +44,7 @@
   "passwordLabel": "كلمة المرور",
   "loginButton": "دخول",
   "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
-  "offlineAuthNote": "يتم حفظ الحسابات بأمان على هذا الجهاز.",
+  "offlineAuthNote": "حساب أسطول مشترك — سجّل الدخول باسم المستخدم.",
   "account": "الحساب",
   "logOut": "تسجيل الخروج",
   "manageUsers": "إدارة المستخدمين",
@@ -58,6 +58,9 @@
   "userExists": "اسم المستخدم موجود بالفعل",
   "passwordChanged": "تم تحديث كلمة المرور",
   "fieldsRequired": "اسم المستخدم وكلمة المرور مطلوبان",
+  "noUsersYet": "لا يوجد مستخدمون بعد",
+  "adminOnlyAction": "يتطلب صلاحية المدير",
+  "actionFailed": "فشل الإجراء — تحقق من الاتصال وحاول مرة أخرى",
   "filesCount": "{count, plural, zero{لا ملفات} one{ملف واحد} two{ملفان} few{{count} ملفات} many{{count} ملفًا} other{{count} ملف}}",
   "@filesCount": {
     "placeholders": { "count": { "type": "int" } }

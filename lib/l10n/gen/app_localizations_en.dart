@@ -129,7 +129,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidCredentials => 'Incorrect username or password';
 
   @override
-  String get offlineAuthNote => 'Accounts are stored securely on this device.';
+  String get offlineAuthNote =>
+      'Shared fleet account — sign in with your username.';
 
   @override
   String get account => 'Account';
@@ -169,6 +170,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fieldsRequired => 'Username and password are required';
+
+  @override
+  String get noUsersYet => 'No users yet';
+
+  @override
+  String get adminOnlyAction => 'Administrator access required';
+
+  @override
+  String get actionFailed =>
+      'Action failed — check your connection and try again';
 
   @override
   String filesCount(int count) {

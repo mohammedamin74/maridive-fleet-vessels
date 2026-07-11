@@ -39,9 +39,10 @@ class SettingsScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (passController.text.isEmpty) return;
-                  auth.changePassword(username, passController.text);
+                  await auth.changePassword(username, passController.text);
+                  if (!sheetContext.mounted) return;
                   Navigator.of(sheetContext).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(t.passwordChanged)),
@@ -104,9 +105,11 @@ class SettingsScreen extends StatelessWidget {
             OutlinedButton.icon(
               style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.statusMaintenance),
-              onPressed: () {
-                context.read<AuthProvider>().logout();
-                Navigator.of(context).popUntil((r) => r.isFirst);
+              onPressed: () async {
+                await context.read<AuthProvider>().logout();
+                if (context.mounted) {
+                  Navigator.of(context).popUntil((r) => r.isFirst);
+                }
               },
               icon: const Icon(Icons.logout),
               label: Text(t.logOut),

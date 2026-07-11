@@ -1,136 +1,160 @@
-import 'dart:convert';
-import 'dart:math';
-
-import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/app_user.dart';
+import '../services/supabase_config.dart';
 
-/// Local, offline authentication. Accounts live in a Hive box; the signed-in
-/// user is held in memory only, so the app requires a fresh login on every
-/// launch. Passwords are stored as a per-user salt plus a SHA-256 hash, never
-/// in plain text.
+/// Cloud authentication backed by Supabase. Team members share one account
+/// list; the signed-in session is persisted by Supabase (so users stay logged
+/// in across launches until they log out). Usernames are mapped to hidden
+/// `username@maridive.app` addresses, so the team only ever types a username.
+///
+/// Creating, deleting, and password-resetting *other* users requires admin
+/// privileges and is done server-side by the `admin-users` Edge Function.
 class AuthProvider extends ChangeNotifier {
-  final Box box;
+  final SupabaseClient _sb = SupabaseConfig.client;
   AppUser? _current;
+  List<AppUser> _users = [];
+  bool _loading = true;
 
-  AuthProvider({required this.box}) {
-    _seedDefaultAdmin();
+  AuthProvider() {
+    _restore();
   }
 
   AppUser? get currentUser => _current;
   bool get isAuthenticated => _current != null;
   bool get isAdmin => _current?.isAdmin ?? false;
+  bool get loading => _loading;
+  List<AppUser> get users => _users;
 
-  List<AppUser> get users {
-    final list = box.values.map((e) => AppUser.fromMap(e as Map)).toList();
-    list.sort((a, b) => a.username.compareTo(b.username));
-    return list;
-  }
+  static const String _emailDomain = '@maridive.app';
+  static String _emailFor(String username) =>
+      '${username.trim().toLowerCase()}$_emailDomain';
 
-  static String _hash(String salt, String password) =>
-      sha256.convert(utf8.encode('$salt::$password')).toString();
-
-  static String _newSalt() {
-    final r = Random.secure();
-    return base64Encode(List<int>.generate(16, (_) => r.nextInt(256)));
-  }
-
-  void _seedDefaultAdmin() {
-    if (box.isEmpty) {
-      final salt = _newSalt();
-      box.put(
-        'admin',
-        AppUser(
-          username: 'admin',
-          displayName: 'Administrator',
-          salt: salt,
-          passwordHash: _hash(salt, 'Maridive@2026'),
-          isAdmin: true,
-          createdAt: DateTime.now(),
-        ).toMap(),
-      );
+  Future<void> _restore() async {
+    try {
+      if (_sb.auth.currentUser != null) {
+        await _loadProfile();
+      }
+    } catch (_) {
+      // Ignore restore errors; user just lands on the login screen.
     }
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> _loadProfile() async {
+    final user = _sb.auth.currentUser;
+    if (user == null) {
+      _current = null;
+      return;
+    }
+    final row = await _sb
+        .from('profiles')
+        .select()
+        .eq('id', user.id)
+        .maybeSingle();
+    _current = row != null ? AppUser.fromProfile(row) : null;
   }
 
   /// Returns null on success, or an error code ('invalidCredentials').
-  String? login(String username, String password) {
-    final key = username.trim().toLowerCase();
-    final raw = box.get(key);
-    if (raw == null) return 'invalidCredentials';
-    final user = AppUser.fromMap(raw as Map);
-    if (_hash(user.salt, password) != user.passwordHash) {
+  Future<String?> login(String username, String password) async {
+    try {
+      await _sb.auth.signInWithPassword(
+        email: _emailFor(username),
+        password: password,
+      );
+      await _loadProfile();
+      notifyListeners();
+      return _current == null ? 'invalidCredentials' : null;
+    } on AuthException {
+      return 'invalidCredentials';
+    } catch (_) {
       return 'invalidCredentials';
     }
-    _current = user;
-    notifyListeners();
-    return null;
   }
 
-  void logout() {
+  Future<void> logout() async {
+    await _sb.auth.signOut();
     _current = null;
+    _users = [];
     notifyListeners();
   }
 
-  /// Returns null on success, or an error code ('required' | 'userExists').
-  String? addUser({
+  Future<void> refreshUsers() async {
+    try {
+      final rows = await _sb.from('profiles').select();
+      _users = (rows as List)
+          .map((r) => AppUser.fromProfile(r as Map<String, dynamic>))
+          .toList()
+        ..sort((a, b) => a.username.compareTo(b.username));
+      notifyListeners();
+    } catch (_) {
+      // Leave the existing list on failure.
+    }
+  }
+
+  /// Calls the admin-users Edge Function. Returns null on success or an error
+  /// message. Requires the function to be deployed and the caller to be admin.
+  Future<String?> _adminAction(Map<String, dynamic> body) async {
+    try {
+      final res = await _sb.functions.invoke('admin-users', body: body);
+      final data = res.data;
+      if (res.status == 200) {
+        await refreshUsers();
+        return null;
+      }
+      if (data is Map && data['error'] != null) return data['error'].toString();
+      return 'requestFailed';
+    } on FunctionException catch (e) {
+      final details = e.details;
+      if (details is Map && details['error'] != null) {
+        return details['error'].toString();
+      }
+      return 'requestFailed';
+    } catch (_) {
+      return 'requestFailed';
+    }
+  }
+
+  Future<String?> addUser({
     required String username,
     required String displayName,
     required String password,
     bool isAdmin = false,
   }) {
-    final key = username.trim().toLowerCase();
-    if (key.isEmpty || password.isEmpty) return 'required';
-    if (box.containsKey(key)) return 'userExists';
-    final salt = _newSalt();
-    box.put(
-      key,
-      AppUser(
-        username: key,
-        displayName:
-            displayName.trim().isEmpty ? username.trim() : displayName.trim(),
-        salt: salt,
-        passwordHash: _hash(salt, password),
-        isAdmin: isAdmin,
-        createdAt: DateTime.now(),
-      ).toMap(),
-    );
-    notifyListeners();
-    return null;
-  }
-
-  Future<void> removeUser(String username) async {
-    final key = username.toLowerCase();
-    // Never delete the built-in admin or the account currently signed in.
-    if (key == 'admin' || key == _current?.username) return;
-    await box.delete(key);
-    notifyListeners();
-  }
-
-  /// Returns null on success, or an error code ('required' | 'notFound').
-  String? changePassword(String username, String newPassword) {
-    final key = username.toLowerCase();
-    if (newPassword.isEmpty) return 'required';
-    final raw = box.get(key);
-    if (raw == null) return 'notFound';
-    final user = AppUser.fromMap(raw as Map);
-    final salt = _newSalt();
-    box.put(
-      key,
-      AppUser(
-        username: user.username,
-        displayName: user.displayName,
-        salt: salt,
-        passwordHash: _hash(salt, newPassword),
-        isAdmin: user.isAdmin,
-        createdAt: user.createdAt,
-      ).toMap(),
-    );
-    if (_current?.username == key) {
-      _current = AppUser.fromMap(box.get(key) as Map);
+    if (username.trim().isEmpty || password.isEmpty) {
+      return Future.value('required');
     }
-    notifyListeners();
-    return null;
+    return _adminAction({
+      'action': 'create',
+      'username': username.trim().toLowerCase(),
+      'displayName': displayName.trim(),
+      'password': password,
+      'isAdmin': isAdmin,
+    });
+  }
+
+  Future<String?> removeUser(String username) {
+    if (username == 'admin' || username == _current?.username) {
+      return Future.value(null);
+    }
+    return _adminAction({'action': 'delete', 'username': username});
+  }
+
+  Future<String?> changePassword(String username, String newPassword) {
+    if (newPassword.isEmpty) return Future.value('required');
+    // Changing your own password can go straight through the client session.
+    if (username == _current?.username) {
+      return _sb.auth
+          .updateUser(UserAttributes(password: newPassword))
+          .then((_) => null)
+          .catchError((_) => 'requestFailed');
+    }
+    return _adminAction({
+      'action': 'reset',
+      'username': username,
+      'password': newPassword,
+    });
   }
 }

@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _userController = TextEditingController();
   final _passController = TextEditingController();
   bool _obscure = true;
+  bool _submitting = false;
   String? _error;
 
   @override
@@ -24,14 +25,21 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
+    if (_submitting) return;
     final t = AppLocalizations.of(context)!;
-    final result = context
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final result = await context
         .read<AuthProvider>()
         .login(_userController.text, _passController.text);
-    if (result != null) {
-      setState(() => _error = t.invalidCredentials);
-    }
+    if (!mounted) return;
+    setState(() {
+      _submitting = false;
+      if (result != null) _error = t.invalidCredentials;
+    });
     // On success the AuthGate rebuilds automatically into the dashboard.
   }
 
@@ -132,8 +140,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 52,
                     child: ElevatedButton(
-                      onPressed: _submit,
-                      child: Text(t.loginButton),
+                      onPressed: _submitting ? null : _submit,
+                      child: _submitting
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2.5, color: Colors.white),
+                            )
+                          : Text(t.loginButton),
                     ),
                   ),
                   const SizedBox(height: 16),

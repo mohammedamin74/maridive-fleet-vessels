@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
-import '../models/app_user.dart';
 import '../state/auth_provider.dart';
 import '../theme/app_colors.dart';
 
-class UserManagementScreen extends StatelessWidget {
+class UserManagementScreen extends StatefulWidget {
   const UserManagementScreen({super.key});
+
+  @override
+  State<UserManagementScreen> createState() => _UserManagementScreenState();
+}
+
+class _UserManagementScreenState extends State<UserManagementScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.read<AuthProvider>().refreshUsers());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,67 +30,101 @@ class UserManagementScreen extends StatelessWidget {
         title: Text(t.manageUsers),
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => auth.refreshUsers(),
+          ),
+          IconButton(
             icon: const Icon(Icons.person_add_alt_1),
             onPressed: () => _showAddUserSheet(context, t),
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(20),
-        itemCount: users.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
-        itemBuilder: (context, index) {
-          final user = users[index];
-          final isSelf = user.username == auth.currentUser?.username;
-          final locked = user.username == 'admin' || isSelf;
-          return Card(
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: (user.isAdmin
-                        ? AppColors.teal500
-                        : AppColors.navy500)
-                    .withValues(alpha: 0.18),
-                child: Icon(
-                  user.isAdmin ? Icons.shield_outlined : Icons.person_outline,
-                  color: user.isAdmin ? AppColors.teal600 : AppColors.navy500,
-                ),
-              ),
-              title: Text(user.displayName),
-              subtitle: Text(
-                  '@${user.username} · ${user.isAdmin ? t.adminRole : t.userRole}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    tooltip: t.changePassword,
-                    icon: const Icon(Icons.key_outlined),
-                    onPressed: () =>
-                        _showChangePasswordSheet(context, t, user.username),
-                  ),
-                  IconButton(
-                    tooltip: t.delete,
-                    icon: Icon(
-                      Icons.delete_outline,
-                      color: locked
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.25)
-                          : AppColors.statusMaintenance,
+      body: users.isEmpty
+          ? Center(
+              child: Text(t.noUsersYet,
+                  style: Theme.of(context).textTheme.bodyMedium))
+          : ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: users.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final isSelf = user.username == auth.currentUser?.username;
+                final locked = user.username == 'admin' || isSelf;
+                return Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor:
+                          (user.isAdmin ? AppColors.teal500 : AppColors.navy500)
+                              .withValues(alpha: 0.18),
+                      child: Icon(
+                        user.isAdmin
+                            ? Icons.shield_outlined
+                            : Icons.person_outline,
+                        color:
+                            user.isAdmin ? AppColors.teal600 : AppColors.navy500,
+                      ),
                     ),
-                    onPressed: locked
-                        ? null
-                        : () => context
-                            .read<AuthProvider>()
-                            .removeUser(user.username),
+                    title: Text(user.displayName.isEmpty
+                        ? user.username
+                        : user.displayName),
+                    subtitle: Text(
+                        '@${user.username} · ${user.isAdmin ? t.adminRole : t.userRole}'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: t.changePassword,
+                          icon: const Icon(Icons.key_outlined),
+                          onPressed: () => _showChangePasswordSheet(
+                              context, t, user.username),
+                        ),
+                        IconButton(
+                          tooltip: t.delete,
+                          icon: Icon(
+                            Icons.delete_outline,
+                            color: locked
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.25)
+                                : AppColors.statusMaintenance,
+                          ),
+                          onPressed: locked
+                              ? null
+                              : () async {
+                                  final err = await context
+                                      .read<AuthProvider>()
+                                      .removeUser(user.username);
+                                  if (err != null && context.mounted) {
+                                    _toast(context, _msg(t, err));
+                                  }
+                                },
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
+  }
+
+  String _msg(AppLocalizations t, String code) {
+    switch (code) {
+      case 'userExists':
+        return t.userExists;
+      case 'required':
+        return t.fieldsRequired;
+      case 'notAdmin':
+        return t.adminOnlyAction;
+      default:
+        return t.actionFailed;
+    }
+  }
+
+  void _toast(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void _showAddUserSheet(BuildContext context, AppLocalizations t) {
@@ -87,6 +132,7 @@ class UserManagementScreen extends StatelessWidget {
     final nameController = TextEditingController();
     final passController = TextEditingController();
     bool isAdmin = false;
+    bool busy = false;
     String? error;
 
     showModalBottomSheet(
@@ -94,7 +140,7 @@ class UserManagementScreen extends StatelessWidget {
       isScrollControlled: true,
       builder: (sheetContext) {
         return StatefulBuilder(
-          builder: (sheetContext, setState) {
+          builder: (sheetContext, setSheet) {
             return Padding(
               padding: EdgeInsets.only(
                 left: 20,
@@ -128,7 +174,7 @@ class UserManagementScreen extends StatelessWidget {
                     contentPadding: EdgeInsets.zero,
                     title: Text(t.makeAdmin),
                     value: isAdmin,
-                    onChanged: (v) => setState(() => isAdmin = v),
+                    onChanged: (v) => setSheet(() => isAdmin = v),
                   ),
                   if (error != null) ...[
                     const SizedBox(height: 4),
@@ -140,22 +186,36 @@ class UserManagementScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        final res = context.read<AuthProvider>().addUser(
-                              username: userController.text,
-                              displayName: nameController.text,
-                              password: passController.text,
-                              isAdmin: isAdmin,
-                            );
-                        if (res == 'userExists') {
-                          setState(() => error = t.userExists);
-                        } else if (res == 'required') {
-                          setState(() => error = t.fieldsRequired);
-                        } else {
-                          Navigator.of(sheetContext).pop();
-                        }
-                      },
-                      child: Text(t.save),
+                      onPressed: busy
+                          ? null
+                          : () async {
+                              setSheet(() {
+                                busy = true;
+                                error = null;
+                              });
+                              final res =
+                                  await context.read<AuthProvider>().addUser(
+                                        username: userController.text,
+                                        displayName: nameController.text,
+                                        password: passController.text,
+                                        isAdmin: isAdmin,
+                                      );
+                              if (!sheetContext.mounted) return;
+                              if (res == null) {
+                                Navigator.of(sheetContext).pop();
+                              } else {
+                                setSheet(() {
+                                  busy = false;
+                                  error = _msg(t, res);
+                                });
+                              }
+                            },
+                      child: busy
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2.4))
+                          : Text(t.save),
                     ),
                   ),
                 ],
@@ -170,6 +230,7 @@ class UserManagementScreen extends StatelessWidget {
   void _showChangePasswordSheet(
       BuildContext context, AppLocalizations t, String username) {
     final passController = TextEditingController();
+    bool busy = false;
     String? error;
 
     showModalBottomSheet(
@@ -177,7 +238,7 @@ class UserManagementScreen extends StatelessWidget {
       isScrollControlled: true,
       builder: (sheetContext) {
         return StatefulBuilder(
-          builder: (sheetContext, setState) {
+          builder: (sheetContext, setSheet) {
             return Padding(
               padding: EdgeInsets.only(
                 left: 20,
@@ -206,20 +267,34 @@ class UserManagementScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {
-                        final res = context
-                            .read<AuthProvider>()
-                            .changePassword(username, passController.text);
-                        if (res == 'required') {
-                          setState(() => error = t.fieldsRequired);
-                        } else {
-                          Navigator.of(sheetContext).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(t.passwordChanged)),
-                          );
-                        }
-                      },
-                      child: Text(t.save),
+                      onPressed: busy
+                          ? null
+                          : () async {
+                              setSheet(() {
+                                busy = true;
+                                error = null;
+                              });
+                              final res = await context
+                                  .read<AuthProvider>()
+                                  .changePassword(
+                                      username, passController.text);
+                              if (!sheetContext.mounted) return;
+                              if (res == null) {
+                                Navigator.of(sheetContext).pop();
+                                _toast(context, t.passwordChanged);
+                              } else {
+                                setSheet(() {
+                                  busy = false;
+                                  error = _msg(t, res);
+                                });
+                              }
+                            },
+                      child: busy
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2.4))
+                          : Text(t.save),
                     ),
                   ),
                 ],

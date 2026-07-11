@@ -341,7 +341,7 @@ abstract class AppLocalizations {
   /// No description provided for @offlineAuthNote.
   ///
   /// In en, this message translates to:
-  /// **'Accounts are stored securely on this device.'**
+  /// **'Shared fleet account — sign in with your username.'**
   String get offlineAuthNote;
 
   /// No description provided for @account.
@@ -421,6 +421,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Username and password are required'**
   String get fieldsRequired;
+
+  /// No description provided for @noUsersYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No users yet'**
+  String get noUsersYet;
+
+  /// No description provided for @adminOnlyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator access required'**
+  String get adminOnlyAction;
+
+  /// No description provided for @actionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Action failed — check your connection and try again'**
+  String get actionFailed;
 
   /// No description provided for @filesCount.
   ///
