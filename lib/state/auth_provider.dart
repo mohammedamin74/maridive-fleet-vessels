@@ -142,14 +142,16 @@ class AuthProvider extends ChangeNotifier {
     return _adminAction({'action': 'delete', 'username': username});
   }
 
-  Future<String?> changePassword(String username, String newPassword) {
-    if (newPassword.isEmpty) return Future.value('required');
+  Future<String?> changePassword(String username, String newPassword) async {
+    if (newPassword.isEmpty) return 'required';
     // Changing your own password can go straight through the client session.
     if (username == _current?.username) {
-      return _sb.auth
-          .updateUser(UserAttributes(password: newPassword))
-          .then((_) => null)
-          .catchError((_) => 'requestFailed');
+      try {
+        await _sb.auth.updateUser(UserAttributes(password: newPassword));
+        return null;
+      } catch (_) {
+        return 'requestFailed';
+      }
     }
     return _adminAction({
       'action': 'reset',

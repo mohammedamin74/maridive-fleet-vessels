@@ -3,6 +3,11 @@ import 'package:hive/hive.dart';
 import '../models/attachment.dart';
 import '../models/vessel_spec.dart';
 
+/// Vessel specification documents. Still local (Hive): the bundled spec PDFs
+/// are large (1–3 MB each) and are shipped identically to every device via the
+/// app assets/seed, so they don't need jsonb cloud sync. User-added specs move
+/// to shared Supabase Storage in Phase 3 (large files belong in Storage, not a
+/// jsonb column).
 class VesselSpecProvider extends ChangeNotifier {
   final Box box;
   VesselSpecProvider({required this.box});

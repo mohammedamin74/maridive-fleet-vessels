@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/attachment.dart';
 import '../models/defect.dart';
 import '../models/requisition.dart';
@@ -7,6 +7,8 @@ import '../models/tank.dart';
 import '../models/tank_reading.dart';
 import '../models/vessel.dart';
 import '../models/vessel_note.dart';
+import '../services/cloud_store.dart';
+import '../services/supabase_config.dart';
 import 'alert_thresholds.dart';
 
 class TankAlert {
@@ -23,38 +25,78 @@ class TankAlert {
   });
 }
 
-/// Wraps the Hive-backed readings/notes/defects/requisitions boxes and
-/// derives live tank levels. Tank current levels are NOT stored on the
-/// static [Tank] catalog — they are always the most recent [TankReading]
-/// for that vessel+tank pair, so there is one source of truth for
-/// "current level" and "history".
+/// Cloud-backed tank readings / logbook notes / defects / requisitions.
+///
+/// Each of the four datasets lives in its own shared Supabase table; the
+/// provider keeps an in-memory cache of each (loaded on login and refreshed
+/// after writes) so the whole fleet shares one source of truth. Tank current
+/// levels are NOT stored on the static [Tank] catalog — they are always the
+/// most recent [TankReading] for that vessel+tank pair.
 class TankDataProvider extends ChangeNotifier {
-  final Box readingsBox;
-  final Box notesBox;
-  final Box defectsBox;
-  final Box requisitionsBox;
+  final CloudStore _readings = const CloudStore('readings');
+  final CloudStore _notes = const CloudStore('notes');
+  final CloudStore _defects = const CloudStore('defects');
+  final CloudStore _requisitions = const CloudStore('requisitions');
 
-  TankDataProvider({
-    required this.readingsBox,
-    required this.notesBox,
-    required this.defectsBox,
-    required this.requisitionsBox,
-  });
+  List<TankReading> _readingsCache = [];
+  List<VesselNote> _notesCache = [];
+  List<Defect> _defectsCache = [];
+  List<Requisition> _requisitionsCache = [];
+
+  TankDataProvider() {
+    _loadAll();
+    SupabaseConfig.client.auth.onAuthStateChange.listen((state) {
+      switch (state.event) {
+        case AuthChangeEvent.signedIn:
+        case AuthChangeEvent.initialSession:
+        case AuthChangeEvent.tokenRefreshed:
+          _loadAll();
+          break;
+        case AuthChangeEvent.signedOut:
+          _readingsCache = [];
+          _notesCache = [];
+          _defectsCache = [];
+          _requisitionsCache = [];
+          notifyListeners();
+          break;
+        default:
+          break;
+      }
+    });
+  }
+
+  Future<void> _loadAll() async {
+    try {
+      final results = await Future.wait([
+        _readings.fetchAll(),
+        _notes.fetchAll(),
+        _defects.fetchAll(),
+        _requisitions.fetchAll(),
+      ]);
+      _readingsCache = results[0].map(TankReading.fromMap).toList();
+      _notesCache = results[1].map(VesselNote.fromMap).toList();
+      _defectsCache = results[2].map(Defect.fromMap).toList();
+      _requisitionsCache = results[3].map(Requisition.fromMap).toList();
+      notifyListeners();
+    } catch (_) {
+      // Offline or not signed in yet — keep whatever is cached.
+    }
+  }
+
+  Future<void> refresh() => _loadAll();
+
+  // --- Tank readings ---
 
   List<TankReading> readingsFor(String vesselId, String tankId) {
-    final list = readingsBox.values
-        .map((e) => TankReading.fromMap(e as Map))
+    final list = _readingsCache
         .where((r) => r.vesselId == vesselId && r.tankId == tankId)
         .toList();
     list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return list;
   }
 
-  bool hasReading(String vesselId, String tankId) =>
-      readingsBox.values.any((e) {
-        final m = e as Map;
-        return m['vesselId'] == vesselId && m['tankId'] == tankId;
-      });
+  bool hasReading(String vesselId, String tankId) => _readingsCache
+      .any((r) => r.vesselId == vesselId && r.tankId == tankId);
 
   double currentLevel(String vesselId, String tankId) {
     final readings = readingsFor(vesselId, tankId);
@@ -83,8 +125,9 @@ class TankDataProvider extends ChangeNotifier {
       temperatureC: temperatureC,
       timestamp: DateTime.now(),
     );
-    await readingsBox.put(reading.storageKey, reading.toMap());
+    _readingsCache = [..._readingsCache, reading];
     notifyListeners();
+    await _readings.put(reading.storageKey, reading.vesselId, reading.toMap());
   }
 
   double avgFuelPercent(Vessel vessel) {
@@ -117,66 +160,74 @@ class TankDataProvider extends ChangeNotifier {
     return alerts;
   }
 
+  // --- Logbook notes ---
+
   List<VesselNote> notesFor(String vesselId) {
-    final list = notesBox.values
-        .map((e) => VesselNote.fromMap(e as Map))
-        .where((n) => n.vesselId == vesselId)
-        .toList();
+    final list = _notesCache.where((n) => n.vesselId == vesselId).toList();
     list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
     return list;
   }
 
+  Future<void> _saveNote(VesselNote note) async {
+    final idx = _notesCache.indexWhere((n) => n.id == note.id);
+    if (idx >= 0) {
+      _notesCache[idx] = note;
+    } else {
+      _notesCache = [..._notesCache, note];
+    }
+    notifyListeners();
+    await _notes.put(note.id, note.vesselId, note.toMap());
+  }
+
+  VesselNote? _noteById(String id) {
+    for (final n in _notesCache) {
+      if (n.id == id) return n;
+    }
+    return null;
+  }
+
   Future<void> addNote(String vesselId, String text,
       {List<Attachment> attachments = const []}) async {
-    final note = VesselNote(
+    await _saveNote(VesselNote(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
       text: text,
       attachments: attachments,
       timestamp: DateTime.now(),
-    );
-    await notesBox.put(note.id, note.toMap());
-    notifyListeners();
+    ));
   }
 
   Future<void> addNoteAttachment(String noteId, Attachment attachment) async {
-    final raw = notesBox.get(noteId);
-    if (raw == null) return;
-    final note = VesselNote.fromMap(raw as Map);
-    await notesBox.put(noteId,
-        note.copyWith(attachments: [...note.attachments, attachment]).toMap());
-    notifyListeners();
+    final note = _noteById(noteId);
+    if (note == null) return;
+    await _saveNote(
+        note.copyWith(attachments: [...note.attachments, attachment]));
   }
 
   Future<void> removeNoteAttachment(String noteId, int index) async {
-    final raw = notesBox.get(noteId);
-    if (raw == null) return;
-    final note = VesselNote.fromMap(raw as Map);
+    final note = _noteById(noteId);
+    if (note == null) return;
     final files = [...note.attachments]..removeAt(index);
-    await notesBox.put(noteId, note.copyWith(attachments: files).toMap());
-    notifyListeners();
+    await _saveNote(note.copyWith(attachments: files));
   }
 
   Future<void> deleteNote(String noteId) async {
-    await notesBox.delete(noteId);
+    _notesCache.removeWhere((n) => n.id == noteId);
     notifyListeners();
+    await _notes.remove(noteId);
   }
 
   // --- Defects ---
 
   List<Defect> defectsFor(String vesselId) {
-    final list = defectsBox.values
-        .map((e) => Defect.fromMap(e as Map))
-        .where((d) => d.vesselId == vesselId)
-        .toList();
+    final list = _defectsCache.where((d) => d.vesselId == vesselId).toList();
     list.sort((a, b) => b.reportedAt.compareTo(a.reportedAt));
     return list;
   }
 
   List<Defect> criticalOpenDefects(List<Vessel> vessels) {
     final vesselIds = vessels.map((v) => v.id).toSet();
-    final list = defectsBox.values
-        .map((e) => Defect.fromMap(e as Map))
+    final list = _defectsCache
         .where((d) =>
             vesselIds.contains(d.vesselId) &&
             d.status != DefectStatus.closed &&
@@ -185,6 +236,24 @@ class TankDataProvider extends ChangeNotifier {
         .toList();
     list.sort((a, b) => b.priority.index.compareTo(a.priority.index));
     return list;
+  }
+
+  Future<void> _saveDefect(Defect defect) async {
+    final idx = _defectsCache.indexWhere((d) => d.id == defect.id);
+    if (idx >= 0) {
+      _defectsCache[idx] = defect;
+    } else {
+      _defectsCache = [..._defectsCache, defect];
+    }
+    notifyListeners();
+    await _defects.put(defect.id, defect.vesselId, defect.toMap());
+  }
+
+  Defect? _defectById(String id) {
+    for (final d in _defectsCache) {
+      if (d.id == id) return d;
+    }
+    return null;
   }
 
   Future<void> addDefect({
@@ -196,7 +265,7 @@ class TankDataProvider extends ChangeNotifier {
     String assignedOfficer = '',
     String requiredSpareParts = '',
   }) async {
-    final defect = Defect(
+    await _saveDefect(Defect(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
       title: title,
@@ -209,62 +278,68 @@ class TankDataProvider extends ChangeNotifier {
       actionTaken: '',
       attachments: const [],
       reportedAt: DateTime.now(),
-    );
-    await defectsBox.put(defect.id, defect.toMap());
-    notifyListeners();
+    ));
   }
 
   Future<void> updateDefectStatus(String id, DefectStatus status) async {
-    final raw = defectsBox.get(id);
-    if (raw == null) return;
-    final defect = Defect.fromMap(raw as Map).copyWith(status: status);
-    await defectsBox.put(id, defect.toMap());
-    notifyListeners();
+    final defect = _defectById(id);
+    if (defect == null) return;
+    await _saveDefect(defect.copyWith(status: status));
   }
 
   Future<void> updateDefectActionTaken(String id, String actionTaken) async {
-    final raw = defectsBox.get(id);
-    if (raw == null) return;
-    final defect =
-        Defect.fromMap(raw as Map).copyWith(actionTaken: actionTaken);
-    await defectsBox.put(id, defect.toMap());
-    notifyListeners();
+    final defect = _defectById(id);
+    if (defect == null) return;
+    await _saveDefect(defect.copyWith(actionTaken: actionTaken));
   }
 
   Future<void> addDefectAttachment(String id, Attachment attachment) async {
-    final raw = defectsBox.get(id);
-    if (raw == null) return;
-    final defect = Defect.fromMap(raw as Map);
-    await defectsBox.put(
-        id,
-        defect.copyWith(
-            attachments: [...defect.attachments, attachment]).toMap());
-    notifyListeners();
+    final defect = _defectById(id);
+    if (defect == null) return;
+    await _saveDefect(
+        defect.copyWith(attachments: [...defect.attachments, attachment]));
   }
 
   Future<void> removeDefectAttachment(String id, int index) async {
-    final raw = defectsBox.get(id);
-    if (raw == null) return;
-    final defect = Defect.fromMap(raw as Map);
+    final defect = _defectById(id);
+    if (defect == null) return;
     final files = [...defect.attachments]..removeAt(index);
-    await defectsBox.put(id, defect.copyWith(attachments: files).toMap());
-    notifyListeners();
+    await _saveDefect(defect.copyWith(attachments: files));
   }
 
   Future<void> deleteDefect(String id) async {
-    await defectsBox.delete(id);
+    _defectsCache.removeWhere((d) => d.id == id);
     notifyListeners();
+    await _defects.remove(id);
   }
 
   // --- Requisitions ---
 
   List<Requisition> requisitionsFor(String vesselId) {
-    final list = requisitionsBox.values
-        .map((e) => Requisition.fromMap(e as Map))
-        .where((r) => r.vesselId == vesselId)
-        .toList();
+    final list =
+        _requisitionsCache.where((r) => r.vesselId == vesselId).toList();
     list.sort((a, b) => b.requestedAt.compareTo(a.requestedAt));
     return list;
+  }
+
+  Future<void> _saveRequisition(Requisition requisition) async {
+    final idx =
+        _requisitionsCache.indexWhere((r) => r.id == requisition.id);
+    if (idx >= 0) {
+      _requisitionsCache[idx] = requisition;
+    } else {
+      _requisitionsCache = [..._requisitionsCache, requisition];
+    }
+    notifyListeners();
+    await _requisitions.put(
+        requisition.id, requisition.vesselId, requisition.toMap());
+  }
+
+  Requisition? _requisitionById(String id) {
+    for (final r in _requisitionsCache) {
+      if (r.id == id) return r;
+    }
+    return null;
   }
 
   Future<void> addRequisition({
@@ -283,14 +358,11 @@ class TankDataProvider extends ChangeNotifier {
     String notes = '',
     List<Attachment> attachments = const [],
   }) async {
-    final seq = requisitionsBox.values
-            .map((e) => Requisition.fromMap(e as Map))
-            .where((r) => r.vesselId == vesselId)
-            .length +
-        1;
+    final seq =
+        _requisitionsCache.where((r) => r.vesselId == vesselId).length + 1;
     final requisitionNumber =
         'REQ-${vesselName.replaceAll(RegExp(r'[^A-Za-z0-9]'), '')}-${seq.toString().padLeft(4, '0')}';
-    final requisition = Requisition(
+    await _saveRequisition(Requisition(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
       requisitionNumber: requisitionNumber,
@@ -308,45 +380,34 @@ class TankDataProvider extends ChangeNotifier {
       notes: notes,
       attachments: attachments,
       requestedAt: DateTime.now(),
-    );
-    await requisitionsBox.put(requisition.id, requisition.toMap());
-    notifyListeners();
+    ));
   }
 
   Future<void> updateRequisitionStatus(
       String id, RequisitionStatus status) async {
-    final raw = requisitionsBox.get(id);
-    if (raw == null) return;
-    final requisition =
-        Requisition.fromMap(raw as Map).copyWith(status: status);
-    await requisitionsBox.put(id, requisition.toMap());
-    notifyListeners();
+    final requisition = _requisitionById(id);
+    if (requisition == null) return;
+    await _saveRequisition(requisition.copyWith(status: status));
   }
 
   Future<void> addRequisitionAttachment(
       String id, Attachment attachment) async {
-    final raw = requisitionsBox.get(id);
-    if (raw == null) return;
-    final requisition = Requisition.fromMap(raw as Map);
-    await requisitionsBox.put(
-        id,
-        requisition.copyWith(
-            attachments: [...requisition.attachments, attachment]).toMap());
-    notifyListeners();
+    final requisition = _requisitionById(id);
+    if (requisition == null) return;
+    await _saveRequisition(requisition
+        .copyWith(attachments: [...requisition.attachments, attachment]));
   }
 
   Future<void> removeRequisitionAttachment(String id, int index) async {
-    final raw = requisitionsBox.get(id);
-    if (raw == null) return;
-    final requisition = Requisition.fromMap(raw as Map);
+    final requisition = _requisitionById(id);
+    if (requisition == null) return;
     final files = [...requisition.attachments]..removeAt(index);
-    await requisitionsBox.put(
-        id, requisition.copyWith(attachments: files).toMap());
-    notifyListeners();
+    await _saveRequisition(requisition.copyWith(attachments: files));
   }
 
   Future<void> deleteRequisition(String id) async {
-    await requisitionsBox.delete(id);
+    _requisitionsCache.removeWhere((r) => r.id == id);
     notifyListeners();
+    await _requisitions.remove(id);
   }
 }

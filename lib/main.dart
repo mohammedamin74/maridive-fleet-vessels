@@ -20,17 +20,12 @@ Future<void> main() async {
   await SupabaseConfig.init();
   await Hive.initFlutter();
 
+  // Local-only boxes. All fleet data (readings, notes, defects, requisitions,
+  // port calls, certificates, alerts, daily tasks, maintenance, vessel status/
+  // IMO overrides) is now cloud-backed via CloudStore and no longer uses Hive.
+  // `settings` holds device-local prefs; `vessel_specs` stays local until the
+  // Phase 3 move to Supabase Storage (the spec PDFs are large files).
   final settingsBox = await Hive.openBox('settings');
-  final readingsBox = await Hive.openBox('tank_readings');
-  final notesBox = await Hive.openBox('vessel_notes');
-  final defectsBox = await Hive.openBox('defects');
-  final requisitionsBox = await Hive.openBox('requisitions');
-  final portCallsBox = await Hive.openBox('port_calls');
-  final vesselCertsBox = await Hive.openBox('vessel_certs');
-  final crewCertsBox = await Hive.openBox('crew_certs');
-  final urgentNotificationsBox = await Hive.openBox('urgent_notifications');
-  final dailyTasksBox = await Hive.openBox('daily_tasks');
-  final vesselProfilesBox = await Hive.openBox('vessel_profiles');
   final vesselSpecsBox = await Hive.openBox('vessel_specs');
 
   await seedVesselSpecs(specsBox: vesselSpecsBox, settingsBox: settingsBox);
@@ -40,29 +35,13 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
             create: (_) => AppState(settingsBox: settingsBox)),
-        ChangeNotifierProvider(
-          create: (_) => TankDataProvider(
-            readingsBox: readingsBox,
-            notesBox: notesBox,
-            defectsBox: defectsBox,
-            requisitionsBox: requisitionsBox,
-          ),
-        ),
-        ChangeNotifierProvider(
-            create: (_) => PortCallProvider(box: portCallsBox)),
-        ChangeNotifierProvider(
-          create: (_) => CertificationProvider(
-              vesselCertsBox: vesselCertsBox, crewCertsBox: crewCertsBox),
-        ),
-        ChangeNotifierProvider(
-            create: (_) =>
-                UrgentNotificationProvider(box: urgentNotificationsBox)),
-        ChangeNotifierProvider(
-            create: (_) => DailyTasksProvider(box: dailyTasksBox)),
-        ChangeNotifierProvider(
-            create: (_) => MaintenanceProvider()),
-        ChangeNotifierProvider(
-            create: (_) => VesselProfileProvider(box: vesselProfilesBox)),
+        ChangeNotifierProvider(create: (_) => TankDataProvider()),
+        ChangeNotifierProvider(create: (_) => PortCallProvider()),
+        ChangeNotifierProvider(create: (_) => CertificationProvider()),
+        ChangeNotifierProvider(create: (_) => UrgentNotificationProvider()),
+        ChangeNotifierProvider(create: (_) => DailyTasksProvider()),
+        ChangeNotifierProvider(create: (_) => MaintenanceProvider()),
+        ChangeNotifierProvider(create: (_) => VesselProfileProvider()),
         ChangeNotifierProvider(
             create: (_) => VesselSpecProvider(box: vesselSpecsBox)),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
