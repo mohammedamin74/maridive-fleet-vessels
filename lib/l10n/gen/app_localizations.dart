@@ -284,6 +284,36 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get maintStatusCompleted;
 
+  /// No description provided for @specifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Specifications'**
+  String get specifications;
+
+  /// No description provided for @addSpec.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Specification'**
+  String get addSpec;
+
+  /// No description provided for @noSpecs.
+  ///
+  /// In en, this message translates to:
+  /// **'No specification files'**
+  String get noSpecs;
+
+  /// No description provided for @specTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Document Title'**
+  String get specTitleLabel;
+
+  /// No description provided for @filesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No files} one{1 file} other{{count} files}}'**
+  String filesCount(int count);
+
   /// No description provided for @vesselDetails.
   ///
   /// In en, this message translates to:

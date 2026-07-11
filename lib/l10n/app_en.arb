@@ -36,6 +36,14 @@
   "maintStatusPlanned": "Planned",
   "maintStatusInProgress": "In Progress",
   "maintStatusCompleted": "Completed",
+  "specifications": "Specifications",
+  "addSpec": "Add Specification",
+  "noSpecs": "No specification files",
+  "specTitleLabel": "Document Title",
+  "filesCount": "{count, plural, =0{No files} one{1 file} other{{count} files}}",
+  "@filesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "vesselDetails": "Vessel Details",
   "imoNumber": "IMO Number",

@@ -102,6 +102,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get maintStatusCompleted => 'مكتمل';
 
   @override
+  String get specifications => 'المواصفات';
+
+  @override
+  String get addSpec => 'إضافة مواصفة';
+
+  @override
+  String get noSpecs => 'لا توجد ملفات مواصفات';
+
+  @override
+  String get specTitleLabel => 'عنوان المستند';
+
+  @override
+  String filesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ملف',
+      many: '$count ملفًا',
+      few: '$count ملفات',
+      two: 'ملفان',
+      one: 'ملف واحد',
+      zero: 'لا ملفات',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get vesselDetails => 'تفاصيل السفينة';
 
   @override

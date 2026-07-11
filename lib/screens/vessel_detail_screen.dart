@@ -13,6 +13,7 @@ import '../state/port_call_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
 import '../state/vessel_profile_provider.dart';
+import '../state/vessel_spec_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
@@ -25,6 +26,7 @@ import 'requisition_list_screen.dart';
 import 'tank_category_screen.dart';
 import 'urgent_notifications_screen.dart';
 import 'vessel_logbook_screen.dart';
+import 'vessel_specs_screen.dart';
 
 class VesselDetailScreen extends StatelessWidget {
   final Vessel vessel;
@@ -37,6 +39,7 @@ class VesselDetailScreen extends StatelessWidget {
     final resolved = context.watch<VesselProfileProvider>().resolve(vessel);
     final openMaintenance =
         context.watch<MaintenanceProvider>().openCountFor(vessel.id);
+    final specCount = context.watch<VesselSpecProvider>().countFor(vessel.id);
     final openDefects = data
         .defectsFor(vessel.id)
         .where((d) => d.status != DefectStatus.closed)
@@ -141,6 +144,16 @@ class VesselDetailScreen extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (_) => VesselLogbookScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.description_outlined,
+                    title: t.specifications,
+                    subtitle: t.filesCount(specCount),
+                    color: AppColors.navy500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => VesselSpecsScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(

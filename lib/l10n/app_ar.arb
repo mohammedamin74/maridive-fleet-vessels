@@ -35,6 +35,14 @@
   "maintStatusPlanned": "مخطط",
   "maintStatusInProgress": "قيد التنفيذ",
   "maintStatusCompleted": "مكتمل",
+  "specifications": "المواصفات",
+  "addSpec": "إضافة مواصفة",
+  "noSpecs": "لا توجد ملفات مواصفات",
+  "specTitleLabel": "عنوان المستند",
+  "filesCount": "{count, plural, zero{لا ملفات} one{ملف واحد} two{ملفان} few{{count} ملفات} many{{count} ملفًا} other{{count} ملف}}",
+  "@filesCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
 
   "vesselDetails": "تفاصيل السفينة",
   "imoNumber": "رقم IMO",

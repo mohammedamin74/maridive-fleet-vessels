@@ -102,6 +102,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get maintStatusCompleted => 'Completed';
 
   @override
+  String get specifications => 'Specifications';
+
+  @override
+  String get addSpec => 'Add Specification';
+
+  @override
+  String get noSpecs => 'No specification files';
+
+  @override
+  String get specTitleLabel => 'Document Title';
+
+  @override
+  String filesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+      zero: 'No files',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get vesselDetails => 'Vessel Details';
 
   @override
