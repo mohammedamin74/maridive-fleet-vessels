@@ -754,6 +754,7 @@ class FleetData {
     const Vessel(
       id: 'mrd-701',
       name: 'Maridive 701',
+      photoAsset: 'assets/vessels/mrd-701.jpg',
       type: 'Anchor Handling Tug Supply (AHTS)',
       imo: 'N/A',
       homePort: 'Alexandria, Egypt',
@@ -765,6 +766,7 @@ class FleetData {
     const Vessel(
       id: 'mrd-704',
       name: 'Maridive 704',
+      photoAsset: 'assets/vessels/mrd-704.jpg',
       type: 'Anchor Handling Tug Supply (AHTS)',
       imo: '9603788',
       homePort: 'Alexandria, Egypt',
@@ -783,6 +785,7 @@ class FleetData {
     const Vessel(
       id: 'mrd-601',
       name: 'Maridive 601',
+      photoAsset: 'assets/vessels/mrd-601.jpg',
       type: 'Platform Supply Vessel (PSV)',
       imo: '9643374',
       homePort: 'Alexandria, Egypt',
@@ -1083,6 +1086,7 @@ class FleetData {
     const Vessel(
       id: 'mrd-zohr-1',
       name: 'Maridive ZOHR I',
+      photoAsset: 'assets/vessels/mrd-zohr-1.jpg',
       type: 'Platform Supply Vessel (PSV)',
       imo: '9693903',
       homePort: 'Alexandria, Egypt',
@@ -1094,6 +1098,7 @@ class FleetData {
     const Vessel(
       id: 'mrd-zohr-2',
       name: 'Maridive ZOHR II',
+      photoAsset: 'assets/vessels/mrd-zohr-2.jpg',
       type: 'Platform Supply Vessel (PSV)',
       imo: '9693898',
       homePort: 'Alexandria, Egypt',

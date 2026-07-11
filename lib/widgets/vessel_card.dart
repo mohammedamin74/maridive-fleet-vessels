@@ -30,16 +30,17 @@ class VesselCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  gradient: AppColors.heroGradient,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                alignment: Alignment.center,
-                child: const Icon(Icons.directions_boat_filled,
-                    color: Colors.white, size: 22),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: vessel.photoAsset.isEmpty
+                    ? _iconAvatar()
+                    : Image.asset(
+                        vessel.photoAsset,
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _iconAvatar(),
+                      ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -115,6 +116,15 @@ class VesselCard extends StatelessWidget {
     );
   }
 }
+
+Widget _iconAvatar() => Container(
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(gradient: AppColors.heroGradient),
+      alignment: Alignment.center,
+      child: const Icon(Icons.directions_boat_filled,
+          color: Colors.white, size: 22),
+    );
 
 class _MetaChip extends StatelessWidget {
   final IconData icon;

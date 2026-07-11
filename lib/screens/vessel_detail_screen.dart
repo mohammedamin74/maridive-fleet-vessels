@@ -412,6 +412,19 @@ class _VesselHeader extends StatelessWidget {
                             : vessel.workingPort),
                   ],
                 ),
+                if (vessel.photoAsset.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Image.asset(
+                      vessel.photoAsset,
+                      height: 170,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

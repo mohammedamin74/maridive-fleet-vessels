@@ -11,6 +11,7 @@ class Vessel {
   final String workingPort;
   final int crew;
   final VesselStatus status;
+  final String photoAsset;
   final List<Tank> tanks;
 
   const Vessel({
@@ -22,6 +23,7 @@ class Vessel {
     this.workingPort = '',
     required this.crew,
     required this.status,
+    this.photoAsset = '',
     required this.tanks,
   });
 
@@ -40,6 +42,7 @@ class Vessel {
         workingPort: workingPort ?? this.workingPort,
         crew: crew,
         status: status ?? this.status,
+        photoAsset: photoAsset,
         tanks: tanks,
       );
 
