@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
+import '../widgets/attachment_picker.dart';
 
 class VesselLogbookScreen extends StatefulWidget {
   final Vessel vessel;
@@ -112,6 +113,16 @@ class _VesselLogbookScreenState extends State<VesselLogbookScreen> {
                               const SizedBox(height: 6),
                               Text(note.text,
                                   style: Theme.of(context).textTheme.bodyLarge),
+                              const SizedBox(height: 10),
+                              AttachmentPickerStrip(
+                                attachments: note.attachments,
+                                onAdd: (file) => context
+                                    .read<TankDataProvider>()
+                                    .addNoteAttachment(note.id, file),
+                                onRemove: (i) => context
+                                    .read<TankDataProvider>()
+                                    .removeNoteAttachment(note.id, i),
+                              ),
                             ],
                           ),
                         ),

@@ -26,6 +26,7 @@ class AppColors {
   static const Color statusStandby = Color(0xFFFBBF24);
   static const Color statusPort = Color(0xFF60A5FA);
   static const Color statusMaintenance = Color(0xFFF87171);
+  static const Color statusOffHire = Color(0xFF94A3B8);
 
   // Neutral surfaces.
   static const Color slate50 = Color(0xFFF5F8FB);
@@ -56,6 +57,8 @@ class AppColors {
         return statusPort;
       case 'maintenance':
         return statusMaintenance;
+      case 'offHire':
+        return statusOffHire;
       default:
         return statusActive;
     }

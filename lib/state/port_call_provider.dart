@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import '../models/attachment.dart';
 import '../models/checklist_item.dart';
 import '../models/port_call.dart';
 
@@ -69,6 +70,24 @@ class PortCallProvider extends ChangeNotifier {
     if (raw == null) return;
     final call = PortCall.fromMap(raw as Map).copyWith(status: status);
     await box.put(id, call.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addAttachment(String id, Attachment attachment) async {
+    final raw = box.get(id);
+    if (raw == null) return;
+    final call = PortCall.fromMap(raw as Map);
+    await box.put(id,
+        call.copyWith(attachments: [...call.attachments, attachment]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeAttachment(String id, int index) async {
+    final raw = box.get(id);
+    if (raw == null) return;
+    final call = PortCall.fromMap(raw as Map);
+    final files = [...call.attachments]..removeAt(index);
+    await box.put(id, call.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 

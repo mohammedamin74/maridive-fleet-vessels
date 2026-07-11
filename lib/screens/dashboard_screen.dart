@@ -6,6 +6,7 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
+import '../state/vessel_profile_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/alerts_panel.dart';
 import '../widgets/defects_panel.dart';
@@ -37,12 +38,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final data = context.watch<TankDataProvider>();
-    final vessels = FleetData.vessels;
+    final profiles = context.watch<VesselProfileProvider>();
+    final vessels = FleetData.vessels.map(profiles.resolve).toList();
     final filtered = vessels
         .where((v) =>
             (_statusFilter == null || v.status == _statusFilter) &&
             (v.name.toLowerCase().contains(_query.toLowerCase()) ||
-                v.homePort.toLowerCase().contains(_query.toLowerCase())))
+                v.homePort.toLowerCase().contains(_query.toLowerCase()) ||
+                v.workingPort.toLowerCase().contains(_query.toLowerCase())))
         .toList();
 
     final activeCount =
@@ -227,6 +230,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         selected: _statusFilter == VesselStatus.maintenance,
                         onTap: () => setState(
                             () => _statusFilter = VesselStatus.maintenance),
+                      ),
+                      _FilterChip(
+                        label: t.statusOffHire,
+                        color: AppColors.statusOffHire,
+                        selected: _statusFilter == VesselStatus.offHire,
+                        onTap: () => setState(
+                            () => _statusFilter = VesselStatus.offHire),
                       ),
                     ],
                   ),

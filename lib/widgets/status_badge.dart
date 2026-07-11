@@ -16,6 +16,7 @@ class StatusBadge extends StatelessWidget {
       VesselStatus.standby => t.statusStandby,
       VesselStatus.port => t.statusInPort,
       VesselStatus.maintenance => t.statusMaintenance,
+      VesselStatus.offHire => t.statusOffHire,
     };
 
     return Container(
@@ -51,5 +52,6 @@ class StatusBadge extends StatelessWidget {
         VesselStatus.standby => 'standby',
         VesselStatus.port => 'port',
         VesselStatus.maintenance => 'maintenance',
+        VesselStatus.offHire => 'offHire',
       };
 }

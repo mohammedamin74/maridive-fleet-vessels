@@ -60,6 +60,48 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fleetLabel => 'الأسطول';
 
   @override
+  String get statusOffHire => 'خارج الخدمة';
+
+  @override
+  String get workingPort => 'ميناء العمل';
+
+  @override
+  String get editVessel => 'تعديل السفينة';
+
+  @override
+  String get vesselStatusLabel => 'الحالة';
+
+  @override
+  String get maintenance => 'الصيانة';
+
+  @override
+  String get addMaintenance => 'إضافة صيانة';
+
+  @override
+  String get noMaintenance => 'لا توجد سجلات صيانة';
+
+  @override
+  String get maintenanceTitleLabel => 'عنوان العمل';
+
+  @override
+  String get maintenanceDescLabel => 'الوصف';
+
+  @override
+  String get performedByLabel => 'نُفّذ بواسطة';
+
+  @override
+  String get maintenanceDueLabel => 'الاستحقاق';
+
+  @override
+  String get maintStatusPlanned => 'مخطط';
+
+  @override
+  String get maintStatusInProgress => 'قيد التنفيذ';
+
+  @override
+  String get maintStatusCompleted => 'مكتمل';
+
+  @override
   String get vesselDetails => 'تفاصيل السفينة';
 
   @override

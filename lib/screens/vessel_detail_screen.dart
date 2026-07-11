@@ -8,15 +8,18 @@ import '../models/urgent_notification.dart';
 import '../models/vessel.dart';
 import '../services/report_service.dart';
 import '../state/daily_tasks_provider.dart';
+import '../state/maintenance_provider.dart';
 import '../state/port_call_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
+import '../state/vessel_profile_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
 import 'certification_screen.dart';
 import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
+import 'maintenance_list_screen.dart';
 import 'port_call_list_screen.dart';
 import 'requisition_list_screen.dart';
 import 'tank_category_screen.dart';
@@ -31,6 +34,9 @@ class VesselDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final data = context.watch<TankDataProvider>();
+    final resolved = context.watch<VesselProfileProvider>().resolve(vessel);
+    final openMaintenance =
+        context.watch<MaintenanceProvider>().openCountFor(vessel.id);
     final openDefects = data
         .defectsFor(vessel.id)
         .where((d) => d.status != DefectStatus.closed)
@@ -53,7 +59,7 @@ class VesselDetailScreen extends StatelessWidget {
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _VesselHeader(vessel: vessel, t: t)),
+            SliverToBoxAdapter(child: _VesselHeader(vessel: resolved, t: t)),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
               sliver: SliverToBoxAdapter(
@@ -206,13 +212,25 @@ class VesselDetailScreen extends StatelessWidget {
                     ),
                   ),
                   CategoryTile(
+                    icon: Icons.build_outlined,
+                    title: t.maintenance,
+                    subtitle: t.openCount(openMaintenance),
+                    color: openMaintenance > 0
+                        ? AppColors.amber400
+                        : AppColors.statusPort,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => MaintenanceListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
                     icon: Icons.picture_as_pdf_outlined,
                     title: t.exportReport,
                     subtitle: t.tankStatusPdf,
                     color: AppColors.navy500,
                     onTap: () async {
                       await ReportService.exportVesselReport(
-                          vessel: vessel, data: data);
+                          vessel: resolved, data: data);
                     },
                   ),
                 ]),
@@ -240,6 +258,70 @@ class _VesselHeader extends StatelessWidget {
   final AppLocalizations t;
   const _VesselHeader({required this.vessel, required this.t});
 
+  String _statusLabel(AppLocalizations t, VesselStatus s) => switch (s) {
+        VesselStatus.active => t.statusActive,
+        VesselStatus.standby => t.statusStandby,
+        VesselStatus.port => t.statusInPort,
+        VesselStatus.maintenance => t.statusMaintenance,
+        VesselStatus.offHire => t.statusOffHire,
+      };
+
+  void _showEditSheet(BuildContext context, AppLocalizations t) {
+    final provider = context.read<VesselProfileProvider>();
+    VesselStatus status = vessel.status;
+    final imoController = TextEditingController(
+        text: vessel.imo.toUpperCase() == 'N/A' ? '' : vessel.imo);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (sheetContext, setState) => Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 20,
+            bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.editVessel,
+                  style: Theme.of(sheetContext).textTheme.titleLarge),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<VesselStatus>(
+                initialValue: status,
+                decoration: InputDecoration(labelText: t.vesselStatusLabel),
+                items: VesselStatus.values
+                    .map((s) => DropdownMenuItem(
+                        value: s, child: Text(_statusLabel(t, s))))
+                    .toList(),
+                onChanged: (v) => setState(() => status = v ?? status),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: imoController,
+                decoration: InputDecoration(labelText: t.imoNumber),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    provider.setStatus(vessel.id, status);
+                    provider.setImo(vessel.id, imoController.text.trim());
+                    Navigator.of(sheetContext).pop();
+                  },
+                  child: Text(t.save),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -257,6 +339,11 @@ class _VesselHeader extends StatelessWidget {
               ),
               const Spacer(),
               StatusBadge(status: vessel.status),
+              IconButton(
+                onPressed: () => _showEditSheet(context, t),
+                icon: const Icon(Icons.edit_outlined, color: Colors.white),
+                tooltip: t.editVessel,
+              ),
             ],
           ),
           const SizedBox(height: 4),
@@ -283,17 +370,33 @@ class _VesselHeader extends StatelessWidget {
                 Row(
                   children: [
                     _InfoChip(
-                        icon: Icons.tag, label: t.imoNumber, value: vessel.imo),
-                    const SizedBox(width: 10),
-                    _InfoChip(
-                        icon: Icons.location_on,
-                        label: t.homePort,
-                        value: vessel.homePort),
+                        icon: Icons.tag,
+                        label: t.imoNumber,
+                        value: (vessel.imo.isEmpty ||
+                                vessel.imo.toUpperCase() == 'N/A')
+                            ? '—'
+                            : vessel.imo),
                     const SizedBox(width: 10),
                     _InfoChip(
                         icon: Icons.groups,
                         label: t.crewOnBoard,
                         value: '${vessel.crew}'),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    _InfoChip(
+                        icon: Icons.home_outlined,
+                        label: t.homePort,
+                        value: vessel.homePort),
+                    const SizedBox(width: 10),
+                    _InfoChip(
+                        icon: Icons.anchor,
+                        label: t.workingPort,
+                        value: vessel.workingPort.isEmpty
+                            ? '—'
+                            : vessel.workingPort),
                   ],
                 ),
               ],

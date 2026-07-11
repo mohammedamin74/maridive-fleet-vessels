@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/port_call.dart';
 import '../state/port_call_provider.dart';
+import '../widgets/attachment_picker.dart';
 
 class PortCallDetailScreen extends StatelessWidget {
   final PortCall portCall;
@@ -94,6 +95,17 @@ class PortCallDetailScreen extends StatelessWidget {
                 );
               }),
             ),
+          ),
+          const SizedBox(height: 20),
+          Text(t.attachmentsLabel,
+              style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 8),
+          AttachmentPickerStrip(
+            attachments: call.attachments,
+            onAdd: (file) =>
+                context.read<PortCallProvider>().addAttachment(call.id, file),
+            onRemove: (i) =>
+                context.read<PortCallProvider>().removeAttachment(call.id, i),
           ),
           const SizedBox(height: 20),
           Wrap(

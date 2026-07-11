@@ -200,6 +200,90 @@ abstract class AppLocalizations {
   /// **'Fleet'**
   String get fleetLabel;
 
+  /// No description provided for @statusOffHire.
+  ///
+  /// In en, this message translates to:
+  /// **'Off-hire'**
+  String get statusOffHire;
+
+  /// No description provided for @workingPort.
+  ///
+  /// In en, this message translates to:
+  /// **'Working Port'**
+  String get workingPort;
+
+  /// No description provided for @editVessel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Vessel'**
+  String get editVessel;
+
+  /// No description provided for @vesselStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get vesselStatusLabel;
+
+  /// No description provided for @maintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get maintenance;
+
+  /// No description provided for @addMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Maintenance'**
+  String get addMaintenance;
+
+  /// No description provided for @noMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'No maintenance records'**
+  String get noMaintenance;
+
+  /// No description provided for @maintenanceTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Title'**
+  String get maintenanceTitleLabel;
+
+  /// No description provided for @maintenanceDescLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get maintenanceDescLabel;
+
+  /// No description provided for @performedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Performed By'**
+  String get performedByLabel;
+
+  /// No description provided for @maintenanceDueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get maintenanceDueLabel;
+
+  /// No description provided for @maintStatusPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned'**
+  String get maintStatusPlanned;
+
+  /// No description provided for @maintStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get maintStatusInProgress;
+
+  /// No description provided for @maintStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get maintStatusCompleted;
+
   /// No description provided for @vesselDetails.
   ///
   /// In en, this message translates to:

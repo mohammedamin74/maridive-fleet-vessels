@@ -126,14 +126,34 @@ class TankDataProvider extends ChangeNotifier {
     return list;
   }
 
-  Future<void> addNote(String vesselId, String text) async {
+  Future<void> addNote(String vesselId, String text,
+      {List<Attachment> attachments = const []}) async {
     final note = VesselNote(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
       vesselId: vesselId,
       text: text,
+      attachments: attachments,
       timestamp: DateTime.now(),
     );
     await notesBox.put(note.id, note.toMap());
+    notifyListeners();
+  }
+
+  Future<void> addNoteAttachment(String noteId, Attachment attachment) async {
+    final raw = notesBox.get(noteId);
+    if (raw == null) return;
+    final note = VesselNote.fromMap(raw as Map);
+    await notesBox.put(noteId,
+        note.copyWith(attachments: [...note.attachments, attachment]).toMap());
+    notifyListeners();
+  }
+
+  Future<void> removeNoteAttachment(String noteId, int index) async {
+    final raw = notesBox.get(noteId);
+    if (raw == null) return;
+    final note = VesselNote.fromMap(raw as Map);
+    final files = [...note.attachments]..removeAt(index);
+    await notesBox.put(noteId, note.copyWith(attachments: files).toMap());
     notifyListeners();
   }
 

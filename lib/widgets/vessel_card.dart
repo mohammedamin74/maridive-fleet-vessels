@@ -61,7 +61,9 @@ class VesselCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '${vessel.type} · ${vessel.homePort}',
+                      vessel.workingPort.isEmpty
+                          ? '${vessel.type} · ${vessel.homePort}'
+                          : '${vessel.type} · ${vessel.workingPort}',
                       style: Theme.of(context).textTheme.bodyMedium,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

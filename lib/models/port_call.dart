@@ -1,3 +1,4 @@
+import 'attachment.dart';
 import 'checklist_item.dart';
 
 enum PortCallStatus { upcoming, arrived, departed }
@@ -26,6 +27,7 @@ class PortCall {
   final double sludgeQuantity;
   final List<ChecklistItem> customsChecklist;
   final PortCallStatus status;
+  final List<Attachment> attachments;
   final DateTime createdAt;
 
   const PortCall({
@@ -44,11 +46,14 @@ class PortCall {
     required this.sludgeQuantity,
     required this.customsChecklist,
     required this.status,
+    this.attachments = const [],
     required this.createdAt,
   });
 
   PortCall copyWith(
-          {PortCallStatus? status, List<ChecklistItem>? customsChecklist}) =>
+          {PortCallStatus? status,
+          List<ChecklistItem>? customsChecklist,
+          List<Attachment>? attachments}) =>
       PortCall(
         id: id,
         vesselId: vesselId,
@@ -65,6 +70,7 @@ class PortCall {
         sludgeQuantity: sludgeQuantity,
         customsChecklist: customsChecklist ?? this.customsChecklist,
         status: status ?? this.status,
+        attachments: attachments ?? this.attachments,
         createdAt: createdAt,
       );
 

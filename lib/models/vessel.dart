@@ -1,6 +1,6 @@
 import 'tank.dart';
 
-enum VesselStatus { active, standby, port, maintenance }
+enum VesselStatus { active, standby, port, maintenance, offHire }
 
 class Vessel {
   final String id;
@@ -8,6 +8,7 @@ class Vessel {
   final String type;
   final String imo;
   final String homePort;
+  final String workingPort;
   final int crew;
   final VesselStatus status;
   final List<Tank> tanks;
@@ -18,10 +19,29 @@ class Vessel {
     required this.type,
     required this.imo,
     required this.homePort,
+    this.workingPort = '',
     required this.crew,
     required this.status,
     required this.tanks,
   });
+
+  Vessel copyWith({
+    String? imo,
+    String? homePort,
+    String? workingPort,
+    VesselStatus? status,
+  }) =>
+      Vessel(
+        id: id,
+        name: name,
+        type: type,
+        imo: imo ?? this.imo,
+        homePort: homePort ?? this.homePort,
+        workingPort: workingPort ?? this.workingPort,
+        crew: crew,
+        status: status ?? this.status,
+        tanks: tanks,
+      );
 
   List<Tank> tanksOf(TankCategory category) =>
       tanks.where((t) => t.category == category).toList();
@@ -36,6 +56,8 @@ class Vessel {
         return 'port';
       case VesselStatus.maintenance:
         return 'maintenance';
+      case VesselStatus.offHire:
+        return 'offHire';
     }
   }
 }

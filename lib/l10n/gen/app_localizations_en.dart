@@ -60,6 +60,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fleetLabel => 'Fleet';
 
   @override
+  String get statusOffHire => 'Off-hire';
+
+  @override
+  String get workingPort => 'Working Port';
+
+  @override
+  String get editVessel => 'Edit Vessel';
+
+  @override
+  String get vesselStatusLabel => 'Status';
+
+  @override
+  String get maintenance => 'Maintenance';
+
+  @override
+  String get addMaintenance => 'Add Maintenance';
+
+  @override
+  String get noMaintenance => 'No maintenance records';
+
+  @override
+  String get maintenanceTitleLabel => 'Job Title';
+
+  @override
+  String get maintenanceDescLabel => 'Description';
+
+  @override
+  String get performedByLabel => 'Performed By';
+
+  @override
+  String get maintenanceDueLabel => 'Due';
+
+  @override
+  String get maintStatusPlanned => 'Planned';
+
+  @override
+  String get maintStatusInProgress => 'In Progress';
+
+  @override
+  String get maintStatusCompleted => 'Completed';
+
+  @override
   String get vesselDetails => 'Vessel Details';
 
   @override

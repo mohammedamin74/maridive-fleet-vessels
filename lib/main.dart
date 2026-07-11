@@ -5,9 +5,11 @@ import 'app.dart';
 import 'state/app_state.dart';
 import 'state/certification_provider.dart';
 import 'state/daily_tasks_provider.dart';
+import 'state/maintenance_provider.dart';
 import 'state/port_call_provider.dart';
 import 'state/tank_data_provider.dart';
 import 'state/urgent_notification_provider.dart';
+import 'state/vessel_profile_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,8 @@ Future<void> main() async {
   final crewCertsBox = await Hive.openBox('crew_certs');
   final urgentNotificationsBox = await Hive.openBox('urgent_notifications');
   final dailyTasksBox = await Hive.openBox('daily_tasks');
+  final maintenanceBox = await Hive.openBox('maintenance_records');
+  final vesselProfilesBox = await Hive.openBox('vessel_profiles');
 
   runApp(
     MultiProvider(
@@ -48,6 +52,10 @@ Future<void> main() async {
                 UrgentNotificationProvider(box: urgentNotificationsBox)),
         ChangeNotifierProvider(
             create: (_) => DailyTasksProvider(box: dailyTasksBox)),
+        ChangeNotifierProvider(
+            create: (_) => MaintenanceProvider(box: maintenanceBox)),
+        ChangeNotifierProvider(
+            create: (_) => VesselProfileProvider(box: vesselProfilesBox)),
       ],
       child: const MaridiveFleetApp(),
     ),
