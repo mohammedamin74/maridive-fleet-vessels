@@ -1,16 +1,18 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
+import '../services/attachment_store.dart';
 import '../theme/app_colors.dart';
 
-/// Opens the platform file picker for ANY file type and returns the picked
-/// file as an [Attachment] (original filename + base64 bytes), or null if
-/// cancelled/unavailable. Always reads bytes rather than a filesystem path
-/// so it works uniformly on Android/iOS/Web/Windows/macOS/Linux.
+/// Opens the platform file picker for ANY file type, uploads the picked file to
+/// the shared Supabase Storage bucket, and returns an [Attachment] referencing
+/// it (or null if cancelled/unavailable). Reads bytes rather than a filesystem
+/// path so it works uniformly on Android/iOS/Web/Windows/macOS/Linux. If the
+/// upload fails the returned attachment falls back to inline base64 bytes.
 Future<Attachment?> pickAttachment() async {
   final result = await FilePicker.platform.pickFiles(
     type: FileType.any,
@@ -19,7 +21,7 @@ Future<Attachment?> pickAttachment() async {
   final file = result?.files.single;
   final bytes = file?.bytes;
   if (file == null || bytes == null) return null;
-  return Attachment(name: file.name, dataBase64: base64Encode(bytes));
+  return AttachmentStore.upload(file.name, bytes);
 }
 
 /// A horizontal strip of attachment tiles. Image attachments render as a
@@ -28,7 +30,7 @@ Future<Attachment?> pickAttachment() async {
 /// and name. Each tile has a remove affordance, and an "add file" tile
 /// appends more. Used for defect/requisition/daily-task evidence and for
 /// certificate document attachments.
-class AttachmentPickerStrip extends StatelessWidget {
+class AttachmentPickerStrip extends StatefulWidget {
   final List<Attachment> attachments;
   final ValueChanged<Attachment> onAdd;
   final ValueChanged<int> onRemove;
@@ -41,6 +43,13 @@ class AttachmentPickerStrip extends StatelessWidget {
     required this.onRemove,
     this.multiple = true,
   });
+
+  @override
+  State<AttachmentPickerStrip> createState() => _AttachmentPickerStripState();
+}
+
+class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
+  bool _busy = false;
 
   IconData _iconFor(Attachment a) {
     switch (a.extension) {
@@ -67,12 +76,21 @@ class AttachmentPickerStrip extends StatelessWidget {
     }
   }
 
-  /// Opens a non-image attachment. PDFs go through the print/share sheet
-  /// (which downloads on web and opens the share/print dialog on desktop &
-  /// mobile); other formats currently have no in-app viewer.
-  void _openFile(Attachment a) {
-    if (a.extension == 'pdf') {
-      Printing.sharePdf(bytes: base64Decode(a.dataBase64), filename: a.name);
+  /// Opens a non-image attachment. PDFs are fetched (from Storage or inline)
+  /// then handed to the print/share sheet (downloads on web, opens the
+  /// share/print dialog on desktop & mobile); other formats have no in-app
+  /// viewer yet.
+  Future<void> _openFile(Attachment a) async {
+    if (a.extension != 'pdf') return;
+    try {
+      final bytes = await AttachmentStore.bytes(a);
+      await Printing.sharePdf(bytes: bytes, filename: a.name);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${a.name} — download failed')),
+        );
+      }
     }
   }
 
@@ -86,7 +104,7 @@ class AttachmentPickerStrip extends StatelessWidget {
           children: [
             Flexible(
               child: InteractiveViewer(
-                child: Image.memory(base64Decode(a.dataBase64)),
+                child: _AttachmentImage(a, fit: BoxFit.contain),
               ),
             ),
             Padding(
@@ -101,18 +119,29 @@ class AttachmentPickerStrip extends StatelessWidget {
     );
   }
 
+  Future<void> _pick() async {
+    setState(() => _busy = true);
+    try {
+      final picked = await pickAttachment();
+      if (picked != null) widget.onAdd(picked);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     final dark = scheme.brightness == Brightness.dark;
-    final showAddTile = multiple || attachments.isEmpty;
+    final attachments = widget.attachments;
+    final showAddTile = widget.multiple || attachments.isEmpty;
 
     Widget removeBadge(int index) => Positioned(
           top: 2,
           right: 2,
           child: InkWell(
-            onTap: () => onRemove(index),
+            onTap: () => widget.onRemove(index),
             child: Container(
               padding: const EdgeInsets.all(2),
               decoration: const BoxDecoration(
@@ -140,11 +169,10 @@ class AttachmentPickerStrip extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.memory(
-                          base64Decode(attachments[i].dataBase64),
+                        child: _AttachmentImage(
+                          attachments[i],
                           width: 84,
                           height: 84,
-                          fit: BoxFit.cover,
                         ),
                       ),
                     )
@@ -189,10 +217,7 @@ class AttachmentPickerStrip extends StatelessWidget {
             ),
           if (showAddTile)
             InkWell(
-              onTap: () async {
-                final picked = await pickAttachment();
-                if (picked != null) onAdd(picked);
-              },
+              onTap: _busy ? null : _pick,
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 width: 84,
@@ -205,20 +230,77 @@ class AttachmentPickerStrip extends StatelessWidget {
                   ),
                 ),
                 alignment: Alignment.center,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.upload_file_outlined,
-                        color: scheme.onSurface.withValues(alpha: 0.6),
-                        size: 22),
-                    const SizedBox(height: 4),
-                    Text(t.addFile, style: const TextStyle(fontSize: 10)),
-                  ],
-                ),
+                child: _busy
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.upload_file_outlined,
+                              color: scheme.onSurface.withValues(alpha: 0.6),
+                              size: 22),
+                          const SizedBox(height: 4),
+                          Text(t.addFile, style: const TextStyle(fontSize: 10)),
+                        ],
+                      ),
               ),
             ),
         ],
       ),
+    );
+  }
+}
+
+/// Renders an attachment's image bytes, fetching them from Storage (or decoding
+/// inline base64) and showing a spinner while a cloud download is in flight.
+class _AttachmentImage extends StatelessWidget {
+  final Attachment attachment;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+
+  const _AttachmentImage(
+    this.attachment, {
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+  });
+
+  Widget _placeholder(BuildContext context, {bool error = false}) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: width,
+      height: height,
+      alignment: Alignment.center,
+      color: scheme.surfaceContainerHighest,
+      child: error
+          ? const Icon(Icons.broken_image_outlined, size: 22)
+          : const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cached = AttachmentStore.peek(attachment);
+    if (cached != null) {
+      return Image.memory(cached, width: width, height: height, fit: fit);
+    }
+    return FutureBuilder<Uint8List>(
+      future: AttachmentStore.bytes(attachment),
+      builder: (ctx, snap) {
+        if (snap.hasData) {
+          return Image.memory(snap.data!,
+              width: width, height: height, fit: fit);
+        }
+        return _placeholder(ctx, error: snap.hasError);
+      },
     );
   }
 }

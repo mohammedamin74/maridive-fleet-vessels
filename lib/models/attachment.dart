@@ -7,9 +7,18 @@
 /// exported reports.
 class Attachment {
   final String name; // original filename incl. extension, e.g. "cert.pdf"
-  final String dataBase64;
+  final String dataBase64; // inline bytes; '' when the file lives in Storage
+  final String? storagePath; // Supabase Storage object path; null when inline
 
-  const Attachment({required this.name, required this.dataBase64});
+  const Attachment({
+    required this.name,
+    this.dataBase64 = '',
+    this.storagePath,
+  });
+
+  /// True when the bytes live in shared Supabase Storage (the record keeps only
+  /// this small path) rather than being base64-inlined in the record itself.
+  bool get isCloud => storagePath != null && storagePath!.isNotEmpty;
 
   String get extension {
     final dot = name.lastIndexOf('.');
@@ -27,11 +36,16 @@ class Attachment {
         'heif',
       }.contains(extension);
 
-  Map<String, dynamic> toMap() => {'name': name, 'data': dataBase64};
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'data': dataBase64,
+        if (storagePath != null && storagePath!.isNotEmpty) 'path': storagePath,
+      };
 
   factory Attachment.fromMap(Map<dynamic, dynamic> map) => Attachment(
         name: (map['name'] as String?) ?? 'file',
         dataBase64: (map['data'] as String?) ?? '',
+        storagePath: map['path'] as String?,
       );
 
   /// Reads an attachment list from a stored record map, tolerating both the

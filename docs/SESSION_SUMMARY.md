@@ -82,7 +82,15 @@ The app stores its existing `toMap()` output as the `data` jsonb. RLS: any authe
   - ✅ **VesselProfileProvider** → `vessel_profiles` (status / IMO overrides; the `data` jsonb embeds `vesselId` so the keyed cache can be rebuilt from `fetchAll`).
   - ⏸️ **VesselSpecProvider** stays on **local Hive** — the bundled spec PDFs are 1–3 MB each and ship identically to every device, so they belong in Storage (Phase 3), not a jsonb column.
   - Fixed a real bug in `AuthProvider.changePassword` (a `catchError` returned a `String` into a `Future<Null>` chain, so the error code never surfaced) — rewritten with async/try-catch.
-- **Phase 3 — Attachments → Supabase Storage:** base64-in-jsonb breaks on large PDFs / realtime ~1 MB limit; VesselSpecProvider + large attachments migrate here.
+- **Phase 3 — Attachments → Supabase Storage (DONE):** file bytes now live in the shared `attachments` Storage bucket; records keep only a small path.
+  - `Attachment` model gained an optional `storagePath` (backward-compatible: legacy inline-base64 attachments still load and render).
+  - `lib/services/attachment_store.dart` — `AttachmentStore`: `upload` (unique path), `uploadAt` (fixed path, for seeds), `bytes`/`peek` (download + in-memory cache). Falls back to inline base64 if an upload fails so a picked file is never lost.
+  - `lib/widgets/attachment_picker.dart` — `pickAttachment` now uploads on pick (spinner on the add tile); images/PDFs render via async byte fetch (`_AttachmentImage` FutureBuilder). Single chokepoint → covers every module (defects, requisitions, logbook, port calls, daily tasks, maintenance, certs, specs).
+  - **VesselSpecProvider is now cloud-backed** (`vessel_specs` table) — moved off local Hive. The 5 bundled spec PDFs upload once to Storage at deterministic paths (`specs/<vesselId>.pdf`) with deterministic ids (`<vesselId>_seed_spec`), so seeding is idempotent across devices (`_ensureSeeded` on first authenticated load).
+  - `main.dart`: the last data box is gone; only `settings` (language/theme) remains local.
+  - Verified: Storage REST upload/download/delete all `HTTP 200` with an authenticated token; bucket + RLS live.
+  - Not migrated: the small crew-cert avatar (`photoBase64`) still rides in the `crew_certs` jsonb — it's tiny; can move later if needed.
+  - Known minor: picking a file in an add-form that's then cancelled leaves an orphaned Storage object (no cleanup yet).
 - **Phase 4 — Roles & final security; optional realtime** (add tables to `supabase_realtime` publication).
 
 ---
