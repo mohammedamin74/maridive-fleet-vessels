@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
 import 'data/vessel_specs_seed.dart';
+import 'services/supabase_config.dart';
 import 'state/app_state.dart';
 import 'state/auth_provider.dart';
 import 'state/certification_provider.dart';
@@ -16,6 +17,7 @@ import 'state/vessel_spec_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.init();
   await Hive.initFlutter();
 
   final settingsBox = await Hive.openBox('settings');
