@@ -308,6 +308,120 @@ abstract class AppLocalizations {
   /// **'Document Title'**
   String get specTitleLabel;
 
+  /// No description provided for @signInPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get signInPrompt;
+
+  /// No description provided for @usernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get passwordLabel;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Log In'**
+  String get loginButton;
+
+  /// No description provided for @invalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect username or password'**
+  String get invalidCredentials;
+
+  /// No description provided for @offlineAuthNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts are stored securely on this device.'**
+  String get offlineAuthNote;
+
+  /// No description provided for @account.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Out'**
+  String get logOut;
+
+  /// No description provided for @manageUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Users'**
+  String get manageUsers;
+
+  /// No description provided for @addUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Add User'**
+  String get addUser;
+
+  /// No description provided for @displayNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Display Name'**
+  String get displayNameLabel;
+
+  /// No description provided for @adminRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator'**
+  String get adminRole;
+
+  /// No description provided for @userRole.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get userRole;
+
+  /// No description provided for @makeAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator access'**
+  String get makeAdmin;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @newPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPasswordLabel;
+
+  /// No description provided for @userExists.
+  ///
+  /// In en, this message translates to:
+  /// **'That username already exists'**
+  String get userExists;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated'**
+  String get passwordChanged;
+
+  /// No description provided for @fieldsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Username and password are required'**
+  String get fieldsRequired;
+
   /// No description provided for @filesCount.
   ///
   /// In en, this message translates to:

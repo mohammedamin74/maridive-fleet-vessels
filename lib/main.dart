@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'data/vessel_specs_seed.dart';
 import 'state/app_state.dart';
+import 'state/auth_provider.dart';
 import 'state/certification_provider.dart';
 import 'state/daily_tasks_provider.dart';
 import 'state/maintenance_provider.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
   final maintenanceBox = await Hive.openBox('maintenance_records');
   final vesselProfilesBox = await Hive.openBox('vessel_profiles');
   final vesselSpecsBox = await Hive.openBox('vessel_specs');
+  final usersBox = await Hive.openBox('app_users');
 
   await seedVesselSpecs(specsBox: vesselSpecsBox, settingsBox: settingsBox);
 
@@ -63,6 +65,7 @@ Future<void> main() async {
             create: (_) => VesselProfileProvider(box: vesselProfilesBox)),
         ChangeNotifierProvider(
             create: (_) => VesselSpecProvider(box: vesselSpecsBox)),
+        ChangeNotifierProvider(create: (_) => AuthProvider(box: usersBox)),
       ],
       child: const MaridiveFleetApp(),
     ),

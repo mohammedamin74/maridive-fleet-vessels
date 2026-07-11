@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'l10n/gen/app_localizations.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/login_screen.dart';
 import 'state/app_state.dart';
+import 'state/auth_provider.dart';
 import 'theme/app_theme.dart';
 
 class MaridiveFleetApp extends StatelessWidget {
@@ -21,7 +23,19 @@ class MaridiveFleetApp extends StatelessWidget {
       locale: appState.locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
-      home: const DashboardScreen(),
+      home: const _AuthGate(),
     );
+  }
+}
+
+/// Shows the login screen until a user signs in, then the dashboard. Because
+/// the signed-in user is held in memory, every app launch starts here.
+class _AuthGate extends StatelessWidget {
+  const _AuthGate();
+
+  @override
+  Widget build(BuildContext context) {
+    final authed = context.watch<AuthProvider>().isAuthenticated;
+    return authed ? const DashboardScreen() : const LoginScreen();
   }
 }

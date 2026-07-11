@@ -114,6 +114,63 @@ class AppLocalizationsAr extends AppLocalizations {
   String get specTitleLabel => 'عنوان المستند';
 
   @override
+  String get signInPrompt => 'سجّل الدخول للمتابعة';
+
+  @override
+  String get usernameLabel => 'اسم المستخدم';
+
+  @override
+  String get passwordLabel => 'كلمة المرور';
+
+  @override
+  String get loginButton => 'دخول';
+
+  @override
+  String get invalidCredentials => 'اسم المستخدم أو كلمة المرور غير صحيحة';
+
+  @override
+  String get offlineAuthNote => 'يتم حفظ الحسابات بأمان على هذا الجهاز.';
+
+  @override
+  String get account => 'الحساب';
+
+  @override
+  String get logOut => 'تسجيل الخروج';
+
+  @override
+  String get manageUsers => 'إدارة المستخدمين';
+
+  @override
+  String get addUser => 'إضافة مستخدم';
+
+  @override
+  String get displayNameLabel => 'الاسم الظاهر';
+
+  @override
+  String get adminRole => 'مدير';
+
+  @override
+  String get userRole => 'مستخدم';
+
+  @override
+  String get makeAdmin => 'صلاحية المدير';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get newPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get userExists => 'اسم المستخدم موجود بالفعل';
+
+  @override
+  String get passwordChanged => 'تم تحديث كلمة المرور';
+
+  @override
+  String get fieldsRequired => 'اسم المستخدم وكلمة المرور مطلوبان';
+
+  @override
   String filesCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

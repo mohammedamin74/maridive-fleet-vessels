@@ -114,6 +114,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get specTitleLabel => 'Document Title';
 
   @override
+  String get signInPrompt => 'Sign in to continue';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get loginButton => 'Log In';
+
+  @override
+  String get invalidCredentials => 'Incorrect username or password';
+
+  @override
+  String get offlineAuthNote => 'Accounts are stored securely on this device.';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get logOut => 'Log Out';
+
+  @override
+  String get manageUsers => 'Manage Users';
+
+  @override
+  String get addUser => 'Add User';
+
+  @override
+  String get displayNameLabel => 'Display Name';
+
+  @override
+  String get adminRole => 'Administrator';
+
+  @override
+  String get userRole => 'User';
+
+  @override
+  String get makeAdmin => 'Administrator access';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get newPasswordLabel => 'New Password';
+
+  @override
+  String get userExists => 'That username already exists';
+
+  @override
+  String get passwordChanged => 'Password updated';
+
+  @override
+  String get fieldsRequired => 'Username and password are required';
+
+  @override
   String filesCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
