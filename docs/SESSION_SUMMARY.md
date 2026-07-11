@@ -112,6 +112,8 @@ Dependencies added: `supabase_flutter ^2.8.0`, `file_picker`, `pdf` / `printing`
 - `flutter gen-l10n` must be run from the project dir (not home) or getters don't regenerate.
 - Flutter **web** canvas text input via DOM value-set does NOT reliably commit to controllers — verify the cloud path via the app's live Supabase session token (REST write + read-back) instead.
 - Vessel photo extraction: macOS `qlmanage -t -s 1600` to rasterize PDF page 1, then Pillow to crop.
+- **Network entitlement / permission (critical for cloud builds):** a sandboxed **macOS** release build makes NO network calls unless `com.apple.security.network.client` is in `macos/Runner/Release.entitlements` (and DebugProfile). Without it every Supabase call — including login — fails silently and shows as "incorrect username or password". Likewise **Android** release APKs need `<uses-permission android:name="android.permission.INTERNET"/>` in the **main** manifest (`android/app/src/main/AndroidManifest.xml`); it was present only in debug/profile. Both fixed. Web/Windows don't need this.
+- **Creating fleet users without the Edge Function:** the `handle_new_user` trigger auto-creates a profile for any auth user (username = the part before `@` in the email), so users can be created straight from **Dashboard → Authentication → Users → Add user** with email `username@maridive.app`, a password, and **Auto Confirm User ON**. Always use lowercase emails (Supabase stores them lowercase and the app lowercases the typed username). Promote to admin with `update public.profiles set is_admin = true where username = '...';`. The `admin-users` Edge Function is only needed for in-app user management.
 
 ---
 

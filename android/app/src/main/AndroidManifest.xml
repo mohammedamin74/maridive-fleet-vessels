@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for the shared cloud backend (Supabase). Without this in the
+         MAIN manifest, release/production APKs get no network access and every
+         cloud call — including login — fails silently. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="maridive_fleet_vessels"
         android:name="${applicationName}"
