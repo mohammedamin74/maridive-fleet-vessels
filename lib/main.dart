@@ -30,7 +30,6 @@ Future<void> main() async {
   final crewCertsBox = await Hive.openBox('crew_certs');
   final urgentNotificationsBox = await Hive.openBox('urgent_notifications');
   final dailyTasksBox = await Hive.openBox('daily_tasks');
-  final maintenanceBox = await Hive.openBox('maintenance_records');
   final vesselProfilesBox = await Hive.openBox('vessel_profiles');
   final vesselSpecsBox = await Hive.openBox('vessel_specs');
 
@@ -61,7 +60,7 @@ Future<void> main() async {
         ChangeNotifierProvider(
             create: (_) => DailyTasksProvider(box: dailyTasksBox)),
         ChangeNotifierProvider(
-            create: (_) => MaintenanceProvider(box: maintenanceBox)),
+            create: (_) => MaintenanceProvider()),
         ChangeNotifierProvider(
             create: (_) => VesselProfileProvider(box: vesselProfilesBox)),
         ChangeNotifierProvider(
