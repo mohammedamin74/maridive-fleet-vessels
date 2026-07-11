@@ -72,10 +72,17 @@ The app stores its existing `toMap()` output as the `data` jsonb. RLS: any authe
 ## 3. Migration phases
 
 - **Phase 1 — Auth (DONE, commit `e7fff92`):** Supabase auth, login screen, user management, `_AuthGate`.
-- **Phase 2 — Cloud-sync data modules (IN PROGRESS):**
-  - ✅ **Maintenance** — migrated & verified end-to-end (commit `4ae11d6`). Write returned HTTP 201, read-back correct, "1 open" showed after reload, session auto-restored.
-  - ⏭️ Remaining, same pattern: TankDataProvider (readings, notes/logbook, defects, requisitions), PortCallProvider, CertificationProvider (vessel_certs, crew_certs), UrgentNotificationProvider, DailyTasksProvider, VesselSpecProvider, VesselProfileProvider (status/IMO overrides).
-- **Phase 3 — Attachments → Supabase Storage:** base64-in-jsonb breaks on large PDFs / realtime ~1 MB limit; specs migration pairs with this.
+- **Phase 2 — Cloud-sync data modules (DONE, commits `4ae11d6` + `e95343e`):** every fleet data provider now reads/writes the shared Supabase backend via `CloudStore` (in-memory cache loaded on auth state change, optimistic write-through, unchanged public method signatures so screens are untouched).
+  - ✅ **Maintenance** (`maintenance_records`) — verified end-to-end (write 201, read-back, reload persisted).
+  - ✅ **TankDataProvider** → `readings`, `notes`, `defects`, `requisitions`.
+  - ✅ **PortCallProvider** → `port_calls` — verified end-to-end (write 201 / read 200 / delete 204 via the app's live session token).
+  - ✅ **CertificationProvider** → `vessel_certs`, `crew_certs`.
+  - ✅ **UrgentNotificationProvider** → `urgent_notifications`.
+  - ✅ **DailyTasksProvider** → `daily_tasks`.
+  - ✅ **VesselProfileProvider** → `vessel_profiles` (status / IMO overrides; the `data` jsonb embeds `vesselId` so the keyed cache can be rebuilt from `fetchAll`).
+  - ⏸️ **VesselSpecProvider** stays on **local Hive** — the bundled spec PDFs are 1–3 MB each and ship identically to every device, so they belong in Storage (Phase 3), not a jsonb column.
+  - Fixed a real bug in `AuthProvider.changePassword` (a `catchError` returned a `String` into a `Future<Null>` chain, so the error code never surfaced) — rewritten with async/try-catch.
+- **Phase 3 — Attachments → Supabase Storage:** base64-in-jsonb breaks on large PDFs / realtime ~1 MB limit; VesselSpecProvider + large attachments migrate here.
 - **Phase 4 — Roles & final security; optional realtime** (add tables to `supabase_realtime` publication).
 
 ---
