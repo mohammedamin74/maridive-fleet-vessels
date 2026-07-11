@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:printing/printing.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
 import '../theme/app_colors.dart';
@@ -63,6 +64,15 @@ class AttachmentPickerStrip extends StatelessWidget {
         return Icons.article_outlined;
       default:
         return Icons.insert_drive_file_outlined;
+    }
+  }
+
+  /// Opens a non-image attachment. PDFs go through the print/share sheet
+  /// (which downloads on web and opens the share/print dialog on desktop &
+  /// mobile); other formats currently have no in-app viewer.
+  void _openFile(Attachment a) {
+    if (a.extension == 'pdf') {
+      Printing.sharePdf(bytes: base64Decode(a.dataBase64), filename: a.name);
     }
   }
 
@@ -139,34 +149,38 @@ class AttachmentPickerStrip extends StatelessWidget {
                       ),
                     )
                   else
-                    Container(
-                      width: 84,
-                      height: 84,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: dark ? AppColors.navy700 : AppColors.slate100,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: dark
-                              ? AppColors.navy600
-                              : AppColors.slate200,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(_iconFor(attachments[i]),
-                              size: 26, color: AppColors.teal500),
-                          const SizedBox(height: 4),
-                          Text(
-                            attachments[i].name,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                                fontSize: 9, fontWeight: FontWeight.w600),
+                    InkWell(
+                      onTap: () => _openFile(attachments[i]),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        width: 84,
+                        height: 84,
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: dark ? AppColors.navy700 : AppColors.slate100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: dark
+                                ? AppColors.navy600
+                                : AppColors.slate200,
                           ),
-                        ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(_iconFor(attachments[i]),
+                                size: 26, color: AppColors.teal500),
+                            const SizedBox(height: 4),
+                            Text(
+                              attachments[i].name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontSize: 9, fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   removeBadge(i),

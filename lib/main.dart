@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'app.dart';
+import 'data/vessel_specs_seed.dart';
 import 'state/app_state.dart';
 import 'state/certification_provider.dart';
 import 'state/daily_tasks_provider.dart';
@@ -29,6 +30,8 @@ Future<void> main() async {
   final maintenanceBox = await Hive.openBox('maintenance_records');
   final vesselProfilesBox = await Hive.openBox('vessel_profiles');
   final vesselSpecsBox = await Hive.openBox('vessel_specs');
+
+  await seedVesselSpecs(specsBox: vesselSpecsBox, settingsBox: settingsBox);
 
   runApp(
     MultiProvider(
