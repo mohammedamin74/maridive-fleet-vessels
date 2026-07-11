@@ -1,0 +1,9 @@
+# Minimal Supabase project config so `supabase functions deploy` works with
+# `--project-ref`. The CLI fills sensible defaults for everything else.
+project_id = "forcpesacwaektzyslyh"
+
+# The admin-users function is called by signed-in admins (their JWT is sent in
+# the Authorization header and re-checked inside the function), so keep the
+# gateway JWT verification on.
+[functions.admin-users]
+verify_jwt = true
