@@ -80,7 +80,9 @@ jobs:
           channel: stable
       - run: flutter config --enable-web
       - run: flutter pub get
-      - run: flutter build web --release
+      # --no-web-resources-cdn bundles CanvasKit locally instead of loading it
+      # from gstatic.com, so the app loads on networks where that CDN is blocked.
+      - run: flutter build web --release --no-web-resources-cdn
       - uses: actions/upload-artifact@v4
         with:
           name: maridive-fleet-web
