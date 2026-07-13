@@ -1753,6 +1753,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{1 overdue} other{{count} overdue}}'**
   String overdueCount(int count);
+
+  /// No description provided for @assignToManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to management'**
+  String get assignToManagement;
+
+  /// No description provided for @dueDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Date'**
+  String get dueDateLabel;
+
+  /// No description provided for @setDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Set due date'**
+  String get setDueDate;
+
+  /// No description provided for @managementAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Management Action'**
+  String get managementAction;
+
+  /// No description provided for @noAssignedActions.
+  ///
+  /// In en, this message translates to:
+  /// **'No assigned actions'**
+  String get noAssignedActions;
+
+  /// No description provided for @unassignedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get unassignedLabel;
+
+  /// No description provided for @filterActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get filterActions;
 }
 
 class _AppLocalizationsDelegate

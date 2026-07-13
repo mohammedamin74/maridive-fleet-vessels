@@ -74,6 +74,9 @@ class UrgentNotificationProvider extends ChangeNotifier {
     required AlertType alertType,
     required String location,
     required String description,
+    bool isAction = false,
+    String? assignee,
+    DateTime? dueDate,
   }) async {
     await _save(UrgentNotification(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
@@ -83,20 +86,82 @@ class UrgentNotificationProvider extends ChangeNotifier {
       description: description,
       timestamp: DateTime.now(),
       escalationStatus: EscalationStatus.notAcknowledged,
+      isAction: isAction,
+      assignee: assignee,
+      actionStatus: ActionStatus.pending,
+      dueDate: dueDate,
     ));
   }
 
-  Future<void> updateStatus(String id, EscalationStatus status) async {
-    UrgentNotification? current;
+  UrgentNotification? _byId(String id) {
     for (final n in _all) {
-      if (n.id == id) {
-        current = n;
-        break;
-      }
+      if (n.id == id) return n;
     }
+    return null;
+  }
+
+  Future<void> updateStatus(String id, EscalationStatus status) async {
+    final current = _byId(id);
     if (current == null) return;
     await _save(current.copyWith(escalationStatus: status));
   }
+
+  /// Transition an assigned action's workflow state, stamping [completedAt]
+  /// when it is marked completed.
+  Future<void> updateActionStatus(String id, ActionStatus status) async {
+    final current = _byId(id);
+    if (current == null) return;
+    await _save(current.copyWith(
+      actionStatus: status,
+      completedAt:
+          status == ActionStatus.completed ? DateTime.now() : current.completedAt,
+    ));
+  }
+
+  /// Assign (or re-assign) an alert as a management action.
+  Future<void> assignAction(String id,
+      {required String assignee, DateTime? dueDate}) async {
+    final current = _byId(id);
+    if (current == null) return;
+    await _save(current.copyWith(
+      isAction: true,
+      assignee: assignee,
+      dueDate: dueDate,
+    ));
+  }
+
+  /// All management actions for a vessel, most recent first.
+  List<UrgentNotification> actionsForVessel(String vesselId) {
+    final list =
+        _all.where((n) => n.vesselId == vesselId && n.isAction).toList();
+    list.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+    return list;
+  }
+
+  /// Fleet-wide open actions assigned to [assignee] ("My Tasks").
+  List<UrgentNotification> myTasks(String assignee, List<String> vesselIds) {
+    final list = _all
+        .where((n) =>
+            n.isAction &&
+            n.assignee == assignee &&
+            vesselIds.contains(n.vesselId) &&
+            n.actionStatus != ActionStatus.completed)
+        .toList();
+    list.sort((a, b) {
+      // Overdue and soonest-due first; undated actions last.
+      final ad = a.dueDate, bd = b.dueDate;
+      if (ad == null && bd == null) return b.timestamp.compareTo(a.timestamp);
+      if (ad == null) return 1;
+      if (bd == null) return -1;
+      return ad.compareTo(bd);
+    });
+    return list;
+  }
+
+  /// Count of overdue actions across the given vessels (for badges).
+  int overdueCount(List<String> vesselIds) => _all
+      .where((n) => vesselIds.contains(n.vesselId) && n.isOverdue)
+      .length;
 
   Future<void> delete(String id) async {
     _all.removeWhere((n) => n.id == id);

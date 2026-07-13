@@ -345,5 +345,14 @@
   "overdueCount": "{count, plural, zero{لا توجد متأخرة} one{١ متأخرة} two{٢ متأخرة} few{{count} متأخرة} many{{count} متأخرة} other{{count} متأخرة}}",
   "@overdueCount": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+  "assignToManagement": "إسناد إلى الإدارة",
+  "dueDateLabel": "تاريخ الاستحقاق",
+  "setDueDate": "تحديد تاريخ الاستحقاق",
+  "managementAction": "إجراء إداري",
+  "markInProgress": "قيد التنفيذ",
+  "noAssignedActions": "لا توجد إجراءات مُسندة",
+  "unassignedLabel": "غير مُسند",
+  "filterAll": "الكل",
+  "filterActions": "الإجراءات"
 }

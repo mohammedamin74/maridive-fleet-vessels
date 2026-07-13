@@ -945,4 +945,25 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get assignToManagement => 'Assign to management';
+
+  @override
+  String get dueDateLabel => 'Due Date';
+
+  @override
+  String get setDueDate => 'Set due date';
+
+  @override
+  String get managementAction => 'Management Action';
+
+  @override
+  String get noAssignedActions => 'No assigned actions';
+
+  @override
+  String get unassignedLabel => 'Unassigned';
+
+  @override
+  String get filterActions => 'Actions';
 }

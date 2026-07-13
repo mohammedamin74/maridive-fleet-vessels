@@ -477,7 +477,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportedOn => 'تاريخ الإبلاغ';
 
   @override
-  String get markInProgress => 'قيد المعالجة';
+  String get markInProgress => 'قيد التنفيذ';
 
   @override
   String get markClosed => 'إغلاق';
@@ -994,4 +994,25 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get assignToManagement => 'إسناد إلى الإدارة';
+
+  @override
+  String get dueDateLabel => 'تاريخ الاستحقاق';
+
+  @override
+  String get setDueDate => 'تحديد تاريخ الاستحقاق';
+
+  @override
+  String get managementAction => 'إجراء إداري';
+
+  @override
+  String get noAssignedActions => 'لا توجد إجراءات مُسندة';
+
+  @override
+  String get unassignedLabel => 'غير مُسند';
+
+  @override
+  String get filterActions => 'الإجراءات';
 }

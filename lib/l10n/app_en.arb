@@ -346,5 +346,14 @@
   "overdueCount": "{count, plural, one{1 overdue} other{{count} overdue}}",
   "@overdueCount": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+  "assignToManagement": "Assign to management",
+  "dueDateLabel": "Due Date",
+  "setDueDate": "Set due date",
+  "managementAction": "Management Action",
+  "markInProgress": "Mark In Progress",
+  "noAssignedActions": "No assigned actions",
+  "unassignedLabel": "Unassigned",
+  "filterAll": "All",
+  "filterActions": "Actions"
 }
