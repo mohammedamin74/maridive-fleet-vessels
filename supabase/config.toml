@@ -7,3 +7,9 @@ project_id = "forcpesacwaektzyslyh"
 # gateway JWT verification on.
 [functions.admin-users]
 verify_jwt = true
+
+# The extract function reads an uploaded file and returns structured defect/
+# requisition fields via Gemini. Called by any signed-in fleet user; the gateway
+# verifies their JWT.
+[functions.extract]
+verify_jwt = true

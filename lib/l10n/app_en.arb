@@ -379,5 +379,11 @@
   "requirementsReady": "{ready}/{total} ready",
   "@requirementsReady": {
     "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
-  }
+  },
+  "extractFromFile": "Scan file with AI",
+  "reviewExtractedDefect": "Review Extracted Defect",
+  "reviewExtractedRequisition": "Review Extracted Requisition",
+  "extractingFile": "Reading file with AI…",
+  "extractionFailed": "Couldn't read the file automatically. Please enter the details manually.",
+  "extractionNotConfigured": "AI extraction isn't set up yet."
 }

@@ -1081,4 +1081,24 @@ class AppLocalizationsAr extends AppLocalizations {
   String requirementsReady(int ready, int total) {
     return '$ready/$total جاهز';
   }
+
+  @override
+  String get extractFromFile => 'مسح الملف بالذكاء الاصطناعي';
+
+  @override
+  String get reviewExtractedDefect => 'مراجعة العطل المستخرج';
+
+  @override
+  String get reviewExtractedRequisition => 'مراجعة الطلب المستخرج';
+
+  @override
+  String get extractingFile => 'جارٍ قراءة الملف بالذكاء الاصطناعي…';
+
+  @override
+  String get extractionFailed =>
+      'تعذّرت قراءة الملف تلقائيًا. الرجاء إدخال البيانات يدويًا.';
+
+  @override
+  String get extractionNotConfigured =>
+      'ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد.';
 }

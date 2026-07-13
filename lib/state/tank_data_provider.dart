@@ -264,6 +264,7 @@ class TankDataProvider extends ChangeNotifier {
     required DefectPriority priority,
     String assignedOfficer = '',
     String requiredSpareParts = '',
+    List<Attachment> attachments = const [],
   }) async {
     await _saveDefect(Defect(
       id: '${vesselId}_${DateTime.now().microsecondsSinceEpoch}',
@@ -276,7 +277,7 @@ class TankDataProvider extends ChangeNotifier {
       assignedOfficer: assignedOfficer,
       requiredSpareParts: requiredSpareParts,
       actionTaken: '',
-      attachments: const [],
+      attachments: attachments,
       reportedAt: DateTime.now(),
     ));
   }

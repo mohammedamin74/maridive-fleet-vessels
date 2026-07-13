@@ -5,6 +5,7 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
 import '../models/requisition.dart';
 import '../models/vessel.dart';
+import '../services/extraction_service.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/attachment_picker.dart';
@@ -97,6 +98,11 @@ class RequisitionListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.requisitions} — ${vessel.name}'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.document_scanner_outlined),
+            tooltip: t.extractFromFile,
+            onPressed: () => _extractFromFile(context, t),
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () => _showAddRequisitionSheet(context, t),
@@ -362,19 +368,32 @@ class RequisitionListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddRequisitionSheet(BuildContext context, AppLocalizations t) {
-    final itemController = TextEditingController();
-    final partNumberController = TextEditingController();
-    final oemController = TextEditingController();
-    final qtyController = TextEditingController(text: '1');
+  void _showAddRequisitionSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    List<Attachment> initialAttachments = const [],
+  }) {
+    final itemController =
+        TextEditingController(text: _str(prefill, 'itemName'));
+    final partNumberController =
+        TextEditingController(text: _str(prefill, 'partNumber'));
+    final oemController =
+        TextEditingController(text: _str(prefill, 'oemManufacturer'));
+    final qtyController =
+        TextEditingController(text: _numStr(prefill, 'quantity', '1'));
     final stockController = TextEditingController(text: '0');
-    final unitController = TextEditingController(text: 'pcs');
-    final priceController = TextEditingController(text: '0');
-    final notesController = TextEditingController();
-    RequisitionPriority priority = RequisitionPriority.normal;
-    RequisitionDepartment department = RequisitionDepartment.deck;
+    final unitController =
+        TextEditingController(text: _strOr(prefill, 'unit', 'pcs'));
+    final priceController =
+        TextEditingController(text: _numStr(prefill, 'unitPrice', '0'));
+    final notesController = TextEditingController(text: _str(prefill, 'notes'));
+    RequisitionPriority priority = _enumFrom(RequisitionPriority.values,
+        _str(prefill, 'priority'), RequisitionPriority.normal);
+    RequisitionDepartment department = _enumFrom(RequisitionDepartment.values,
+        _str(prefill, 'department'), RequisitionDepartment.deck);
     DateTime? requiredDeliveryDate;
-    List<Attachment> newFiles = [];
+    List<Attachment> newFiles = [...initialAttachments];
 
     showModalBottomSheet(
       context: context,
@@ -394,7 +413,10 @@ class RequisitionListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addRequisition,
+                    Text(
+                        prefill != null
+                            ? t.reviewExtractedRequisition
+                            : t.addRequisition,
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -487,8 +509,9 @@ class RequisitionListScreen extends StatelessWidget {
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
-                        if (picked != null)
+                        if (picked != null) {
                           setState(() => requiredDeliveryDate = picked);
+                        }
                       },
                       child: InputDecorator(
                         decoration:
@@ -547,8 +570,10 @@ class RequisitionListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           final qty = double.tryParse(qtyController.text);
-                          if (itemController.text.trim().isEmpty || qty == null)
+                          if (itemController.text.trim().isEmpty ||
+                              qty == null) {
                             return;
+                          }
                           context.read<TankDataProvider>().addRequisition(
                                 vesselId: vessel.id,
                                 vesselName: vessel.name,
@@ -581,6 +606,89 @@ class RequisitionListScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  static String _str(Map<String, dynamic>? m, String key) {
+    final v = m?[key];
+    return v == null ? '' : v.toString();
+  }
+
+  static String _strOr(Map<String, dynamic>? m, String key, String fallback) {
+    final s = _str(m, key);
+    return s.isEmpty ? fallback : s;
+  }
+
+  static String _numStr(Map<String, dynamic>? m, String key, String fallback) {
+    final v = m?[key];
+    if (v is num) {
+      return v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+    }
+    return fallback;
+  }
+
+  static T _enumFrom<T extends Enum>(List<T> values, String name, T fallback) {
+    for (final v in values) {
+      if (v.name == name) return v;
+    }
+    return fallback;
+  }
+
+  /// AI-assisted entry: pick a file, upload it, ask the `extract` function to
+  /// read it, then open the add sheet pre-filled with the result for review.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
+    final picked = await pickAttachment();
+    if (picked == null) return;
+    if (!picked.isCloud) {
+      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
+      return;
+    }
+    if (!context.mounted) return;
+
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => _ExtractingDialog(message: t.extractingFile),
+    );
+
+    try {
+      final data = await ExtractionService.extract(
+          storagePath: picked.storagePath!, kind: 'requisition');
+      navigator.pop();
+      if (!context.mounted) return;
+      _showAddRequisitionSheet(context, t,
+          prefill: data, initialAttachments: [picked]);
+    } on ExtractionException catch (e) {
+      navigator.pop();
+      final msg = e.code == 'not_configured'
+          ? t.extractionNotConfigured
+          : t.extractionFailed;
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
+    }
+  }
+}
+
+/// Small modal shown while the AI reads an uploaded file.
+class _ExtractingDialog extends StatelessWidget {
+  final String message;
+  const _ExtractingDialog({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Row(
+        children: [
+          const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2)),
+          const SizedBox(width: 16),
+          Expanded(child: Text(message)),
+        ],
+      ),
     );
   }
 }

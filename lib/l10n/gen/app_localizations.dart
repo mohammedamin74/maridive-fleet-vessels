@@ -1921,6 +1921,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{ready}/{total} ready'**
   String requirementsReady(int ready, int total);
+
+  /// No description provided for @extractFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan file with AI'**
+  String get extractFromFile;
+
+  /// No description provided for @reviewExtractedDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Extracted Defect'**
+  String get reviewExtractedDefect;
+
+  /// No description provided for @reviewExtractedRequisition.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Extracted Requisition'**
+  String get reviewExtractedRequisition;
+
+  /// No description provided for @extractingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading file with AI…'**
+  String get extractingFile;
+
+  /// No description provided for @extractionFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the file automatically. Please enter the details manually.'**
+  String get extractionFailed;
+
+  /// No description provided for @extractionNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'AI extraction isn\'t set up yet.'**
+  String get extractionNotConfigured;
 }
 
 class _AppLocalizationsDelegate

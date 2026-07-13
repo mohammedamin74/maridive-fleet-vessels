@@ -378,5 +378,11 @@
   "requirementsReady": "{ready}/{total} جاهز",
   "@requirementsReady": {
     "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
-  }
+  },
+  "extractFromFile": "مسح الملف بالذكاء الاصطناعي",
+  "reviewExtractedDefect": "مراجعة العطل المستخرج",
+  "reviewExtractedRequisition": "مراجعة الطلب المستخرج",
+  "extractingFile": "جارٍ قراءة الملف بالذكاء الاصطناعي…",
+  "extractionFailed": "تعذّرت قراءة الملف تلقائيًا. الرجاء إدخال البيانات يدويًا.",
+  "extractionNotConfigured": "ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد."
 }

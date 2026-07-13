@@ -1032,4 +1032,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String requirementsReady(int ready, int total) {
     return '$ready/$total ready';
   }
+
+  @override
+  String get extractFromFile => 'Scan file with AI';
+
+  @override
+  String get reviewExtractedDefect => 'Review Extracted Defect';
+
+  @override
+  String get reviewExtractedRequisition => 'Review Extracted Requisition';
+
+  @override
+  String get extractingFile => 'Reading file with AI…';
+
+  @override
+  String get extractionFailed =>
+      'Couldn\'t read the file automatically. Please enter the details manually.';
+
+  @override
+  String get extractionNotConfigured => 'AI extraction isn\'t set up yet.';
 }
