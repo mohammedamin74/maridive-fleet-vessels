@@ -966,4 +966,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterActions => 'Actions';
+
+  @override
+  String get downloadFile => 'Download';
+
+  @override
+  String get previewUnavailable =>
+      'Preview isn\'t available for this file type. Download it to open in another app.';
+
+  @override
+  String get fileSaved => 'File saved to your device';
+
+  @override
+  String get downloadFailed => 'Download failed';
 }

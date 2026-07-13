@@ -355,5 +355,9 @@
   "noAssignedActions": "No assigned actions",
   "unassignedLabel": "Unassigned",
   "filterAll": "All",
-  "filterActions": "Actions"
+  "filterActions": "Actions",
+  "downloadFile": "Download",
+  "previewUnavailable": "Preview isn't available for this file type. Download it to open in another app.",
+  "fileSaved": "File saved to your device",
+  "downloadFailed": "Download failed"
 }

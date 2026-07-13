@@ -1795,6 +1795,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Actions'**
   String get filterActions;
+
+  /// No description provided for @downloadFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get downloadFile;
+
+  /// No description provided for @previewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview isn\'t available for this file type. Download it to open in another app.'**
+  String get previewUnavailable;
+
+  /// No description provided for @fileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'File saved to your device'**
+  String get fileSaved;
+
+  /// No description provided for @downloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed'**
+  String get downloadFailed;
 }
 
 class _AppLocalizationsDelegate

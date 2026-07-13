@@ -1015,4 +1015,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get filterActions => 'الإجراءات';
+
+  @override
+  String get downloadFile => 'تنزيل';
+
+  @override
+  String get previewUnavailable =>
+      'لا تتوفر معاينة لهذا النوع من الملفات. نزّله لفتحه في تطبيق آخر.';
+
+  @override
+  String get fileSaved => 'تم حفظ الملف على جهازك';
+
+  @override
+  String get downloadFailed => 'فشل التنزيل';
 }

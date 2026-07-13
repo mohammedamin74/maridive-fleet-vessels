@@ -44,6 +44,7 @@ dependencies:
   printing: ^5.12.0
   path_provider: ^2.1.3
   file_picker: ^8.1.2
+  file_saver: ^0.4.0
   crypto: ^3.0.6
   supabase_flutter: ^2.8.0
 

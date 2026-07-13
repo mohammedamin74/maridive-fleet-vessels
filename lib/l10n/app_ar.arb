@@ -354,5 +354,9 @@
   "noAssignedActions": "لا توجد إجراءات مُسندة",
   "unassignedLabel": "غير مُسند",
   "filterAll": "الكل",
-  "filterActions": "الإجراءات"
+  "filterActions": "الإجراءات",
+  "downloadFile": "تنزيل",
+  "previewUnavailable": "لا تتوفر معاينة لهذا النوع من الملفات. نزّله لفتحه في تطبيق آخر.",
+  "fileSaved": "تم حفظ الملف على جهازك",
+  "downloadFailed": "فشل التنزيل"
 }

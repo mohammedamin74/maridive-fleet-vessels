@@ -2,11 +2,11 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
 import '../services/attachment_store.dart';
 import '../theme/app_colors.dart';
+import 'file_viewer.dart';
 
 /// Opens the platform file picker for ANY file type, uploads the picked file to
 /// the shared Supabase Storage bucket, and returns an [Attachment] referencing
@@ -76,49 +76,6 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
     }
   }
 
-  /// Opens a non-image attachment. PDFs are fetched (from Storage or inline)
-  /// then handed to the print/share sheet (downloads on web, opens the
-  /// share/print dialog on desktop & mobile); other formats have no in-app
-  /// viewer yet.
-  Future<void> _openFile(Attachment a) async {
-    if (a.extension != 'pdf') return;
-    try {
-      final bytes = await AttachmentStore.bytes(a);
-      await Printing.sharePdf(bytes: bytes, filename: a.name);
-    } catch (_) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${a.name} — download failed')),
-        );
-      }
-    }
-  }
-
-  void _previewImage(BuildContext context, Attachment a) {
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => Dialog(
-        insetPadding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Flexible(
-              child: InteractiveViewer(
-                child: _AttachmentImage(a, fit: BoxFit.contain),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(a.name,
-                  style: Theme.of(ctx).textTheme.bodyMedium,
-                  textAlign: TextAlign.center),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Future<void> _pick() async {
     setState(() => _busy = true);
     try {
@@ -165,7 +122,7 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
                 children: [
                   if (attachments[i].isImage)
                     InkWell(
-                      onTap: () => _previewImage(context, attachments[i]),
+                      onTap: () => showAttachmentViewer(context, attachments[i]),
                       borderRadius: BorderRadius.circular(10),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
@@ -178,7 +135,7 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
                     )
                   else
                     InkWell(
-                      onTap: () => _openFile(attachments[i]),
+                      onTap: () => showAttachmentViewer(context, attachments[i]),
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         width: 84,
@@ -260,14 +217,14 @@ class _AttachmentImage extends StatelessWidget {
   final Attachment attachment;
   final double? width;
   final double? height;
-  final BoxFit fit;
 
   const _AttachmentImage(
     this.attachment, {
     this.width,
     this.height,
-    this.fit = BoxFit.cover,
   });
+
+  static const BoxFit fit = BoxFit.cover;
 
   Widget _placeholder(BuildContext context, {bool error = false}) {
     final scheme = Theme.of(context).colorScheme;
