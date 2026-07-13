@@ -1101,4 +1101,58 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get extractionNotConfigured =>
       'ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد.';
+
+  @override
+  String get crew => 'الطاقم';
+
+  @override
+  String get crewListTitle => 'قائمة الطاقم';
+
+  @override
+  String get currentCrew => 'الحالي';
+
+  @override
+  String get previousCrew => 'السابق';
+
+  @override
+  String get addCrew => 'إضافة فرد طاقم';
+
+  @override
+  String get crewNameLabel => 'الاسم';
+
+  @override
+  String get nationalityLabel => 'الجنسية';
+
+  @override
+  String get signOnDateLabel => 'تاريخ الالتحاق';
+
+  @override
+  String get signOffDateLabel => 'تاريخ المغادرة';
+
+  @override
+  String get signOffCrew => 'تسجيل المغادرة';
+
+  @override
+  String get reactivateCrew => 'إعادة التنشيط';
+
+  @override
+  String get noCurrentCrew => 'لا يوجد طاقم حالي';
+
+  @override
+  String get noPreviousCrew => 'لا يوجد طاقم سابق';
+
+  @override
+  String crewOnboard(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فرد',
+      many: '$count فردًا',
+      few: '$count أفراد',
+      two: 'فردان',
+      one: 'فرد واحد',
+      zero: 'لا يوجد طاقم',
+    );
+    return '$_temp0';
+  }
 }

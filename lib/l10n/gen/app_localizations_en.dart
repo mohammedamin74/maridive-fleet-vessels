@@ -1051,4 +1051,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get extractionNotConfigured => 'AI extraction isn\'t set up yet.';
+
+  @override
+  String get crew => 'Crew';
+
+  @override
+  String get crewListTitle => 'Crew List';
+
+  @override
+  String get currentCrew => 'Current';
+
+  @override
+  String get previousCrew => 'Previous';
+
+  @override
+  String get addCrew => 'Add Crew Member';
+
+  @override
+  String get crewNameLabel => 'Name';
+
+  @override
+  String get nationalityLabel => 'Nationality';
+
+  @override
+  String get signOnDateLabel => 'Sign-on Date';
+
+  @override
+  String get signOffDateLabel => 'Sign-off Date';
+
+  @override
+  String get signOffCrew => 'Sign Off';
+
+  @override
+  String get reactivateCrew => 'Reactivate';
+
+  @override
+  String get noCurrentCrew => 'No current crew';
+
+  @override
+  String get noPreviousCrew => 'No previous crew';
+
+  @override
+  String crewOnboard(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count onboard',
+      one: '1 onboard',
+      zero: 'No crew',
+    );
+    return '$_temp0';
+  }
 }

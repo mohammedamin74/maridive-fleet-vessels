@@ -6,6 +6,7 @@ import 'services/supabase_config.dart';
 import 'state/app_state.dart';
 import 'state/auth_provider.dart';
 import 'state/certification_provider.dart';
+import 'state/crew_provider.dart';
 import 'state/daily_tasks_provider.dart';
 import 'state/maintenance_provider.dart';
 import 'state/port_call_provider.dart';
@@ -36,6 +37,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => PortCallProvider()),
         ChangeNotifierProvider(create: (_) => PortRequirementProvider()),
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
+        ChangeNotifierProvider(create: (_) => CrewProvider()),
         ChangeNotifierProvider(create: (_) => UrgentNotificationProvider()),
         ChangeNotifierProvider(create: (_) => DailyTasksProvider()),
         ChangeNotifierProvider(create: (_) => MaintenanceProvider()),

@@ -7,6 +7,7 @@ import '../models/tank.dart';
 import '../models/urgent_notification.dart';
 import '../models/vessel.dart';
 import '../services/report_service.dart';
+import '../state/crew_provider.dart';
 import '../state/daily_tasks_provider.dart';
 import '../state/maintenance_provider.dart';
 import '../state/port_call_provider.dart';
@@ -19,6 +20,7 @@ import '../theme/app_colors.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
 import 'certification_screen.dart';
+import 'crew_list_screen.dart';
 import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
 import 'maintenance_list_screen.dart';
@@ -61,6 +63,7 @@ class VesselDetailScreen extends StatelessWidget {
         context.watch<PortCallProvider>().forVessel(vessel.id).length;
     final pendingRequirements =
         context.watch<PortRequirementProvider>().pendingCount(vessel.id);
+    final crewOnboard = context.watch<CrewProvider>().currentCount(vessel.id);
 
     return Scaffold(
       body: SafeArea(
@@ -214,6 +217,16 @@ class VesselDetailScreen extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (_) => CertificationScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.groups_outlined,
+                    title: t.crew,
+                    subtitle: t.crewOnboard(crewOnboard),
+                    color: AppColors.teal500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => CrewListScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(

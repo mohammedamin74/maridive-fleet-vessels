@@ -1957,6 +1957,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'AI extraction isn\'t set up yet.'**
   String get extractionNotConfigured;
+
+  /// No description provided for @crew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get crew;
+
+  /// No description provided for @crewListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew List'**
+  String get crewListTitle;
+
+  /// No description provided for @currentCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get currentCrew;
+
+  /// No description provided for @previousCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previousCrew;
+
+  /// No description provided for @addCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Crew Member'**
+  String get addCrew;
+
+  /// No description provided for @crewNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get crewNameLabel;
+
+  /// No description provided for @nationalityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Nationality'**
+  String get nationalityLabel;
+
+  /// No description provided for @signOnDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-on Date'**
+  String get signOnDateLabel;
+
+  /// No description provided for @signOffDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign-off Date'**
+  String get signOffDateLabel;
+
+  /// No description provided for @signOffCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Off'**
+  String get signOffCrew;
+
+  /// No description provided for @reactivateCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get reactivateCrew;
+
+  /// No description provided for @noCurrentCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'No current crew'**
+  String get noCurrentCrew;
+
+  /// No description provided for @noPreviousCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'No previous crew'**
+  String get noPreviousCrew;
+
+  /// No description provided for @crewOnboard.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No crew} one{1 onboard} other{{count} onboard}}'**
+  String crewOnboard(int count);
 }
 
 class _AppLocalizationsDelegate

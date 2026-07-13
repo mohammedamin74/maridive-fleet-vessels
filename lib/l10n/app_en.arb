@@ -385,5 +385,23 @@
   "reviewExtractedRequisition": "Review Extracted Requisition",
   "extractingFile": "Reading file with AI…",
   "extractionFailed": "Couldn't read the file automatically. Please enter the details manually.",
-  "extractionNotConfigured": "AI extraction isn't set up yet."
+  "extractionNotConfigured": "AI extraction isn't set up yet.",
+  "crew": "Crew",
+  "crewListTitle": "Crew List",
+  "currentCrew": "Current",
+  "previousCrew": "Previous",
+  "addCrew": "Add Crew Member",
+  "crewNameLabel": "Name",
+  "rankLabel": "Rank",
+  "nationalityLabel": "Nationality",
+  "signOnDateLabel": "Sign-on Date",
+  "signOffDateLabel": "Sign-off Date",
+  "signOffCrew": "Sign Off",
+  "reactivateCrew": "Reactivate",
+  "noCurrentCrew": "No current crew",
+  "noPreviousCrew": "No previous crew",
+  "crewOnboard": "{count, plural, =0{No crew} one{1 onboard} other{{count} onboard}}",
+  "@crewOnboard": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

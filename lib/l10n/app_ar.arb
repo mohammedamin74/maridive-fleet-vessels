@@ -384,5 +384,23 @@
   "reviewExtractedRequisition": "مراجعة الطلب المستخرج",
   "extractingFile": "جارٍ قراءة الملف بالذكاء الاصطناعي…",
   "extractionFailed": "تعذّرت قراءة الملف تلقائيًا. الرجاء إدخال البيانات يدويًا.",
-  "extractionNotConfigured": "ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد."
+  "extractionNotConfigured": "ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد.",
+  "crew": "الطاقم",
+  "crewListTitle": "قائمة الطاقم",
+  "currentCrew": "الحالي",
+  "previousCrew": "السابق",
+  "addCrew": "إضافة فرد طاقم",
+  "crewNameLabel": "الاسم",
+  "rankLabel": "الرتبة",
+  "nationalityLabel": "الجنسية",
+  "signOnDateLabel": "تاريخ الالتحاق",
+  "signOffDateLabel": "تاريخ المغادرة",
+  "signOffCrew": "تسجيل المغادرة",
+  "reactivateCrew": "إعادة التنشيط",
+  "noCurrentCrew": "لا يوجد طاقم حالي",
+  "noPreviousCrew": "لا يوجد طاقم سابق",
+  "crewOnboard": "{count, plural, zero{لا يوجد طاقم} one{فرد واحد} two{فردان} few{{count} أفراد} many{{count} فردًا} other{{count} فرد}}",
+  "@crewOnboard": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }
