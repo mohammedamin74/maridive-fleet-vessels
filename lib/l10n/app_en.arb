@@ -359,5 +359,25 @@
   "downloadFile": "Download",
   "previewUnavailable": "Preview isn't available for this file type. Download it to open in another app.",
   "fileSaved": "File saved to your device",
-  "downloadFailed": "Download failed"
+  "downloadFailed": "Download failed",
+  "portRequirements": "Port Requirements",
+  "portRequirementsTitle": "Requirements Upon Arrival at Port",
+  "addRequirement": "Add Requirement",
+  "requirementTitleLabel": "Requirement",
+  "reqCategoryLabel": "Category",
+  "reqCatDocuments": "Documents",
+  "reqCatCustoms": "Customs",
+  "reqCatHealth": "Health & Safety",
+  "reqCatSecurity": "Security (ISPS)",
+  "reqCatProvisions": "Provisions & Supplies",
+  "reqCatOther": "Other",
+  "reqStatusReady": "Ready",
+  "reqStatusPendingLabel": "Pending",
+  "markReady": "Mark Ready",
+  "markPending": "Mark Pending",
+  "noRequirements": "No requirements yet",
+  "requirementsReady": "{ready}/{total} ready",
+  "@requirementsReady": {
+    "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
+  }
 }

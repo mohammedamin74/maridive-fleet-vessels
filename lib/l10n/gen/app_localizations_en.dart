@@ -979,4 +979,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get downloadFailed => 'Download failed';
+
+  @override
+  String get portRequirements => 'Port Requirements';
+
+  @override
+  String get portRequirementsTitle => 'Requirements Upon Arrival at Port';
+
+  @override
+  String get addRequirement => 'Add Requirement';
+
+  @override
+  String get requirementTitleLabel => 'Requirement';
+
+  @override
+  String get reqCategoryLabel => 'Category';
+
+  @override
+  String get reqCatDocuments => 'Documents';
+
+  @override
+  String get reqCatCustoms => 'Customs';
+
+  @override
+  String get reqCatHealth => 'Health & Safety';
+
+  @override
+  String get reqCatSecurity => 'Security (ISPS)';
+
+  @override
+  String get reqCatProvisions => 'Provisions & Supplies';
+
+  @override
+  String get reqCatOther => 'Other';
+
+  @override
+  String get reqStatusReady => 'Ready';
+
+  @override
+  String get reqStatusPendingLabel => 'Pending';
+
+  @override
+  String get markReady => 'Mark Ready';
+
+  @override
+  String get markPending => 'Mark Pending';
+
+  @override
+  String get noRequirements => 'No requirements yet';
+
+  @override
+  String requirementsReady(int ready, int total) {
+    return '$ready/$total ready';
+  }
 }

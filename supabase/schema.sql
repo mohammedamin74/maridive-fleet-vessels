@@ -54,6 +54,7 @@ declare
   t text;
   module_tables text[] := array[
     'readings', 'notes', 'defects', 'requisitions', 'port_calls',
+    'port_requirements',
     'vessel_certs', 'crew_certs', 'urgent_notifications', 'daily_tasks',
     'maintenance_records', 'vessel_specs', 'vessel_profiles'
   ];

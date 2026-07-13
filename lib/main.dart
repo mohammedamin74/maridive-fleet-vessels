@@ -9,6 +9,7 @@ import 'state/certification_provider.dart';
 import 'state/daily_tasks_provider.dart';
 import 'state/maintenance_provider.dart';
 import 'state/port_call_provider.dart';
+import 'state/port_requirement_provider.dart';
 import 'state/tank_data_provider.dart';
 import 'state/urgent_notification_provider.dart';
 import 'state/vessel_profile_provider.dart';
@@ -33,6 +34,7 @@ Future<void> main() async {
             create: (_) => AppState(settingsBox: settingsBox)),
         ChangeNotifierProvider(create: (_) => TankDataProvider()),
         ChangeNotifierProvider(create: (_) => PortCallProvider()),
+        ChangeNotifierProvider(create: (_) => PortRequirementProvider()),
         ChangeNotifierProvider(create: (_) => CertificationProvider()),
         ChangeNotifierProvider(create: (_) => UrgentNotificationProvider()),
         ChangeNotifierProvider(create: (_) => DailyTasksProvider()),

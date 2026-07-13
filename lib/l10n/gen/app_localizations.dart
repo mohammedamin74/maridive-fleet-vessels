@@ -1819,6 +1819,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Download failed'**
   String get downloadFailed;
+
+  /// No description provided for @portRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Port Requirements'**
+  String get portRequirements;
+
+  /// No description provided for @portRequirementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirements Upon Arrival at Port'**
+  String get portRequirementsTitle;
+
+  /// No description provided for @addRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Requirement'**
+  String get addRequirement;
+
+  /// No description provided for @requirementTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Requirement'**
+  String get requirementTitleLabel;
+
+  /// No description provided for @reqCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get reqCategoryLabel;
+
+  /// No description provided for @reqCatDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get reqCatDocuments;
+
+  /// No description provided for @reqCatCustoms.
+  ///
+  /// In en, this message translates to:
+  /// **'Customs'**
+  String get reqCatCustoms;
+
+  /// No description provided for @reqCatHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health & Safety'**
+  String get reqCatHealth;
+
+  /// No description provided for @reqCatSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security (ISPS)'**
+  String get reqCatSecurity;
+
+  /// No description provided for @reqCatProvisions.
+  ///
+  /// In en, this message translates to:
+  /// **'Provisions & Supplies'**
+  String get reqCatProvisions;
+
+  /// No description provided for @reqCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get reqCatOther;
+
+  /// No description provided for @reqStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get reqStatusReady;
+
+  /// No description provided for @reqStatusPendingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get reqStatusPendingLabel;
+
+  /// No description provided for @markReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Ready'**
+  String get markReady;
+
+  /// No description provided for @markPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Pending'**
+  String get markPending;
+
+  /// No description provided for @noRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'No requirements yet'**
+  String get noRequirements;
+
+  /// No description provided for @requirementsReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{ready}/{total} ready'**
+  String requirementsReady(int ready, int total);
 }
 
 class _AppLocalizationsDelegate

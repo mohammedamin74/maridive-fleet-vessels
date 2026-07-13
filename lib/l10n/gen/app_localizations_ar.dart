@@ -1028,4 +1028,57 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get downloadFailed => 'فشل التنزيل';
+
+  @override
+  String get portRequirements => 'متطلبات الميناء';
+
+  @override
+  String get portRequirementsTitle => 'المتطلبات عند الوصول إلى الميناء';
+
+  @override
+  String get addRequirement => 'إضافة متطلب';
+
+  @override
+  String get requirementTitleLabel => 'المتطلب';
+
+  @override
+  String get reqCategoryLabel => 'الفئة';
+
+  @override
+  String get reqCatDocuments => 'المستندات';
+
+  @override
+  String get reqCatCustoms => 'الجمارك';
+
+  @override
+  String get reqCatHealth => 'الصحة والسلامة';
+
+  @override
+  String get reqCatSecurity => 'الأمن (ISPS)';
+
+  @override
+  String get reqCatProvisions => 'المؤن والإمدادات';
+
+  @override
+  String get reqCatOther => 'أخرى';
+
+  @override
+  String get reqStatusReady => 'جاهز';
+
+  @override
+  String get reqStatusPendingLabel => 'قيد الانتظار';
+
+  @override
+  String get markReady => 'تحديد كجاهز';
+
+  @override
+  String get markPending => 'تحديد كقيد الانتظار';
+
+  @override
+  String get noRequirements => 'لا توجد متطلبات بعد';
+
+  @override
+  String requirementsReady(int ready, int total) {
+    return '$ready/$total جاهز';
+  }
 }

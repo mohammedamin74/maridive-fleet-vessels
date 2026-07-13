@@ -358,5 +358,25 @@
   "downloadFile": "تنزيل",
   "previewUnavailable": "لا تتوفر معاينة لهذا النوع من الملفات. نزّله لفتحه في تطبيق آخر.",
   "fileSaved": "تم حفظ الملف على جهازك",
-  "downloadFailed": "فشل التنزيل"
+  "downloadFailed": "فشل التنزيل",
+  "portRequirements": "متطلبات الميناء",
+  "portRequirementsTitle": "المتطلبات عند الوصول إلى الميناء",
+  "addRequirement": "إضافة متطلب",
+  "requirementTitleLabel": "المتطلب",
+  "reqCategoryLabel": "الفئة",
+  "reqCatDocuments": "المستندات",
+  "reqCatCustoms": "الجمارك",
+  "reqCatHealth": "الصحة والسلامة",
+  "reqCatSecurity": "الأمن (ISPS)",
+  "reqCatProvisions": "المؤن والإمدادات",
+  "reqCatOther": "أخرى",
+  "reqStatusReady": "جاهز",
+  "reqStatusPendingLabel": "قيد الانتظار",
+  "markReady": "تحديد كجاهز",
+  "markPending": "تحديد كقيد الانتظار",
+  "noRequirements": "لا توجد متطلبات بعد",
+  "requirementsReady": "{ready}/{total} جاهز",
+  "@requirementsReady": {
+    "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
+  }
 }

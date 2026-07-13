@@ -10,6 +10,7 @@ import '../services/report_service.dart';
 import '../state/daily_tasks_provider.dart';
 import '../state/maintenance_provider.dart';
 import '../state/port_call_provider.dart';
+import '../state/port_requirement_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
 import '../state/vessel_profile_provider.dart';
@@ -22,6 +23,7 @@ import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
 import 'maintenance_list_screen.dart';
 import 'port_call_list_screen.dart';
+import 'port_requirements_screen.dart';
 import 'requisition_list_screen.dart';
 import 'tank_category_screen.dart';
 import 'urgent_notifications_screen.dart';
@@ -57,6 +59,8 @@ class VesselDetailScreen extends StatelessWidget {
         context.watch<DailyTasksProvider>().overdueCountFor(vessel.id);
     final upcomingPortCalls =
         context.watch<PortCallProvider>().forVessel(vessel.id).length;
+    final pendingRequirements =
+        context.watch<PortRequirementProvider>().pendingCount(vessel.id);
 
     return Scaffold(
       body: SafeArea(
@@ -187,6 +191,19 @@ class VesselDetailScreen extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (_) => PortCallListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.checklist_rtl_outlined,
+                    title: t.portRequirements,
+                    subtitle: t.pendingCount(pendingRequirements),
+                    color: pendingRequirements > 0
+                        ? AppColors.amber400
+                        : AppColors.statusPort,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              PortRequirementsScreen(vessel: vessel)),
                     ),
                   ),
                   CategoryTile(
