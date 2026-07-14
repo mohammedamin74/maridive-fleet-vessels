@@ -10,6 +10,7 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import * as XLSX from "https://esm.sh/xlsx@0.18.5";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -28,6 +29,23 @@ const json = (body: unknown, status = 200) =>
     status,
     headers: { ...corsHeaders, "content-type": "application/json" },
   });
+
+function isSpreadsheet(path: string): boolean {
+  const ext = path.split(".").pop()?.toLowerCase() ?? "";
+  return ext === "xlsx" || ext === "xls" || ext === "xlsm";
+}
+
+// Gemini's multimodal API only reads inline_data as an image/PDF/audio/video/
+// plain-text document — it can't parse the binary .xlsx zip format directly.
+// So for spreadsheets we parse the workbook here and hand Gemini a plain-text
+// CSV rendering of every sheet instead of the raw bytes.
+function spreadsheetToText(buf: Uint8Array): string {
+  const wb = XLSX.read(buf, { type: "array" });
+  return wb.SheetNames.map((name) => {
+    const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
+    return `Sheet: ${name}\n${csv}`;
+  }).join("\n\n");
+}
 
 function mimeFor(path: string): string {
   const ext = path.split(".").pop()?.toLowerCase() ?? "";
@@ -117,13 +135,32 @@ Deno.serve(async (req) => {
       return json({ error: "download_failed" }, 404);
     }
     const buf = new Uint8Array(await dl.data.arrayBuffer());
-    let binary = "";
-    for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
-    const base64 = btoa(binary);
 
     const schema = extractionKind === "requisition"
       ? REQUISITION_SCHEMA
       : DEFECT_SCHEMA;
+
+    let parts: Record<string, unknown>[];
+    if (isSpreadsheet(path)) {
+      let sheetText: string;
+      try {
+        sheetText = spreadsheetToText(buf);
+      } catch (_) {
+        return json({ error: "parse_failed" }, 422);
+      }
+      parts = [
+        { text: promptFor(extractionKind) },
+        { text: `Spreadsheet content:\n\n${sheetText}` },
+      ];
+    } else {
+      let binary = "";
+      for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
+      const base64 = btoa(binary);
+      parts = [
+        { inline_data: { mime_type: mimeFor(path), data: base64 } },
+        { text: promptFor(extractionKind) },
+      ];
+    }
 
     const geminiRes = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
@@ -131,14 +168,7 @@ Deno.serve(async (req) => {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { inline_data: { mime_type: mimeFor(path), data: base64 } },
-                { text: promptFor(extractionKind) },
-              ],
-            },
-          ],
+          contents: [{ parts }],
           generationConfig: {
             responseMimeType: "application/json",
             responseSchema: schema,
