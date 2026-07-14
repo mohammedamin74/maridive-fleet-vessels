@@ -162,6 +162,8 @@
   "tankStatusPdf": "Tank status PDF",
   "save": "Save",
   "delete": "Delete",
+  "edit": "Edit",
+  "editRequisition": "Edit Requisition",
 
   "openCount": "{count, plural, one{1 open} other{{count} open}}",
   "@openCount": {

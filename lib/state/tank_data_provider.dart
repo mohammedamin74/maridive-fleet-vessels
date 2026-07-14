@@ -391,6 +391,40 @@ class TankDataProvider extends ChangeNotifier {
     await _saveRequisition(requisition.copyWith(status: status));
   }
 
+  /// Full field edit for an existing requisition (item details, quantities,
+  /// department/priority, delivery date, notes) — separate from
+  /// [updateRequisitionStatus], which only advances the approval chain.
+  Future<void> updateRequisition({
+    required String id,
+    required String itemName,
+    required String partNumber,
+    required String oemManufacturer,
+    required double quantity,
+    required double quantityInStock,
+    required String unit,
+    required double unitPrice,
+    required RequisitionDepartment department,
+    required RequisitionPriority priority,
+    DateTime? requiredDeliveryDate,
+    String notes = '',
+  }) async {
+    final requisition = _requisitionById(id);
+    if (requisition == null) return;
+    await _saveRequisition(requisition.copyWith(
+      itemName: itemName,
+      partNumber: partNumber,
+      oemManufacturer: oemManufacturer,
+      quantity: quantity,
+      quantityInStock: quantityInStock,
+      unit: unit,
+      unitPrice: unitPrice,
+      department: department,
+      priority: priority,
+      requiredDeliveryDate: requiredDeliveryDate,
+      notes: notes,
+    ));
+  }
+
   Future<void> addRequisitionAttachment(
       String id, Attachment attachment) async {
     final requisition = _requisitionById(id);

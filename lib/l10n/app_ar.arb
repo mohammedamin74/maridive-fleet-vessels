@@ -161,6 +161,8 @@
   "tankStatusPdf": "تقرير حالة الخزانات PDF",
   "save": "حفظ",
   "delete": "حذف",
+  "edit": "تعديل",
+  "editRequisition": "تعديل الطلب",
 
   "openCount": "{count, plural, zero{لا توجد مفتوحة} one{١ مفتوح} two{٢ مفتوحة} few{{count} مفتوحة} many{{count} مفتوحة} other{{count} مفتوحة}}",
   "@openCount": {

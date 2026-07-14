@@ -17,6 +17,10 @@ enum RequisitionStatus {
 
 enum RequisitionDepartment { engine, deck, steward }
 
+/// Sentinel distinguishing "leave requiredDeliveryDate unchanged" from
+/// "explicitly clear it to null" in [Requisition.copyWith].
+const Object _unset = Object();
+
 class Requisition {
   final String id;
   final String vesselId;
@@ -56,24 +60,39 @@ class Requisition {
     required this.requestedAt,
   });
 
-  Requisition copyWith(
-          {RequisitionStatus? status, List<Attachment>? attachments}) =>
+  Requisition copyWith({
+    String? itemName,
+    String? partNumber,
+    String? oemManufacturer,
+    double? quantity,
+    double? quantityInStock,
+    String? unit,
+    double? unitPrice,
+    RequisitionDepartment? department,
+    RequisitionPriority? priority,
+    RequisitionStatus? status,
+    Object? requiredDeliveryDate = _unset,
+    String? notes,
+    List<Attachment>? attachments,
+  }) =>
       Requisition(
         id: id,
         vesselId: vesselId,
         requisitionNumber: requisitionNumber,
-        itemName: itemName,
-        partNumber: partNumber,
-        oemManufacturer: oemManufacturer,
-        quantity: quantity,
-        quantityInStock: quantityInStock,
-        unit: unit,
-        unitPrice: unitPrice,
-        department: department,
-        priority: priority,
+        itemName: itemName ?? this.itemName,
+        partNumber: partNumber ?? this.partNumber,
+        oemManufacturer: oemManufacturer ?? this.oemManufacturer,
+        quantity: quantity ?? this.quantity,
+        quantityInStock: quantityInStock ?? this.quantityInStock,
+        unit: unit ?? this.unit,
+        unitPrice: unitPrice ?? this.unitPrice,
+        department: department ?? this.department,
+        priority: priority ?? this.priority,
         status: status ?? this.status,
-        requiredDeliveryDate: requiredDeliveryDate,
-        notes: notes,
+        requiredDeliveryDate: requiredDeliveryDate == _unset
+            ? this.requiredDeliveryDate
+            : requiredDeliveryDate as DateTime?,
+        notes: notes ?? this.notes,
         attachments: attachments ?? this.attachments,
         requestedAt: requestedAt,
       );

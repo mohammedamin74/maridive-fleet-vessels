@@ -346,6 +346,15 @@ class RequisitionListScreen extends StatelessWidget {
                             },
                             child: Text(t.markReceived),
                           ),
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.of(sheetContext).pop();
+                            _showAddRequisitionSheet(context, t,
+                                existing: req);
+                          },
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(t.edit),
+                        ),
                         TextButton.icon(
                           onPressed: () {
                             data.deleteRequisition(req.id);
@@ -375,27 +384,38 @@ class RequisitionListScreen extends StatelessWidget {
     Map<String, dynamic>? prefill,
     List<Attachment> initialAttachments = const [],
     String? progressLabel,
+    Requisition? existing,
   }) {
-    final itemController =
-        TextEditingController(text: _str(prefill, 'itemName'));
-    final partNumberController =
-        TextEditingController(text: _str(prefill, 'partNumber'));
-    final oemController =
-        TextEditingController(text: _str(prefill, 'oemManufacturer'));
-    final qtyController =
-        TextEditingController(text: _numStr(prefill, 'quantity', '1'));
-    final stockController = TextEditingController(text: '0');
-    final unitController =
-        TextEditingController(text: _strOr(prefill, 'unit', 'pcs'));
-    final priceController =
-        TextEditingController(text: _numStr(prefill, 'unitPrice', '0'));
-    final notesController = TextEditingController(text: _str(prefill, 'notes'));
-    RequisitionPriority priority = _enumFrom(RequisitionPriority.values,
-        _str(prefill, 'priority'), RequisitionPriority.normal);
-    RequisitionDepartment department = _enumFrom(RequisitionDepartment.values,
-        _str(prefill, 'department'), RequisitionDepartment.deck);
-    DateTime? requiredDeliveryDate;
-    List<Attachment> newFiles = [...initialAttachments];
+    final itemController = TextEditingController(
+        text: existing?.itemName ?? _str(prefill, 'itemName'));
+    final partNumberController = TextEditingController(
+        text: existing?.partNumber ?? _str(prefill, 'partNumber'));
+    final oemController = TextEditingController(
+        text: existing?.oemManufacturer ?? _str(prefill, 'oemManufacturer'));
+    final qtyController = TextEditingController(
+        text: existing != null
+            ? _fmtQty(existing.quantity)
+            : _numStr(prefill, 'quantity', '1'));
+    final stockController = TextEditingController(
+        text: existing != null ? _fmtQty(existing.quantityInStock) : '0');
+    final unitController = TextEditingController(
+        text: existing?.unit ?? _strOr(prefill, 'unit', 'pcs'));
+    final priceController = TextEditingController(
+        text: existing != null
+            ? existing.unitPrice.toString()
+            : _numStr(prefill, 'unitPrice', '0'));
+    final notesController = TextEditingController(
+        text: existing?.notes ?? _str(prefill, 'notes'));
+    RequisitionPriority priority = existing?.priority ??
+        _enumFrom(RequisitionPriority.values, _str(prefill, 'priority'),
+            RequisitionPriority.normal);
+    RequisitionDepartment department = existing?.department ??
+        _enumFrom(RequisitionDepartment.values, _str(prefill, 'department'),
+            RequisitionDepartment.deck);
+    DateTime? requiredDeliveryDate = existing?.requiredDeliveryDate;
+    List<Attachment> newFiles = [
+      ...(existing?.attachments ?? initialAttachments)
+    ];
 
     return showModalBottomSheet(
       context: context,
@@ -417,9 +437,11 @@ class RequisitionListScreen extends StatelessWidget {
                   children: [
                     Text(
                         [
-                          prefill != null
-                              ? t.reviewExtractedRequisition
-                              : t.addRequisition,
+                          existing != null
+                              ? t.editRequisition
+                              : prefill != null
+                                  ? t.reviewExtractedRequisition
+                                  : t.addRequisition,
                           if (progressLabel != null) progressLabel,
                         ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
@@ -579,26 +601,46 @@ class RequisitionListScreen extends StatelessWidget {
                               qty == null) {
                             return;
                           }
-                          context.read<TankDataProvider>().addRequisition(
-                                vesselId: vessel.id,
-                                vesselName: vessel.name,
-                                itemName: itemController.text.trim(),
-                                partNumber: partNumberController.text.trim(),
-                                oemManufacturer: oemController.text.trim(),
-                                quantity: qty,
-                                quantityInStock:
-                                    double.tryParse(stockController.text) ?? 0,
-                                unit: unitController.text.trim().isEmpty
-                                    ? 'pcs'
-                                    : unitController.text.trim(),
-                                unitPrice:
-                                    double.tryParse(priceController.text) ?? 0,
-                                department: department,
-                                priority: priority,
-                                requiredDeliveryDate: requiredDeliveryDate,
-                                notes: notesController.text.trim(),
-                                attachments: newFiles,
-                              );
+                          final unit = unitController.text.trim().isEmpty
+                              ? 'pcs'
+                              : unitController.text.trim();
+                          final stock =
+                              double.tryParse(stockController.text) ?? 0;
+                          final price =
+                              double.tryParse(priceController.text) ?? 0;
+                          if (existing != null) {
+                            context.read<TankDataProvider>().updateRequisition(
+                                  id: existing.id,
+                                  itemName: itemController.text.trim(),
+                                  partNumber: partNumberController.text.trim(),
+                                  oemManufacturer: oemController.text.trim(),
+                                  quantity: qty,
+                                  quantityInStock: stock,
+                                  unit: unit,
+                                  unitPrice: price,
+                                  department: department,
+                                  priority: priority,
+                                  requiredDeliveryDate: requiredDeliveryDate,
+                                  notes: notesController.text.trim(),
+                                );
+                          } else {
+                            context.read<TankDataProvider>().addRequisition(
+                                  vesselId: vessel.id,
+                                  vesselName: vessel.name,
+                                  itemName: itemController.text.trim(),
+                                  partNumber: partNumberController.text.trim(),
+                                  oemManufacturer: oemController.text.trim(),
+                                  quantity: qty,
+                                  quantityInStock: stock,
+                                  unit: unit,
+                                  unitPrice: price,
+                                  department: department,
+                                  priority: priority,
+                                  requiredDeliveryDate: requiredDeliveryDate,
+                                  notes: notesController.text.trim(),
+                                  attachments: newFiles,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
