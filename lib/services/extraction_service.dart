@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'supabase_config.dart';
 
@@ -22,10 +24,9 @@ class ExtractionService {
     required String kind,
   }) async {
     try {
-      final res = await SupabaseConfig.client.functions.invoke(
-        'extract',
-        body: {'path': storagePath, 'kind': kind},
-      );
+      final res = await SupabaseConfig.client.functions
+          .invoke('extract', body: {'path': storagePath, 'kind': kind})
+          .timeout(const Duration(seconds: 45));
       final data = res.data;
       if (data is Map && data['data'] is Map) {
         return Map<String, dynamic>.from(data['data'] as Map);
@@ -37,6 +38,8 @@ class ExtractionService {
           ? details['error'].toString()
           : 'request_failed';
       throw ExtractionException(code);
+    } on TimeoutException {
+      throw ExtractionException('timeout');
     }
   }
 }

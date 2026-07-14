@@ -10,7 +10,9 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import * as XLSX from "https://esm.sh/xlsx@0.18.5";
+// xlsx is imported lazily (see isSpreadsheet branch below) so a slow or
+// unreachable esm.sh fetch for it can never delay/hang PDF or image
+// extraction, which is the common case and doesn't need it.
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -30,6 +32,18 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "content-type": "application/json" },
   });
 
+// Guarantees every request resolves within a bound — a stuck dynamic import
+// (esm.sh unreachable) or a stalled upstream call can never hang the client's
+// loading dialog forever.
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error("timeout")), ms)
+    ),
+  ]);
+}
+
 function isSpreadsheet(path: string): boolean {
   const ext = path.split(".").pop()?.toLowerCase() ?? "";
   return ext === "xlsx" || ext === "xls" || ext === "xlsm";
@@ -39,9 +53,11 @@ function isSpreadsheet(path: string): boolean {
 // plain-text document — it can't parse the binary .xlsx zip format directly.
 // So for spreadsheets we parse the workbook here and hand Gemini a plain-text
 // CSV rendering of every sheet instead of the raw bytes.
-function spreadsheetToText(buf: Uint8Array): string {
+// deno-lint-ignore no-explicit-any
+async function spreadsheetToText(buf: Uint8Array): Promise<string> {
+  const XLSX: any = await import("https://esm.sh/xlsx@0.18.5");
   const wb = XLSX.read(buf, { type: "array" });
-  return wb.SheetNames.map((name) => {
+  return wb.SheetNames.map((name: string) => {
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
     return `Sheet: ${name}\n${csv}`;
   }).join("\n\n");
@@ -144,7 +160,7 @@ Deno.serve(async (req) => {
     if (isSpreadsheet(path)) {
       let sheetText: string;
       try {
-        sheetText = spreadsheetToText(buf);
+        sheetText = await withTimeout(spreadsheetToText(buf), 15_000);
       } catch (_) {
         return json({ error: "parse_failed" }, 422);
       }
@@ -162,20 +178,28 @@ Deno.serve(async (req) => {
       ];
     }
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: schema,
+    let geminiRes: Response;
+    try {
+      geminiRes = await withTimeout(
+        fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+          {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                responseSchema: schema,
+              },
+            }),
           },
-        }),
-      },
-    );
+        ),
+        30_000,
+      );
+    } catch (_) {
+      return json({ error: "ai_timeout" }, 504);
+    }
 
     if (!geminiRes.ok) {
       const detail = await geminiRes.text();

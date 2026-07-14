@@ -668,6 +668,9 @@ class RequisitionListScreen extends StatelessWidget {
           ? t.extractionNotConfigured
           : t.extractionFailed;
       messenger.showSnackBar(SnackBar(content: Text(msg)));
+    } catch (_) {
+      navigator.pop();
+      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
     }
   }
 }
