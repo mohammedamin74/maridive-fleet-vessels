@@ -1188,4 +1188,33 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get aiAssistant => 'المساعد';
+
+  @override
+  String get aiAssistantSubtitle => 'اسأل عن كيفية استخدام التطبيق';
+
+  @override
+  String get aiDisclaimer =>
+      'قد تكون إجابات الذكاء الاصطناعي غير دقيقة — تحقق من الإجراءات الرسمية. لا يتم إرسال أي بيانات عن السفن.';
+
+  @override
+  String get aiInputHint => 'اكتب سؤالك...';
+
+  @override
+  String get aiGreeting =>
+      'مرحبًا! اسألني عن كيفية استخدام أي جزء من التطبيق — تسجيل القراءات، الإبلاغ عن عطل، تصدير تقرير، والمزيد.';
+
+  @override
+  String get aiUnavailable => 'المساعد غير متاح مؤقتًا.';
+
+  @override
+  String get aiBusy => 'المساعد مشغول — حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get aiError => 'حدث خطأ ما. حاول مرة أخرى.';
+
+  @override
+  String get send => 'إرسال';
 }

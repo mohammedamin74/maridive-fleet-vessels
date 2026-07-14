@@ -13,3 +13,8 @@ verify_jwt = true
 # verifies their JWT.
 [functions.extract]
 verify_jwt = true
+
+# The assistant function answers app how-to questions via Gemini. Called by any
+# signed-in fleet user; the gateway verifies their JWT. No fleet data is sent.
+[functions.assistant]
+verify_jwt = true

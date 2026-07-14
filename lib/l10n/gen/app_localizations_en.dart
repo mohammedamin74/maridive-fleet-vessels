@@ -1135,4 +1135,33 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get aiAssistant => 'Assistant';
+
+  @override
+  String get aiAssistantSubtitle => 'Ask how to use the app';
+
+  @override
+  String get aiDisclaimer =>
+      'AI answers may be wrong — verify against official procedures. No vessel data is sent.';
+
+  @override
+  String get aiInputHint => 'Ask a question...';
+
+  @override
+  String get aiGreeting =>
+      'Hi! Ask me how to use any part of the app — logging readings, raising a defect, exporting a report, and more.';
+
+  @override
+  String get aiUnavailable => 'Assistant is temporarily unavailable.';
+
+  @override
+  String get aiBusy => 'Assistant is busy — try again in a moment.';
+
+  @override
+  String get aiError => 'Something went wrong. Please try again.';
+
+  @override
+  String get send => 'Send';
 }

@@ -414,5 +414,15 @@
   "crewOnboard": "{count, plural, =0{No crew} one{1 onboard} other{{count} onboard}}",
   "@crewOnboard": {
     "placeholders": { "count": { "type": "int" } }
-  }
+  },
+
+  "aiAssistant": "Assistant",
+  "aiAssistantSubtitle": "Ask how to use the app",
+  "aiDisclaimer": "AI answers may be wrong — verify against official procedures. No vessel data is sent.",
+  "aiInputHint": "Ask a question...",
+  "aiGreeting": "Hi! Ask me how to use any part of the app — logging readings, raising a defect, exporting a report, and more.",
+  "aiUnavailable": "Assistant is temporarily unavailable.",
+  "aiBusy": "Assistant is busy — try again in a moment.",
+  "aiError": "Something went wrong. Please try again.",
+  "send": "Send"
 }

@@ -2107,6 +2107,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No crew} one{1 onboard} other{{count} onboard}}'**
   String crewOnboard(int count);
+
+  /// No description provided for @aiAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant'**
+  String get aiAssistant;
+
+  /// No description provided for @aiAssistantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask how to use the app'**
+  String get aiAssistantSubtitle;
+
+  /// No description provided for @aiDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'AI answers may be wrong — verify against official procedures. No vessel data is sent.'**
+  String get aiDisclaimer;
+
+  /// No description provided for @aiInputHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask a question...'**
+  String get aiInputHint;
+
+  /// No description provided for @aiGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi! Ask me how to use any part of the app — logging readings, raising a defect, exporting a report, and more.'**
+  String get aiGreeting;
+
+  /// No description provided for @aiUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant is temporarily unavailable.'**
+  String get aiUnavailable;
+
+  /// No description provided for @aiBusy.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant is busy — try again in a moment.'**
+  String get aiBusy;
+
+  /// No description provided for @aiError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get aiError;
+
+  /// No description provided for @send.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
 }
 
 class _AppLocalizationsDelegate

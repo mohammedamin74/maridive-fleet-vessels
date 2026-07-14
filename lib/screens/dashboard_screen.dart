@@ -13,6 +13,7 @@ import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/urgent_alerts_banner.dart';
 import '../widgets/vessel_card.dart';
+import 'ai_assistant_screen.dart';
 import 'settings_screen.dart';
 import 'vessel_detail_screen.dart';
 
@@ -354,6 +355,14 @@ class _Header extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AiAssistantScreen()),
+                ),
+                icon: const Icon(Icons.smart_toy_outlined,
+                    color: Colors.white),
+                tooltip: t.aiAssistant,
               ),
               IconButton(
                 onPressed: () => Navigator.of(context).push(
