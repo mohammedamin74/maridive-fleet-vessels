@@ -10,12 +10,12 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import * as XLSX from "https://esm.sh/xlsx@0.18.5";
-// Supabase's Edge Runtime only reliably resolves remote modules imported at
-// the top level (at boot); a `await import(...)` from inside the request
-// handler crashes the isolate (EDGE_FUNCTION_ERROR) instead of throwing a
-// catchable error. So xlsx is imported statically here, same as supabase-js
-// above, even though it's only used for spreadsheet uploads.
+// The esm.sh build of `xlsx` pulls in Node-only internals (e.g. Buffer) that
+// don't exist in Supabase's Deno Edge Runtime, crashing the isolate at boot
+// for every request regardless of import timing. SheetJS publishes an
+// official Deno-native build on their own CDN specifically to avoid this —
+// same API, no Node shims.
+import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
