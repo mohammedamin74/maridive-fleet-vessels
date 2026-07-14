@@ -22,7 +22,7 @@ import XLSX from "npm:xlsx@0.18.5";
 const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const TEXT_MODEL = "meta-llama/llama-3.1-8b-instruct:free";
+const TEXT_MODEL = "tencent/hy3:free";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const corsHeaders = {

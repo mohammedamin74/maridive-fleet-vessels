@@ -13,7 +13,7 @@
 // ---------------------------------------------------------------------------
 
 const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") ?? "";
-const MODEL = "meta-llama/llama-3.1-8b-instruct:free";
+const MODEL = "tencent/hy3:free";
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const SYSTEM_PROMPT =
