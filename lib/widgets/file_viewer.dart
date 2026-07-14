@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
+import 'package:excel/excel.dart' as xlsx;
 import 'package:file_saver/file_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
@@ -14,10 +16,48 @@ const Set<String> _textExtensions = {
   'txt', 'csv', 'log', 'json', 'md', 'xml', 'yaml', 'yml', 'ini', 'sql',
 };
 
-/// Opens a full-screen viewer for [a]. Images, PDFs and text files render in
-/// the app; every other format (Word, Excel, PowerPoint, archives, …) shows a
-/// clear "no preview" fail-safe with a Download action, so a tap never dead-ends
-/// or crashes. Available on Android/iOS/Web/Windows/macOS/Linux.
+const Set<String> _spreadsheetExtensions = {'xlsx', 'xls', 'xlsm'};
+
+/// Renders every sheet of a spreadsheet as plain tab-separated text — simple,
+/// but lets a tap actually show the data instead of only offering a download.
+String _spreadsheetToText(Uint8List bytes) {
+  final book = xlsx.Excel.decodeBytes(bytes);
+  return book.tables.entries.map((entry) {
+    final rows = entry.value.rows.map((row) {
+      return row.map((cell) => cell?.value?.toString() ?? '').join('\t');
+    }).join('\n');
+    return 'Sheet: ${entry.key}\n$rows';
+  }).join('\n\n');
+}
+
+/// .docx is a zip of XML parts; the visible text lives in `word/document.xml`
+/// inside `<w:t>` runs. A regex pull is simpler and lighter than a full XML
+/// parser for a plain-text preview, and paragraph breaks (`</w:p>`) become
+/// newlines so the text stays readable.
+String _docxToText(Uint8List bytes) {
+  final archive = ZipDecoder().decodeBytes(bytes);
+  final doc = archive.files
+      .firstWhere((f) => f.name == 'word/document.xml', orElse: () {
+    throw const FormatException('word/document.xml not found');
+  });
+  final xml = utf8.decode(doc.content as List<int>);
+  final buffer = StringBuffer();
+  final tagPattern = RegExp(r'<w:t[^>]*>(.*?)</w:t>|</w:p>', dotAll: true);
+  for (final m in tagPattern.allMatches(xml)) {
+    if (m.group(1) != null) {
+      buffer.write(m.group(1));
+    } else {
+      buffer.write('\n');
+    }
+  }
+  return buffer.toString();
+}
+
+/// Opens a full-screen viewer for [a]. Images, PDFs, spreadsheets, Word docs
+/// and text files render in the app; every other format (PowerPoint,
+/// archives, …) shows a clear "no preview" fail-safe with a Download action,
+/// so a tap never dead-ends or crashes. Available on Android/iOS/Web/Windows/
+/// macOS/Linux.
 Future<void> showAttachmentViewer(BuildContext context, Attachment a) {
   return Navigator.of(context).push(
     MaterialPageRoute<void>(
@@ -110,21 +150,41 @@ class FileViewerScreen extends StatelessWidget {
       } catch (_) {
         text = latin1.decode(bytes, allowInvalid: true);
       }
-      return _WithDownloadBar(
-        attachment: attachment,
-        bytes: bytes,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: SelectableText(
-            text,
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
-          ),
-        ),
-      );
+      return _textPane(text, bytes);
+    }
+
+    if (_spreadsheetExtensions.contains(ext)) {
+      try {
+        return _textPane(_spreadsheetToText(bytes), bytes);
+      } catch (_) {
+        return _UnsupportedPane(attachment: attachment, bytes: bytes);
+      }
+    }
+
+    if (ext == 'docx') {
+      try {
+        return _textPane(_docxToText(bytes), bytes);
+      } catch (_) {
+        return _UnsupportedPane(attachment: attachment, bytes: bytes);
+      }
     }
 
     // Unsupported format — the fail-safe.
     return _UnsupportedPane(attachment: attachment, bytes: bytes);
+  }
+
+  Widget _textPane(String text, Uint8List bytes) {
+    return _WithDownloadBar(
+      attachment: attachment,
+      bytes: bytes,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: SelectableText(
+          text,
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+        ),
+      ),
+    );
   }
 }
 
