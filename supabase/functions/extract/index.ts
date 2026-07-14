@@ -207,7 +207,7 @@ Deno.serve(async (req) => {
 
     if (!geminiRes.ok) {
       const detail = await geminiRes.text();
-      return json({ error: "ai_failed", status: geminiRes.status, detail }, 502);
+      return json({ error: `ai_failed_${geminiRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
     const gj = await geminiRes.json();
