@@ -788,6 +788,48 @@ abstract class AppLocalizations {
   /// **'Export Report'**
   String get exportReport;
 
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @tankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank'**
+  String get tankLabel;
+
+  /// No description provided for @categoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get categoryLabel;
+
+  /// No description provided for @levelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get levelLabel;
+
+  /// No description provided for @selectSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Select sections'**
+  String get selectSections;
+
+  /// No description provided for @exportFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Export format'**
+  String get exportFormat;
+
+  /// No description provided for @generateReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate report'**
+  String get generateReport;
+
   /// No description provided for @vesselOperations.
   ///
   /// In en, this message translates to:

@@ -144,6 +144,13 @@
   "noNotes": "لا توجد ملاحظات بعد",
 
   "exportReport": "تصدير التقرير",
+  "status": "الحالة",
+  "tankLabel": "الخزان",
+  "categoryLabel": "الفئة",
+  "levelLabel": "المستوى",
+  "selectSections": "اختر الأقسام",
+  "exportFormat": "صيغة التصدير",
+  "generateReport": "إنشاء التقرير",
 
   "vesselOperations": "عمليات السفينة",
   "viewEntries": "عرض السجلات",

@@ -6,7 +6,6 @@ import '../models/requisition.dart';
 import '../models/tank.dart';
 import '../models/urgent_notification.dart';
 import '../models/vessel.dart';
-import '../services/report_service.dart';
 import '../state/crew_provider.dart';
 import '../state/daily_tasks_provider.dart';
 import '../state/maintenance_provider.dart';
@@ -23,6 +22,7 @@ import 'certification_screen.dart';
 import 'crew_list_screen.dart';
 import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
+import 'export_report_screen.dart';
 import 'maintenance_list_screen.dart';
 import 'port_call_list_screen.dart';
 import 'port_requirements_screen.dart';
@@ -271,10 +271,10 @@ class VesselDetailScreen extends StatelessWidget {
                     title: t.exportReport,
                     subtitle: t.tankStatusPdf,
                     color: AppColors.navy500,
-                    onTap: () async {
-                      await ReportService.exportVesselReport(
-                          vessel: resolved, data: data);
-                    },
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => ExportReportScreen(vessel: resolved)),
+                    ),
                   ),
                 ]),
               ),

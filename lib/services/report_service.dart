@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_saver/file_saver.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -8,6 +13,15 @@ import '../models/tank.dart';
 import '../models/vessel.dart';
 import '../state/alert_thresholds.dart';
 import '../state/tank_data_provider.dart';
+
+/// One titled table within a unified report (Request 7). Any module maps its
+/// records to [headers] + [rows]; the report renders a section per entry.
+class ReportSection {
+  final String title;
+  final List<String> headers;
+  final List<List<String>> rows;
+  const ReportSection(this.title, this.headers, this.rows);
+}
 
 /// Generates and shares a per-vessel daily tank status PDF report.
 /// Report content is always rendered in English regardless of the app's
@@ -22,6 +36,140 @@ class ReportService {
     TankCategory.lubeHydraulic: 'Lube & Hydraulic Oil',
     TankCategory.other: 'Other',
   };
+
+  // Bundled Arabic font so Arabic vessel names / notes render in exports
+  // instead of showing empty boxes. Loaded once and cached.
+  static pw.Font? _arabicFont;
+  static Future<pw.Font?> _loadArabic() async {
+    if (_arabicFont != null) return _arabicFont;
+    try {
+      _arabicFont = pw.Font.ttf(
+          await rootBundle.load('assets/fonts/NotoNaskhArabic-Regular.ttf'));
+    } catch (_) {
+      // Font asset missing — fall back to Latin-only rendering.
+    }
+    return _arabicFont;
+  }
+
+  /// Unified multi-module PDF (Request 7): one section per [sections] entry,
+  /// each a titled table, in a single document with one action.
+  static Future<void> exportUnifiedPdf({
+    required Vessel vessel,
+    required List<ReportSection> sections,
+  }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
+    final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    final doc = pw.Document();
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(28),
+        header: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('Maridive Fleet Vessels — Fleet Report',
+                style: pw.TextStyle(
+                    fontSize: 15,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 2),
+            pw.Text('Generated: $generatedAt',
+                style: const pw.TextStyle(
+                    fontSize: 9, color: PdfColors.grey700)),
+            pw.Divider(),
+          ],
+        ),
+        build: (context) => [
+          pw.Text(vessel.name,
+              style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback)),
+          pw.SizedBox(height: 2),
+          pw.Text(vessel.type,
+              style: pw.TextStyle(
+                  fontSize: 11,
+                  color: PdfColors.grey700,
+                  fontFallback: fallback)),
+          pw.SizedBox(height: 16),
+          for (final s in sections) ...[
+            pw.Text(s.title,
+                style: pw.TextStyle(
+                    fontSize: 13,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 6),
+            if (s.rows.isEmpty)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 4),
+                child: pw.Text('— No entries —',
+                    style: pw.TextStyle(
+                        fontSize: 9,
+                        color: PdfColors.grey600,
+                        fontFallback: fallback)),
+              )
+            else
+              pw.TableHelper.fromTextArray(
+                headers: s.headers,
+                data: s.rows,
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 8.5,
+                    color: PdfColors.white,
+                    fontFallback: fallback),
+                headerDecoration:
+                    const pw.BoxDecoration(color: PdfColors.blueGrey800),
+                cellStyle:
+                    pw.TextStyle(fontSize: 8, fontFallback: fallback),
+                border:
+                    pw.TableBorder.all(color: PdfColors.grey400, width: 0.4),
+                cellPadding:
+                    const pw.EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+              ),
+            pw.SizedBox(height: 16),
+          ],
+        ],
+      ),
+    );
+
+    final fileName = '${vessel.name.replaceAll(' ', '_')}_Fleet_Report.pdf';
+    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+  }
+
+  /// Unified multi-module CSV (Request 7): section blocks separated by a blank
+  /// line, saved to the device. A UTF-8 BOM is prepended so Excel renders
+  /// Arabic correctly.
+  static Future<void> exportUnifiedCsv({
+    required Vessel vessel,
+    required List<ReportSection> sections,
+  }) async {
+    final buf = StringBuffer();
+    for (final s in sections) {
+      buf.writeln(_csvRow([s.title]));
+      buf.writeln(_csvRow(s.headers));
+      for (final r in s.rows) {
+        buf.writeln(_csvRow(r));
+      }
+      buf.writeln();
+    }
+    final bytes = Uint8List.fromList(
+        [0xEF, 0xBB, 0xBF, ...utf8.encode(buf.toString())]);
+    await FileSaver.instance.saveFile(
+      name: '${vessel.name.replaceAll(' ', '_')}_Fleet_Report',
+      bytes: bytes,
+      fileExtension: 'csv',
+      mimeType: MimeType.csv,
+    );
+  }
+
+  static String _csvRow(List<String> fields) => fields.map((f) {
+        final needsQuote =
+            f.contains(',') || f.contains('"') || f.contains('\n');
+        final escaped = f.replaceAll('"', '""');
+        return needsQuote ? '"$escaped"' : escaped;
+      }).join(',');
 
   static Future<void> exportVesselReport({
     required Vessel vessel,

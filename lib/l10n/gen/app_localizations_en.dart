@@ -384,6 +384,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportReport => 'Export Report';
 
   @override
+  String get status => 'Status';
+
+  @override
+  String get tankLabel => 'Tank';
+
+  @override
+  String get categoryLabel => 'Category';
+
+  @override
+  String get levelLabel => 'Level';
+
+  @override
+  String get selectSections => 'Select sections';
+
+  @override
+  String get exportFormat => 'Export format';
+
+  @override
+  String get generateReport => 'Generate report';
+
+  @override
   String get vesselOperations => 'Vessel Operations';
 
   @override

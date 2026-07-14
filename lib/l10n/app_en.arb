@@ -145,6 +145,13 @@
   "noNotes": "No log entries yet",
 
   "exportReport": "Export Report",
+  "status": "Status",
+  "tankLabel": "Tank",
+  "categoryLabel": "Category",
+  "levelLabel": "Level",
+  "selectSections": "Select sections",
+  "exportFormat": "Export format",
+  "generateReport": "Generate report",
 
   "vesselOperations": "Vessel Operations",
   "viewEntries": "View entries",

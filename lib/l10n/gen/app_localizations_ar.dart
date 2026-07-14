@@ -393,6 +393,27 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exportReport => 'تصدير التقرير';
 
   @override
+  String get status => 'الحالة';
+
+  @override
+  String get tankLabel => 'الخزان';
+
+  @override
+  String get categoryLabel => 'الفئة';
+
+  @override
+  String get levelLabel => 'المستوى';
+
+  @override
+  String get selectSections => 'اختر الأقسام';
+
+  @override
+  String get exportFormat => 'صيغة التصدير';
+
+  @override
+  String get generateReport => 'إنشاء التقرير';
+
+  @override
   String get vesselOperations => 'عمليات السفينة';
 
   @override
