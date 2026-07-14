@@ -12,10 +12,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // The esm.sh build of `xlsx` pulls in Node-only internals (e.g. Buffer) that
 // don't exist in Supabase's Deno Edge Runtime, crashing the isolate at boot
-// for every request regardless of import timing. SheetJS publishes an
-// official Deno-native build on their own CDN specifically to avoid this —
-// same API, no Node shims.
-import * as XLSX from "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs";
+// for every request regardless of import timing. Supabase's bundler also
+// only allows remote imports from a small allowlist of hosts (esm.sh,
+// deno.land, npm registry, etc.) — arbitrary CDNs like cdn.sheetjs.com are
+// rejected at deploy time. Deno's native `npm:` specifier uses Deno's own
+// (more complete) Node compat layer instead of esm.sh's browser shims, and
+// is on the allowlist since it isn't a raw URL import.
+import XLSX from "npm:xlsx@0.18.5";
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
