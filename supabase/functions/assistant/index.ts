@@ -1,17 +1,19 @@
 // Supabase Edge Function: `assistant`
 // ---------------------------------------------------------------------------
-// Help-only chat assistant for the Maridive Fleet app, backed by Google Gemini
-// (free tier, same key as the `extract` function). Answers "how do I..."
-// questions about using the app. Never receives vessel data, crew PII, or any
-// fleet records — only the user's typed messages and a static system prompt.
-// Chat history is session-only on the client; nothing is persisted here.
+// Help-only chat assistant for the Maridive Fleet app, backed by Groq's
+// free-tier LLM API (same key as the `extract` function). Answers "how do
+// I..." questions about using the app. Never receives vessel data, crew PII,
+// or any fleet records — only the user's typed messages and a static system
+// prompt. Chat history is session-only on the client; nothing is persisted
+// here.
 //
-// Secrets required (same key as `extract`, set once):
-//   supabase secrets set GEMINI_API_KEY=your_key_from_aistudio.google.com
+// Secrets required (same key as `extract`, set once, no credit card needed):
+//   supabase secrets set GROQ_API_KEY=your_key_from_console.groq.com
 // ---------------------------------------------------------------------------
 
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
-const MODEL = "gemini-2.0-flash";
+const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY") ?? "";
+const MODEL = "llama-3.3-70b-versatile";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const SYSTEM_PROMPT =
   "You are the Maridive Fleet Vessels app assistant. You help crew and shore " +
@@ -39,7 +41,7 @@ const json = (body: unknown, status = 200) =>
   });
 
 // Best-effort per-user throttle. State lives in the isolate's memory, so it
-// resets on cold start — the real backstop is Gemini's own free-tier rate
+// resets on cold start — the real backstop is Groq's own free-tier rate
 // limit, this just keeps one chatty user from starving everyone else while
 // the isolate is warm. No database table needed.
 const WINDOW_MS = 60_000;
@@ -62,7 +64,7 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    if (!GEMINI_API_KEY) {
+    if (!GROQ_API_KEY) {
       return json({ error: "not_configured" }, 503);
     }
 
@@ -78,33 +80,33 @@ Deno.serve(async (req) => {
     }
 
     const trimmed = messages.slice(-MAX_MESSAGES).map((m) => ({
-      role: m?.role === "assistant" ? "model" : "user",
-      parts: [{ text: String(m?.content ?? "").slice(0, MAX_CHARS) }],
+      role: m?.role === "assistant" ? "assistant" : "user",
+      content: String(m?.content ?? "").slice(0, MAX_CHARS),
     }));
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          contents: trimmed,
-          generationConfig: { maxOutputTokens: 512 },
-        }),
+    const groqRes = await fetch(GROQ_URL, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "authorization": `Bearer ${GROQ_API_KEY}`,
       },
-    );
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...trimmed],
+        max_tokens: 512,
+      }),
+    });
 
-    if (geminiRes.status === 429) {
+    if (groqRes.status === 429) {
       return json({ error: "rate_limited" }, 429);
     }
-    if (!geminiRes.ok) {
-      const detail = await geminiRes.text();
-      return json({ error: "ai_failed", status: geminiRes.status, detail }, 502);
+    if (!groqRes.ok) {
+      const detail = await groqRes.text();
+      return json({ error: `ai_failed_${groqRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
-    const gj = await geminiRes.json();
-    const text = gj?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const gj = await groqRes.json();
+    const text = gj?.choices?.[0]?.message?.content;
     if (!text) {
       return json({ error: "empty_reply" }, 502);
     }

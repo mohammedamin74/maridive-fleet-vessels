@@ -1,29 +1,27 @@
 // Supabase Edge Function: `extract`
 // ---------------------------------------------------------------------------
 // Reads an uploaded file from the shared `attachments` Storage bucket and uses
-// Google Gemini (multimodal, free tier) to extract structured defect or
-// requisition fields as JSON. The client shows the result in an EDITABLE review
-// sheet before anything is saved — the model never writes to the fleet database.
+// Groq's free-tier LLM API to extract structured defect or requisition fields
+// as JSON. The client shows the result in an EDITABLE review sheet before
+// anything is saved — the model never writes to the fleet database.
 //
-// Secrets required (set once):
-//   supabase secrets set GEMINI_API_KEY=your_key_from_aistudio.google.com
+// Secrets required (set once, no credit card needed):
+//   supabase secrets set GROQ_API_KEY=your_key_from_console.groq.com
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // The esm.sh build of `xlsx` pulls in Node-only internals (e.g. Buffer) that
-// don't exist in Supabase's Deno Edge Runtime, crashing the isolate at boot
-// for every request regardless of import timing. Supabase's bundler also
-// only allows remote imports from a small allowlist of hosts (esm.sh,
-// deno.land, npm registry, etc.) — arbitrary CDNs like cdn.sheetjs.com are
-// rejected at deploy time. Deno's native `npm:` specifier uses Deno's own
-// (more complete) Node compat layer instead of esm.sh's browser shims, and
-// is on the allowlist since it isn't a raw URL import.
+// don't exist in Supabase's Deno Edge Runtime, crashing the isolate at boot.
+// Deno's native `npm:` specifier uses Deno's own (more complete) Node compat
+// layer instead, and is on Supabase's bundler allowlist.
 import XLSX from "npm:xlsx@0.18.5";
 
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
+const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const MODEL = "gemini-2.0-flash";
+const TEXT_MODEL = "llama-3.3-70b-versatile";
+const VISION_MODEL = "llama-3.2-90b-vision-preview";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,9 +36,8 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "content-type": "application/json" },
   });
 
-// Guarantees every request resolves within a bound — a stuck dynamic import
-// (esm.sh unreachable) or a stalled upstream call can never hang the client's
-// loading dialog forever.
+// Guarantees every request resolves within a bound — a stalled upstream call
+// can never hang the client's loading dialog forever.
 function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   return Promise.race([
     p,
@@ -55,10 +52,17 @@ function isSpreadsheet(path: string): boolean {
   return ext === "xlsx" || ext === "xls" || ext === "xlsm";
 }
 
-// Gemini's multimodal API only reads inline_data as an image/PDF/audio/video/
-// plain-text document — it can't parse the binary .xlsx zip format directly.
-// So for spreadsheets we parse the workbook here and hand Gemini a plain-text
-// CSV rendering of every sheet instead of the raw bytes.
+function isPdf(path: string): boolean {
+  return (path.split(".").pop()?.toLowerCase() ?? "") === "pdf";
+}
+
+function isImage(path: string): boolean {
+  const ext = path.split(".").pop()?.toLowerCase() ?? "";
+  return ["png", "jpg", "jpeg", "webp", "gif"].includes(ext);
+}
+
+// The AI can't parse the binary .xlsx zip format directly, so we parse the
+// workbook here and hand it a plain-text CSV rendering of every sheet.
 function spreadsheetToText(buf: Uint8Array): string {
   const wb = XLSX.read(buf, { type: "array" });
   return wb.SheetNames.map((name: string) => {
@@ -70,8 +74,6 @@ function spreadsheetToText(buf: Uint8Array): string {
 function mimeFor(path: string): string {
   const ext = path.split(".").pop()?.toLowerCase() ?? "";
   switch (ext) {
-    case "pdf":
-      return "application/pdf";
     case "png":
       return "image/png";
     case "jpg":
@@ -81,9 +83,6 @@ function mimeFor(path: string): string {
       return "image/webp";
     case "gif":
       return "image/gif";
-    case "txt":
-    case "csv":
-      return "text/plain";
     default:
       return "application/octet-stream";
   }
@@ -122,7 +121,7 @@ const REQUISITION_SCHEMA = {
   },
 };
 
-function promptFor(kind: string): string {
+function basePromptFor(kind: string): string {
   if (kind === "requisition") {
     return "You are reading a ship spare-parts requisition (a purchase request, " +
       "quotation, or parts list). Extract the requested item's details. Use an " +
@@ -134,12 +133,20 @@ function promptFor(kind: string): string {
     "string for anything not stated.";
 }
 
+// Groq's JSON mode guarantees syntactically valid JSON but not a specific
+// schema, so the exact field names/types/enums are spelled out in the prompt.
+function promptFor(kind: string, schema: Record<string, unknown>): string {
+  return `${basePromptFor(kind)} Respond with ONLY a single JSON object (no ` +
+    `markdown fences, no commentary) matching exactly this JSON schema: ` +
+    `${JSON.stringify(schema)}`;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    if (!GEMINI_API_KEY) {
+    if (!GROQ_API_KEY) {
       return json({ error: "not_configured" }, 503);
     }
     const { path, kind } = await req.json();
@@ -147,6 +154,10 @@ Deno.serve(async (req) => {
       return json({ error: "missing_path" }, 400);
     }
     const extractionKind = kind === "requisition" ? "requisition" : "defect";
+
+    if (isPdf(path)) {
+      return json({ error: "pdf_not_supported" }, 415);
+    }
 
     // Download the file bytes with the service role (bypasses RLS).
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
@@ -159,8 +170,9 @@ Deno.serve(async (req) => {
     const schema = extractionKind === "requisition"
       ? REQUISITION_SCHEMA
       : DEFECT_SCHEMA;
+    const prompt = promptFor(extractionKind, schema);
 
-    let parts: Record<string, unknown>[];
+    let groqBody: Record<string, unknown>;
     if (isSpreadsheet(path)) {
       let sheetText: string;
       try {
@@ -168,50 +180,70 @@ Deno.serve(async (req) => {
       } catch (_) {
         return json({ error: "parse_failed" }, 422);
       }
-      parts = [
-        { text: promptFor(extractionKind) },
-        { text: `Spreadsheet content:\n\n${sheetText}` },
-      ];
-    } else {
+      groqBody = {
+        model: TEXT_MODEL,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: prompt },
+          { role: "user", content: `Spreadsheet content:\n\n${sheetText}` },
+        ],
+      };
+    } else if (isImage(path)) {
       let binary = "";
       for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
       const base64 = btoa(binary);
-      parts = [
-        { inline_data: { mime_type: mimeFor(path), data: base64 } },
-        { text: promptFor(extractionKind) },
-      ];
+      groqBody = {
+        model: VISION_MODEL,
+        response_format: { type: "json_object" },
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: prompt },
+              {
+                type: "image_url",
+                image_url: { url: `data:${mimeFor(path)};base64,${base64}` },
+              },
+            ],
+          },
+        ],
+      };
+    } else {
+      const text = new TextDecoder().decode(buf);
+      groqBody = {
+        model: TEXT_MODEL,
+        response_format: { type: "json_object" },
+        messages: [
+          { role: "system", content: prompt },
+          { role: "user", content: text.slice(0, 20_000) },
+        ],
+      };
     }
 
-    let geminiRes: Response;
+    let groqRes: Response;
     try {
-      geminiRes = await withTimeout(
-        fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts }],
-              generationConfig: {
-                responseMimeType: "application/json",
-                responseSchema: schema,
-              },
-            }),
+      groqRes = await withTimeout(
+        fetch(GROQ_URL, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "authorization": `Bearer ${GROQ_API_KEY}`,
           },
-        ),
+          body: JSON.stringify(groqBody),
+        }),
         30_000,
       );
     } catch (_) {
       return json({ error: "ai_timeout" }, 504);
     }
 
-    if (!geminiRes.ok) {
-      const detail = await geminiRes.text();
-      return json({ error: `ai_failed_${geminiRes.status}_${detail.slice(0, 400)}` }, 502);
+    if (!groqRes.ok) {
+      const detail = await groqRes.text();
+      return json({ error: `ai_failed_${groqRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
-    const gj = await geminiRes.json();
-    const text = gj?.candidates?.[0]?.content?.parts?.[0]?.text ?? "{}";
+    const gj = await groqRes.json();
+    const text = gj?.choices?.[0]?.message?.content ?? "{}";
     let data: Record<string, unknown>;
     try {
       data = JSON.parse(text);
