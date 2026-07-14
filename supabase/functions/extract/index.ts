@@ -10,9 +10,12 @@
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-// xlsx is imported lazily (see isSpreadsheet branch below) so a slow or
-// unreachable esm.sh fetch for it can never delay/hang PDF or image
-// extraction, which is the common case and doesn't need it.
+import * as XLSX from "https://esm.sh/xlsx@0.18.5";
+// Supabase's Edge Runtime only reliably resolves remote modules imported at
+// the top level (at boot); a `await import(...)` from inside the request
+// handler crashes the isolate (EDGE_FUNCTION_ERROR) instead of throwing a
+// catchable error. So xlsx is imported statically here, same as supabase-js
+// above, even though it's only used for spreadsheet uploads.
 
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -53,9 +56,7 @@ function isSpreadsheet(path: string): boolean {
 // plain-text document — it can't parse the binary .xlsx zip format directly.
 // So for spreadsheets we parse the workbook here and hand Gemini a plain-text
 // CSV rendering of every sheet instead of the raw bytes.
-// deno-lint-ignore no-explicit-any
-async function spreadsheetToText(buf: Uint8Array): Promise<string> {
-  const XLSX: any = await import("https://esm.sh/xlsx@0.18.5");
+function spreadsheetToText(buf: Uint8Array): string {
   const wb = XLSX.read(buf, { type: "array" });
   return wb.SheetNames.map((name: string) => {
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
@@ -160,7 +161,7 @@ Deno.serve(async (req) => {
     if (isSpreadsheet(path)) {
       let sheetText: string;
       try {
-        sheetText = await withTimeout(spreadsheetToText(buf), 15_000);
+        sheetText = spreadsheetToText(buf);
       } catch (_) {
         return json({ error: "parse_failed" }, 422);
       }
