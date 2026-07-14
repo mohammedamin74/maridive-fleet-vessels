@@ -1,16 +1,15 @@
 // Supabase Edge Function: `extract`
 // ---------------------------------------------------------------------------
 // Reads an uploaded file from the shared `attachments` Storage bucket and uses
-// DeepSeek's API to extract structured defect or requisition fields as JSON.
-// The client shows the result in an EDITABLE review sheet before anything is
-// saved — the model never writes to the fleet database.
+// OpenRouter's free-tier LLM API to extract structured defect or requisition
+// fields as JSON. The client shows the result in an EDITABLE review sheet
+// before anything is saved — the model never writes to the fleet database.
 //
-// Text-only for now (spreadsheets, csv, txt) — DeepSeek's image-input format
-// isn't reliably documented at time of writing, so image/PDF uploads return a
-// clear "not supported" error instead of guessing at an API shape.
+// Text-only for now (spreadsheets, csv, txt) — image/PDF uploads return a
+// clear "not supported" error instead of guessing at a multimodal API shape.
 //
-// Secrets required (new accounts get 5M free tokens, no credit card needed):
-//   supabase secrets set DEEPSEEK_API_KEY=your_key_from_platform.deepseek.com
+// Secrets required (no credit card needed, ever, for :free models):
+//   supabase secrets set OPENROUTER_API_KEY=your_key_from_openrouter.ai
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -20,11 +19,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // layer instead, and is on Supabase's bundler allowlist.
 import XLSX from "npm:xlsx@0.18.5";
 
-const DEEPSEEK_API_KEY = Deno.env.get("DEEPSEEK_API_KEY") ?? "";
+const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const TEXT_MODEL = "deepseek-v4-flash";
-const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
+const TEXT_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -130,7 +129,7 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    if (!DEEPSEEK_API_KEY) {
+    if (!OPENROUTER_API_KEY) {
       return json({ error: "not_configured" }, 503);
     }
     const { path, kind } = await req.json();
@@ -167,14 +166,14 @@ Deno.serve(async (req) => {
       content = new TextDecoder().decode(buf).slice(0, 20_000);
     }
 
-    let dsRes: Response;
+    let orRes: Response;
     try {
-      dsRes = await withTimeout(
-        fetch(DEEPSEEK_URL, {
+      orRes = await withTimeout(
+        fetch(OPENROUTER_URL, {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "authorization": `Bearer ${DEEPSEEK_API_KEY}`,
+            "authorization": `Bearer ${OPENROUTER_API_KEY}`,
           },
           body: JSON.stringify({
             model: TEXT_MODEL,
@@ -191,12 +190,12 @@ Deno.serve(async (req) => {
       return json({ error: "ai_timeout" }, 504);
     }
 
-    if (!dsRes.ok) {
-      const detail = await dsRes.text();
-      return json({ error: `ai_failed_${dsRes.status}_${detail.slice(0, 400)}` }, 502);
+    if (!orRes.ok) {
+      const detail = await orRes.text();
+      return json({ error: `ai_failed_${orRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
-    const dj = await dsRes.json();
+    const dj = await orRes.json();
     const text = dj?.choices?.[0]?.message?.content ?? "{}";
     let data: Record<string, unknown>;
     try {
