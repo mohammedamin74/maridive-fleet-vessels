@@ -177,7 +177,15 @@ Deno.serve(async (req) => {
           },
           body: JSON.stringify({
             model: TEXT_MODEL,
-            response_format: { type: "json_object" },
+            response_format: {
+              type: "json_schema",
+              json_schema: {
+                name: extractionKind === "requisition"
+                  ? "requisition_extraction"
+                  : "defect_extraction",
+                schema,
+              },
+            },
             messages: [
               { role: "system", content: prompt },
               { role: "user", content },
