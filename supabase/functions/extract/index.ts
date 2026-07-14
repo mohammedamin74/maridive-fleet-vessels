@@ -5,8 +5,13 @@
 // fields as JSON. The client shows the result in an EDITABLE review sheet
 // before anything is saved — the model never writes to the fleet database.
 //
-// Text-only for now (spreadsheets, csv, txt) — image/PDF uploads return a
-// clear "not supported" error instead of guessing at a multimodal API shape.
+// Supported: Excel (.xlsx/.xls/.xlsm), Word (.docx), PDF, and plain text/csv.
+// PDF text extraction is offloaded to OpenRouter's own file-parser plugin
+// (Cloudflare AI engine, still free) rather than a PDF library running
+// in-process — a known PDF.js-based library (unpdf) has an open, unresolved
+// issue crashing specifically in Supabase's production Edge Runtime while
+// working locally, and this app already lost hours to one such Deno/Node
+// interop crash this session. Images aren't supported yet.
 //
 // Secrets required (no credit card needed, ever, for :free models):
 //   supabase secrets set OPENROUTER_API_KEY=your_key_from_openrouter.ai
@@ -18,6 +23,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Deno's native `npm:` specifier uses Deno's own (more complete) Node compat
 // layer instead, and is on Supabase's bundler allowlist.
 import XLSX from "npm:xlsx@0.18.5";
+import mammoth from "npm:mammoth@1.8.0";
+import { Buffer } from "node:buffer";
 
 const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
@@ -49,16 +56,27 @@ function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
   ]);
 }
 
-function isSpreadsheet(path: string): boolean {
-  const ext = path.split(".").pop()?.toLowerCase() ?? "";
-  return ext === "xlsx" || ext === "xls" || ext === "xlsm";
+function extOf(path: string): string {
+  return path.split(".").pop()?.toLowerCase() ?? "";
 }
 
-// Image/PDF auto-extraction isn't supported yet (see file header) — these
-// still get downloaded and viewed fine, just not auto-filled from AI.
+function isSpreadsheet(path: string): boolean {
+  return ["xlsx", "xls", "xlsm"].includes(extOf(path));
+}
+
+function isDocx(path: string): boolean {
+  return extOf(path) === "docx";
+}
+
+function isPdf(path: string): boolean {
+  return extOf(path) === "pdf";
+}
+
+// Images, and the old binary .doc format (not zip/XML-based like .docx, so
+// mammoth can't read it) — auto-extraction isn't supported for these yet.
+// They still get downloaded and viewed fine, just not auto-filled from AI.
 function isUnsupportedForExtraction(path: string): boolean {
-  const ext = path.split(".").pop()?.toLowerCase() ?? "";
-  return ["pdf", "png", "jpg", "jpeg", "webp", "gif"].includes(ext);
+  return ["doc", "png", "jpg", "jpeg", "webp", "gif"].includes(extOf(path));
 }
 
 // The AI can't parse the binary .xlsx zip format directly, so we parse the
@@ -69,6 +87,11 @@ function spreadsheetToText(buf: Uint8Array): string {
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
     return `Sheet: ${name}\n${csv}`;
   }).join("\n\n");
+}
+
+async function docxToText(buf: Uint8Array): Promise<string> {
+  const result = await mammoth.extractRawText({ buffer: Buffer.from(buf) });
+  return result.value;
 }
 
 const DEFECT_SCHEMA = {
@@ -168,15 +191,40 @@ Deno.serve(async (req) => {
       : DEFECT_SCHEMA;
     const prompt = promptFor(extractionKind, schema);
 
-    let content: string;
+    // `userContent` is either a plain string (spreadsheet/docx/text — parsed
+    // to text here) or a content-parts array carrying the raw PDF, which
+    // OpenRouter's file-parser plugin turns into text on their end.
+    let userContent: string | Record<string, unknown>[];
+    let plugins: Record<string, unknown>[] | undefined;
     if (isSpreadsheet(path)) {
       try {
-        content = `Spreadsheet content:\n\n${spreadsheetToText(buf)}`;
+        userContent = `Spreadsheet content:\n\n${spreadsheetToText(buf)}`;
       } catch (_) {
         return json({ error: "parse_failed" }, 422);
       }
+    } else if (isDocx(path)) {
+      try {
+        userContent =
+          `Document content:\n\n${(await docxToText(buf)).slice(0, 20_000)}`;
+      } catch (_) {
+        return json({ error: "parse_failed" }, 422);
+      }
+    } else if (isPdf(path)) {
+      let binary = "";
+      for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
+      const base64 = btoa(binary);
+      userContent = [
+        {
+          type: "file",
+          file: {
+            filename: path.split("/").pop() ?? "document.pdf",
+            file_data: `data:application/pdf;base64,${base64}`,
+          },
+        },
+      ];
+      plugins = [{ id: "file-parser", pdf: { engine: "cloudflare-ai" } }];
     } else {
-      content = new TextDecoder().decode(buf).slice(0, 20_000);
+      userContent = new TextDecoder().decode(buf).slice(0, 20_000);
     }
 
     let orRes: Response;
@@ -190,6 +238,7 @@ Deno.serve(async (req) => {
           },
           body: JSON.stringify({
             model: TEXT_MODEL,
+            ...(plugins ? { plugins } : {}),
             response_format: {
               type: "json_schema",
               json_schema: {
@@ -201,7 +250,7 @@ Deno.serve(async (req) => {
             },
             messages: [
               { role: "system", content: prompt },
-              { role: "user", content },
+              { role: "user", content: userContent },
             ],
           }),
         }),
