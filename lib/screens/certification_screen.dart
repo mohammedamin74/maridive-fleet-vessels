@@ -61,6 +61,7 @@ class _CertificationScreenState extends State<CertificationScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: t.add,
             onPressed: () => _tabController.index == 0
                 ? _showAddVesselCertSheet(context, t)
                 : _showAddCrewCertSheet(context, t),
@@ -455,6 +456,7 @@ class _VesselCertsTab extends StatelessWidget {
                 ],
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
+                  tooltip: t.delete,
                   onPressed: () => context
                       .read<CertificationProvider>()
                       .deleteVesselCert(cert.id),
@@ -577,6 +579,7 @@ class _CrewCertsTab extends StatelessWidget {
                 ],
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
+                  tooltip: t.delete,
                   onPressed: () => context
                       .read<CertificationProvider>()
                       .deleteCrewCert(cert.id),

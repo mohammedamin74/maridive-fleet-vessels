@@ -50,7 +50,7 @@ class PhotoPickerStrip extends StatelessWidget {
         children: [
           for (var i = 0; i < photosBase64.length; i++)
             Padding(
-              padding: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsetsDirectional.only(end: 10),
               child: Stack(
                 children: [
                   ClipRRect(

@@ -327,6 +327,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get close => 'إغلاق';
 
   @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get add => 'إضافة';
+
+  @override
+  String get showPassword => 'إظهار كلمة المرور';
+
+  @override
+  String get hidePassword => 'إخفاء كلمة المرور';
+
+  @override
   String get gallons => 'غالون';
 
   @override

@@ -118,6 +118,10 @@
 
   "back": "رجوع",
   "close": "إغلاق",
+  "refresh": "تحديث",
+  "add": "إضافة",
+  "showPassword": "إظهار كلمة المرور",
+  "hidePassword": "إخفاء كلمة المرور",
   "gallons": "غالون",
   "cubicMeters": "م³",
   "percent": "٪",

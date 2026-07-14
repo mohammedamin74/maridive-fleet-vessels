@@ -99,6 +99,7 @@ class DefectListScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: t.exportReport,
             onPressed: defects.isEmpty
                 ? null
                 : () => ReportService.exportDefectsReport(
@@ -106,6 +107,7 @@ class DefectListScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: t.addDefect,
             onPressed: () => _showAddDefectSheet(context, t),
           ),
         ],

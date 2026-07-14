@@ -26,6 +26,7 @@ class PortCallDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
+            tooltip: t.delete,
             onPressed: () {
               context.read<PortCallProvider>().delete(call.id);
               Navigator.of(context).pop();

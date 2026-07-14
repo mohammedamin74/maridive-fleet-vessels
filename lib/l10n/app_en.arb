@@ -119,6 +119,10 @@
 
   "back": "Back",
   "close": "Close",
+  "refresh": "Refresh",
+  "add": "Add",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
   "gallons": "IG",
   "cubicMeters": "m³",
   "percent": "%",

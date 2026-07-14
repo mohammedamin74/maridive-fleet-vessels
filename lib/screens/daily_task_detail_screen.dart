@@ -25,6 +25,7 @@ class DailyTaskDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
+            tooltip: t.delete,
             onPressed: () {
               provider.delete(current.id);
               Navigator.of(context).pop();

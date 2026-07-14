@@ -27,6 +27,7 @@ class VesselSpecsScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: t.add,
             onPressed: () => _showAddSheet(context, t),
           ),
         ],

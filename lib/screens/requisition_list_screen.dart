@@ -105,6 +105,7 @@ class RequisitionListScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.add),
+            tooltip: t.addRequisition,
             onPressed: () => _showAddRequisitionSheet(context, t),
           ),
         ],

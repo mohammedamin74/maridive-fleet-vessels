@@ -31,10 +31,12 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: t.refresh,
             onPressed: () => auth.refreshUsers(),
           ),
           IconButton(
             icon: const Icon(Icons.person_add_alt_1),
+            tooltip: t.addUser,
             onPressed: () => _showAddUserSheet(context, t),
           ),
         ],

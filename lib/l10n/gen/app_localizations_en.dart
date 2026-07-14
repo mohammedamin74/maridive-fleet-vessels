@@ -322,6 +322,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get showPassword => 'Show password';
+
+  @override
+  String get hidePassword => 'Hide password';
+
+  @override
   String get gallons => 'IG';
 
   @override

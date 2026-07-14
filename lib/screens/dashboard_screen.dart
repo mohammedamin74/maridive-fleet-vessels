@@ -360,6 +360,7 @@ class _Header extends StatelessWidget {
                   MaterialPageRoute(builder: (_) => const SettingsScreen()),
                 ),
                 icon: const Icon(Icons.settings_outlined, color: Colors.white),
+                tooltip: t.settings,
               ),
             ],
           ),
@@ -457,7 +458,7 @@ class _FilterChip extends StatelessWidget {
     final accent = color ?? scheme.primary;
 
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsetsDirectional.only(end: 8),
       child: Material(
         color: Colors.transparent,
         child: InkWell(

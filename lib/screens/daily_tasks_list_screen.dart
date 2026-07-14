@@ -106,6 +106,7 @@ class DailyTasksListScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
+            tooltip: t.exportReport,
             onPressed: tasks.isEmpty
                 ? null
                 : () => ReportService.exportDailyTasksReport(
@@ -113,6 +114,7 @@ class DailyTasksListScreen extends StatelessWidget {
           ),
           IconButton(
               icon: const Icon(Icons.add),
+              tooltip: t.add,
               onPressed: () => _showAddSheet(context, t)),
         ],
       ),
