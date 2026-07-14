@@ -1,12 +1,16 @@
 // Supabase Edge Function: `extract`
 // ---------------------------------------------------------------------------
 // Reads an uploaded file from the shared `attachments` Storage bucket and uses
-// Groq's free-tier LLM API to extract structured defect or requisition fields
-// as JSON. The client shows the result in an EDITABLE review sheet before
-// anything is saved — the model never writes to the fleet database.
+// DeepSeek's API to extract structured defect or requisition fields as JSON.
+// The client shows the result in an EDITABLE review sheet before anything is
+// saved — the model never writes to the fleet database.
 //
-// Secrets required (set once, no credit card needed):
-//   supabase secrets set GROQ_API_KEY=your_key_from_console.groq.com
+// Text-only for now (spreadsheets, csv, txt) — DeepSeek's image-input format
+// isn't reliably documented at time of writing, so image/PDF uploads return a
+// clear "not supported" error instead of guessing at an API shape.
+//
+// Secrets required (new accounts get 5M free tokens, no credit card needed):
+//   supabase secrets set DEEPSEEK_API_KEY=your_key_from_platform.deepseek.com
 // SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected automatically.
 // ---------------------------------------------------------------------------
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -16,12 +20,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // layer instead, and is on Supabase's bundler allowlist.
 import XLSX from "npm:xlsx@0.18.5";
 
-const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY") ?? "";
+const DEEPSEEK_API_KEY = Deno.env.get("DEEPSEEK_API_KEY") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") ?? "";
 const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-const TEXT_MODEL = "llama-3.3-70b-versatile";
-const VISION_MODEL = "llama-3.2-90b-vision-preview";
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const TEXT_MODEL = "deepseek-v4-flash";
+const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -52,13 +55,11 @@ function isSpreadsheet(path: string): boolean {
   return ext === "xlsx" || ext === "xls" || ext === "xlsm";
 }
 
-function isPdf(path: string): boolean {
-  return (path.split(".").pop()?.toLowerCase() ?? "") === "pdf";
-}
-
-function isImage(path: string): boolean {
+// Image/PDF auto-extraction isn't supported yet (see file header) — these
+// still get downloaded and viewed fine, just not auto-filled from AI.
+function isUnsupportedForExtraction(path: string): boolean {
   const ext = path.split(".").pop()?.toLowerCase() ?? "";
-  return ["png", "jpg", "jpeg", "webp", "gif"].includes(ext);
+  return ["pdf", "png", "jpg", "jpeg", "webp", "gif"].includes(ext);
 }
 
 // The AI can't parse the binary .xlsx zip format directly, so we parse the
@@ -69,23 +70,6 @@ function spreadsheetToText(buf: Uint8Array): string {
     const csv = XLSX.utils.sheet_to_csv(wb.Sheets[name]);
     return `Sheet: ${name}\n${csv}`;
   }).join("\n\n");
-}
-
-function mimeFor(path: string): string {
-  const ext = path.split(".").pop()?.toLowerCase() ?? "";
-  switch (ext) {
-    case "png":
-      return "image/png";
-    case "jpg":
-    case "jpeg":
-      return "image/jpeg";
-    case "webp":
-      return "image/webp";
-    case "gif":
-      return "image/gif";
-    default:
-      return "application/octet-stream";
-  }
 }
 
 const DEFECT_SCHEMA = {
@@ -146,7 +130,7 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    if (!GROQ_API_KEY) {
+    if (!DEEPSEEK_API_KEY) {
       return json({ error: "not_configured" }, 503);
     }
     const { path, kind } = await req.json();
@@ -155,8 +139,8 @@ Deno.serve(async (req) => {
     }
     const extractionKind = kind === "requisition" ? "requisition" : "defect";
 
-    if (isPdf(path)) {
-      return json({ error: "pdf_not_supported" }, 415);
+    if (isUnsupportedForExtraction(path)) {
+      return json({ error: "extraction_unsupported_file_type" }, 415);
     }
 
     // Download the file bytes with the service role (bypasses RLS).
@@ -172,64 +156,34 @@ Deno.serve(async (req) => {
       : DEFECT_SCHEMA;
     const prompt = promptFor(extractionKind, schema);
 
-    let groqBody: Record<string, unknown>;
+    let content: string;
     if (isSpreadsheet(path)) {
-      let sheetText: string;
       try {
-        sheetText = spreadsheetToText(buf);
+        content = `Spreadsheet content:\n\n${spreadsheetToText(buf)}`;
       } catch (_) {
         return json({ error: "parse_failed" }, 422);
       }
-      groqBody = {
-        model: TEXT_MODEL,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: prompt },
-          { role: "user", content: `Spreadsheet content:\n\n${sheetText}` },
-        ],
-      };
-    } else if (isImage(path)) {
-      let binary = "";
-      for (let i = 0; i < buf.length; i++) binary += String.fromCharCode(buf[i]);
-      const base64 = btoa(binary);
-      groqBody = {
-        model: VISION_MODEL,
-        response_format: { type: "json_object" },
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "text", text: prompt },
-              {
-                type: "image_url",
-                image_url: { url: `data:${mimeFor(path)};base64,${base64}` },
-              },
-            ],
-          },
-        ],
-      };
     } else {
-      const text = new TextDecoder().decode(buf);
-      groqBody = {
-        model: TEXT_MODEL,
-        response_format: { type: "json_object" },
-        messages: [
-          { role: "system", content: prompt },
-          { role: "user", content: text.slice(0, 20_000) },
-        ],
-      };
+      content = new TextDecoder().decode(buf).slice(0, 20_000);
     }
 
-    let groqRes: Response;
+    let dsRes: Response;
     try {
-      groqRes = await withTimeout(
-        fetch(GROQ_URL, {
+      dsRes = await withTimeout(
+        fetch(DEEPSEEK_URL, {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "authorization": `Bearer ${GROQ_API_KEY}`,
+            "authorization": `Bearer ${DEEPSEEK_API_KEY}`,
           },
-          body: JSON.stringify(groqBody),
+          body: JSON.stringify({
+            model: TEXT_MODEL,
+            response_format: { type: "json_object" },
+            messages: [
+              { role: "system", content: prompt },
+              { role: "user", content },
+            ],
+          }),
         }),
         30_000,
       );
@@ -237,13 +191,13 @@ Deno.serve(async (req) => {
       return json({ error: "ai_timeout" }, 504);
     }
 
-    if (!groqRes.ok) {
-      const detail = await groqRes.text();
-      return json({ error: `ai_failed_${groqRes.status}_${detail.slice(0, 400)}` }, 502);
+    if (!dsRes.ok) {
+      const detail = await dsRes.text();
+      return json({ error: `ai_failed_${dsRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
-    const gj = await groqRes.json();
-    const text = gj?.choices?.[0]?.message?.content ?? "{}";
+    const dj = await dsRes.json();
+    const text = dj?.choices?.[0]?.message?.content ?? "{}";
     let data: Record<string, unknown>;
     try {
       data = JSON.parse(text);

@@ -1,19 +1,19 @@
 // Supabase Edge Function: `assistant`
 // ---------------------------------------------------------------------------
-// Help-only chat assistant for the Maridive Fleet app, backed by Groq's
-// free-tier LLM API (same key as the `extract` function). Answers "how do
-// I..." questions about using the app. Never receives vessel data, crew PII,
-// or any fleet records — only the user's typed messages and a static system
-// prompt. Chat history is session-only on the client; nothing is persisted
-// here.
+// Help-only chat assistant for the Maridive Fleet app, backed by DeepSeek
+// (same key as the `extract` function). Answers "how do I..." questions
+// about using the app. Never receives vessel data, crew PII, or any fleet
+// records — only the user's typed messages and a static system prompt. Chat
+// history is session-only on the client; nothing is persisted here.
 //
-// Secrets required (same key as `extract`, set once, no credit card needed):
-//   supabase secrets set GROQ_API_KEY=your_key_from_console.groq.com
+// Secrets required (same key as `extract`, new accounts get 5M free tokens,
+// no credit card needed):
+//   supabase secrets set DEEPSEEK_API_KEY=your_key_from_platform.deepseek.com
 // ---------------------------------------------------------------------------
 
-const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY") ?? "";
-const MODEL = "llama-3.3-70b-versatile";
-const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const DEEPSEEK_API_KEY = Deno.env.get("DEEPSEEK_API_KEY") ?? "";
+const MODEL = "deepseek-v4-flash";
+const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
 
 const SYSTEM_PROMPT =
   "You are the Maridive Fleet Vessels app assistant. You help crew and shore " +
@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
   try {
-    if (!GROQ_API_KEY) {
+    if (!DEEPSEEK_API_KEY) {
       return json({ error: "not_configured" }, 503);
     }
 
@@ -84,11 +84,11 @@ Deno.serve(async (req) => {
       content: String(m?.content ?? "").slice(0, MAX_CHARS),
     }));
 
-    const groqRes = await fetch(GROQ_URL, {
+    const dsRes = await fetch(DEEPSEEK_URL, {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "authorization": `Bearer ${GROQ_API_KEY}`,
+        "authorization": `Bearer ${DEEPSEEK_API_KEY}`,
       },
       body: JSON.stringify({
         model: MODEL,
@@ -97,16 +97,16 @@ Deno.serve(async (req) => {
       }),
     });
 
-    if (groqRes.status === 429) {
+    if (dsRes.status === 429) {
       return json({ error: "rate_limited" }, 429);
     }
-    if (!groqRes.ok) {
-      const detail = await groqRes.text();
-      return json({ error: `ai_failed_${groqRes.status}_${detail.slice(0, 400)}` }, 502);
+    if (!dsRes.ok) {
+      const detail = await dsRes.text();
+      return json({ error: `ai_failed_${dsRes.status}_${detail.slice(0, 400)}` }, 502);
     }
 
-    const gj = await groqRes.json();
-    const text = gj?.choices?.[0]?.message?.content;
+    const dj = await dsRes.json();
+    const text = dj?.choices?.[0]?.message?.content;
     if (!text) {
       return json({ error: "empty_reply" }, 502);
     }
