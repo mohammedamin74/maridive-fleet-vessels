@@ -42,4 +42,34 @@ class ExtractionService {
       throw ExtractionException('timeout');
     }
   }
+
+  /// Same as [extract], but for kinds (currently 'requisition') that return a
+  /// list of items — e.g. every row of an uploaded parts list — instead of a
+  /// single object. Each entry is still reviewed individually before saving.
+  static Future<List<Map<String, dynamic>>> extractList({
+    required String storagePath,
+    required String kind,
+  }) async {
+    try {
+      final res = await SupabaseConfig.client.functions
+          .invoke('extract', body: {'path': storagePath, 'kind': kind})
+          .timeout(const Duration(seconds: 45));
+      final data = res.data;
+      if (data is Map && data['data'] is List) {
+        return (data['data'] as List)
+            .whereType<Map>()
+            .map((m) => Map<String, dynamic>.from(m))
+            .toList();
+      }
+      throw ExtractionException('unexpected');
+    } on FunctionException catch (e) {
+      final details = e.details;
+      final code = (details is Map && details['error'] != null)
+          ? details['error'].toString()
+          : 'request_failed';
+      throw ExtractionException(code);
+    } on TimeoutException {
+      throw ExtractionException('timeout');
+    }
+  }
 }

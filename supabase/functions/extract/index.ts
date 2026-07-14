@@ -89,7 +89,7 @@ const DEFECT_SCHEMA = {
   },
 };
 
-const REQUISITION_SCHEMA = {
+const REQUISITION_ITEM_SCHEMA = {
   type: "object",
   properties: {
     itemName: { type: "string" },
@@ -104,12 +104,25 @@ const REQUISITION_SCHEMA = {
   },
 };
 
+// A requisition file (a parts list / quotation) commonly lists many line
+// items, unlike a defect report which is one incident — so requisitions
+// extract as an array of items, each reviewed individually on the client
+// before being saved, while defects stay a single object.
+const REQUISITION_SCHEMA = {
+  type: "object",
+  properties: {
+    items: { type: "array", items: REQUISITION_ITEM_SCHEMA },
+  },
+  required: ["items"],
+};
+
 function basePromptFor(kind: string): string {
   if (kind === "requisition") {
     return "You are reading a ship spare-parts requisition (a purchase request, " +
-      "quotation, or parts list). Extract the requested item's details. Use an " +
-      "empty string for unknown text fields and 0 for unknown numbers. If several " +
-      "items appear, extract the primary/first one.";
+      "quotation, or parts list). It may list MULTIPLE items/rows. Extract " +
+      "EVERY item as a separate entry — one per row. Do not skip rows or merge " +
+      "items together. Use an empty string for unknown text fields and 0 for " +
+      "unknown numbers.";
   }
   return "You are reading a ship equipment defect / fault report. Extract the " +
     "defect details. Choose the closest location and priority. Use an empty " +
@@ -205,12 +218,16 @@ Deno.serve(async (req) => {
 
     const dj = await orRes.json();
     const text = dj?.choices?.[0]?.message?.content ?? "{}";
-    let data: Record<string, unknown>;
+    let parsed: Record<string, unknown>;
     try {
-      data = JSON.parse(text);
+      parsed = JSON.parse(text);
     } catch (_) {
       return json({ error: "parse_failed", raw: text }, 502);
     }
+
+    const data = extractionKind === "requisition"
+      ? (Array.isArray(parsed?.items) ? parsed.items : [])
+      : parsed;
 
     return json({ kind: extractionKind, data });
   } catch (e) {

@@ -369,11 +369,12 @@ class RequisitionListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddRequisitionSheet(
+  Future<void> _showAddRequisitionSheet(
     BuildContext context,
     AppLocalizations t, {
     Map<String, dynamic>? prefill,
     List<Attachment> initialAttachments = const [],
+    String? progressLabel,
   }) {
     final itemController =
         TextEditingController(text: _str(prefill, 'itemName'));
@@ -396,7 +397,7 @@ class RequisitionListScreen extends StatelessWidget {
     DateTime? requiredDeliveryDate;
     List<Attachment> newFiles = [...initialAttachments];
 
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -415,9 +416,12 @@ class RequisitionListScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        prefill != null
-                            ? t.reviewExtractedRequisition
-                            : t.addRequisition,
+                        [
+                          prefill != null
+                              ? t.reviewExtractedRequisition
+                              : t.addRequisition,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -656,12 +660,26 @@ class RequisitionListScreen extends StatelessWidget {
     );
 
     try {
-      final data = await ExtractionService.extract(
+      final items = await ExtractionService.extractList(
           storagePath: picked.storagePath!, kind: 'requisition');
       navigator.pop();
       if (!context.mounted) return;
-      _showAddRequisitionSheet(context, t,
-          prefill: data, initialAttachments: [picked]);
+      if (items.isEmpty) {
+        messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
+        return;
+      }
+      // Review each row one at a time — the same editable-before-saving sheet
+      // used for a single item, just sequenced across every row found.
+      for (var i = 0; i < items.length; i++) {
+        if (!context.mounted) return;
+        await _showAddRequisitionSheet(
+          context,
+          t,
+          prefill: items[i],
+          initialAttachments: [picked],
+          progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+        );
+      }
     } on ExtractionException catch (e) {
       navigator.pop();
       final msg = e.code == 'not_configured'
