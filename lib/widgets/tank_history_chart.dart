@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../l10n/gen/app_localizations.dart';
 import '../models/tank_reading.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Lightweight sounding-history line chart. Plots readings from the last
 /// 24 hours (falling back to whatever history exists if the tank hasn't
@@ -27,31 +29,43 @@ class TankHistoryChart extends StatelessWidget {
     if (points.length < 2) return const SizedBox.shrink();
 
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      height: 120,
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: scheme.brightness == Brightness.dark
-            ? AppColors.navy800
-            : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: scheme.brightness == Brightness.dark
-              ? AppColors.navy700
-              : AppColors.slate200,
-        ),
-      ),
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: _LineChartPainter(
-          values: points
-              .map((r) => capacityM3 <= 0
-                  ? 0.0
-                  : (r.levelM3 / capacityM3).clamp(0.0, 1.0))
-              .toList(),
-          color: color,
-          gridColor: scheme.onSurface.withValues(alpha: 0.08),
+    final t = AppLocalizations.of(context)!;
+    final currentPercent = capacityM3 <= 0
+        ? 0
+        : ((points.last.levelM3 / capacityM3).clamp(0.0, 1.0) * 100).round();
+
+    // The painted chart carries no accessibility tree of its own, so a
+    // Semantics label describes it for screen readers instead.
+    return Semantics(
+      label: t.tankHistoryChartSemantics(currentPercent),
+      child: ExcludeSemantics(
+        child: Container(
+          height: 120,
+          width: double.infinity,
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: scheme.brightness == Brightness.dark
+                ? AppColors.navy800
+                : Colors.white,
+            borderRadius: AppRadius.lgAll,
+            border: Border.all(
+              color: scheme.brightness == Brightness.dark
+                  ? AppColors.navy700
+                  : AppColors.slate200,
+            ),
+          ),
+          child: CustomPaint(
+            size: Size.infinite,
+            painter: _LineChartPainter(
+              values: points
+                  .map((r) => capacityM3 <= 0
+                      ? 0.0
+                      : (r.levelM3 / capacityM3).clamp(0.0, 1.0))
+                  .toList(),
+              color: color,
+              gridColor: scheme.onSurface.withValues(alpha: 0.08),
+            ),
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 /// Compact KPI card used across the dashboard command strip. Shows a tinted
 /// icon chip, a large emphasised value, and a caption label. Designed to sit
@@ -25,10 +26,11 @@ class StatTile extends StatelessWidget {
     final color = accent ?? scheme.primary;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+      padding: const EdgeInsets.symmetric(
+          vertical: AppSpacing.md, horizontal: AppSpacing.md),
       decoration: BoxDecoration(
         color: dark ? AppColors.navy800 : Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: AppRadius.xlAll,
         border: Border.all(
           color: dark ? AppColors.navy700 : AppColors.slate200,
         ),
@@ -50,12 +52,12 @@ class StatTile extends StatelessWidget {
             height: 34,
             decoration: BoxDecoration(
               color: color.withValues(alpha: dark ? 0.18 : 0.12),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: AppRadius.smAll,
             ),
             alignment: Alignment.center,
             child: Icon(icon, color: color, size: 19),
           ),
-          const SizedBox(height: 12),
+          Gaps.h12,
           Text(
             value,
             maxLines: 1,

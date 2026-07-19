@@ -45,7 +45,7 @@ class AlertsPanel extends StatelessWidget {
               color: AppColors.statusMaintenance),
           title: Text(
             t.alertsTitle(alerts.length),
-            style: TextStyle(
+            style: const TextStyle(
               color: AppColors.statusMaintenance,
               fontWeight: FontWeight.w700,
               fontSize: 14,

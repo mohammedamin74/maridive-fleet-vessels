@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import 'status_badge.dart';
 import 'tank_level_bar.dart';
 
@@ -14,24 +16,28 @@ class VesselCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
     final scheme = Theme.of(context).colorScheme;
     final fuelPercent =
         context.watch<TankDataProvider>().avgFuelPercent(vessel);
-    final fuelColor = fuelPercent < 0.25
-        ? AppColors.statusMaintenance
-        : (fuelPercent < 0.5 ? AppColors.amber400 : AppColors.teal400);
+    final muted = scheme.onSurface.withValues(alpha: 0.4);
+    final fuelColor = fuelPercent == null
+        ? muted
+        : fuelPercent < 0.25
+            ? AppColors.statusMaintenance
+            : (fuelPercent < 0.5 ? AppColors.amber400 : AppColors.teal400);
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: AppRadius.lgAll,
                 child: vessel.photoAsset.isEmpty
                     ? _iconAvatar()
                     : Image.asset(
@@ -92,10 +98,12 @@ class VesselCard extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                             child: TankLevelBarHorizontal(
-                                percent: fuelPercent, color: fuelColor)),
+                                percent: fuelPercent ?? 0, color: fuelColor)),
                         const SizedBox(width: 8),
                         Text(
-                          '${(fuelPercent * 100).round()}%',
+                          fuelPercent == null
+                              ? t.noData
+                              : '${(fuelPercent * 100).round()}%',
                           style: Theme.of(context)
                               .textTheme
                               .labelLarge
@@ -141,10 +149,8 @@ class _MetaChip extends StatelessWidget {
         const SizedBox(width: 3),
         Text(
           label,
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(fontSize: 11, color: muted),
+          style:
+              Theme.of(context).textTheme.labelSmall?.copyWith(color: muted),
         ),
       ],
     );

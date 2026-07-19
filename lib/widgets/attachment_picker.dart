@@ -94,9 +94,9 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
     final attachments = widget.attachments;
     final showAddTile = widget.multiple || attachments.isEmpty;
 
-    Widget removeBadge(int index) => Positioned(
+    Widget removeBadge(int index) => PositionedDirectional(
           top: 2,
-          right: 2,
+          end: 2,
           child: InkWell(
             onTap: () => widget.onRemove(index),
             child: Container(
@@ -161,8 +161,7 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontSize: 9, fontWeight: FontWeight.w600),
+                              style: Theme.of(context).textTheme.labelSmall,
                             ),
                           ],
                         ),
@@ -200,7 +199,8 @@ class _AttachmentPickerStripState extends State<AttachmentPickerStrip> {
                               color: scheme.onSurface.withValues(alpha: 0.6),
                               size: 22),
                           const SizedBox(height: 4),
-                          Text(t.addFile, style: const TextStyle(fontSize: 10)),
+                          Text(t.addFile,
+                              style: Theme.of(context).textTheme.labelSmall),
                         ],
                       ),
               ),

@@ -62,9 +62,9 @@ class PhotoPickerStrip extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Positioned(
+                  PositionedDirectional(
                     top: 2,
-                    right: 2,
+                    end: 2,
                     child: InkWell(
                       onTap: () => onRemove(i),
                       child: Container(
@@ -110,7 +110,8 @@ class PhotoPickerStrip extends StatelessWidget {
                         color: scheme.onSurface.withValues(alpha: 0.6),
                         size: 22),
                     const SizedBox(height: 4),
-                    Text(t.addPhoto, style: const TextStyle(fontSize: 10)),
+                    Text(t.addPhoto,
+                        style: Theme.of(context).textTheme.labelSmall),
                   ],
                 ),
               ),

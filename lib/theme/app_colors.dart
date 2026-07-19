@@ -28,6 +28,10 @@ class AppColors {
   static const Color statusMaintenance = Color(0xFFF87171);
   static const Color statusOffHire = Color(0xFF94A3B8);
 
+  // Deliberately more saturated than statusMaintenance so an already-lapsed
+  // item (e.g. an expired certificate) reads as more severe than "due soon".
+  static const Color statusExpired = Color(0xFFDC2626);
+
   // Neutral surfaces.
   static const Color slate50 = Color(0xFFF5F8FB);
   static const Color slate100 = Color(0xFFEBF0F6);

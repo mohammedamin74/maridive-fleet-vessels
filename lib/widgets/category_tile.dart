@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_tokens.dart';
 
 class CategoryTile extends StatelessWidget {
   final IconData icon;
@@ -23,7 +24,7 @@ class CategoryTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -32,7 +33,7 @@ class CategoryTile extends StatelessWidget {
                 height: 42,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.mdAll,
                 ),
                 alignment: Alignment.center,
                 child: Icon(icon, color: color, size: 20),
@@ -44,7 +45,7 @@ class CategoryTile extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(height: 4),
+              Gaps.h4,
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.bodyMedium,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 class StatusBadge extends StatelessWidget {
   final VesselStatus status;
@@ -23,7 +24,7 @@ class StatusBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.pill,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

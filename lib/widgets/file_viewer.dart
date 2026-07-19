@@ -18,39 +18,145 @@ const Set<String> _textExtensions = {
 
 const Set<String> _spreadsheetExtensions = {'xlsx', 'xls', 'xlsm'};
 
-/// Renders every sheet of a spreadsheet as plain tab-separated text — simple,
-/// but lets a tap actually show the data instead of only offering a download.
-String _spreadsheetToText(Uint8List bytes) {
+/// One parsed sheet: name plus its cell grid, trimmed of the fully-blank
+/// trailing rows/columns Excel often keeps in the used range.
+class _SheetTable {
+  final String name;
+  final List<List<String>> rows;
+  const _SheetTable(this.name, this.rows);
+}
+
+/// Parses every sheet into a real grid (for [GridTableView]) instead of
+/// flattening it to tab-separated text — a defect/requisition list with
+/// mostly-empty rows reads as a table, not a wall of numbers.
+List<_SheetTable> _parseSpreadsheet(Uint8List bytes) {
   final book = xlsx.Excel.decodeBytes(bytes);
-  return book.tables.entries.map((entry) {
-    final rows = entry.value.rows.map((row) {
-      return row.map((cell) => cell?.value?.toString() ?? '').join('\t');
-    }).join('\n');
-    return 'Sheet: ${entry.key}\n$rows';
-  }).join('\n\n');
+  final sheets = <_SheetTable>[];
+  for (final entry in book.tables.entries) {
+    final raw = entry.value.rows
+        .map((row) => row.map((c) => c?.value?.toString() ?? '').toList())
+        .toList();
+    if (raw.isEmpty) continue;
+
+    var width = 0;
+    for (final r in raw) {
+      if (r.length > width) width = r.length;
+    }
+    final padded = [
+      for (final r in raw) [...r, ...List.filled(width - r.length, '')],
+    ];
+
+    var lastRow = -1;
+    for (var i = 0; i < padded.length; i++) {
+      if (padded[i].any((c) => c.trim().isNotEmpty)) lastRow = i;
+    }
+    if (lastRow < 0) continue;
+    final trimmedRows = padded.sublist(0, lastRow + 1);
+
+    var lastCol = -1;
+    for (var c = 0; c < width; c++) {
+      if (trimmedRows.any((r) => r[c].trim().isNotEmpty)) lastCol = c;
+    }
+    final trimmed = [
+      for (final r in trimmedRows) r.sublist(0, lastCol + 1),
+    ];
+
+    sheets.add(_SheetTable(entry.key, trimmed));
+  }
+  return sheets;
+}
+
+String _decodeXmlEntities(String s) => s
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', "'")
+    .replaceAll('&amp;', '&');
+
+/// A parsed piece of a .docx body: either running text or a table, in
+/// document order — so tables render as real grids, not flattened lines.
+abstract class _DocxBlock {
+  const _DocxBlock();
+}
+
+class _DocxParagraphs extends _DocxBlock {
+  final String text;
+  const _DocxParagraphs(this.text);
+}
+
+class _DocxTable extends _DocxBlock {
+  /// Rows padded to equal length (merged cells make Word rows ragged).
+  final List<List<String>> rows;
+  const _DocxTable(this.rows);
 }
 
 /// .docx is a zip of XML parts; the visible text lives in `word/document.xml`
-/// inside `<w:t>` runs. A regex pull is simpler and lighter than a full XML
-/// parser for a plain-text preview, and paragraph breaks (`</w:p>`) become
-/// newlines so the text stays readable.
-String _docxToText(Uint8List bytes) {
+/// inside `<w:t>` runs. A regex scan with a small state machine is lighter
+/// than a full XML parser: `<w:t` must be followed by whitespace or `>` (a
+/// bare `[^>]*` also matched table tags like <w:trPr>, dumping raw XML into
+/// the preview), and the self-closing empty-run alternative keeps `<w:t/>`
+/// from pairing with a later `</w:t>` and swallowing markup between them.
+List<_DocxBlock> _parseDocx(Uint8List bytes) {
   final archive = ZipDecoder().decodeBytes(bytes);
   final doc = archive.files
       .firstWhere((f) => f.name == 'word/document.xml', orElse: () {
     throw const FormatException('word/document.xml not found');
   });
   final xml = utf8.decode(doc.content as List<int>);
-  final buffer = StringBuffer();
-  final tagPattern = RegExp(r'<w:t[^>]*>(.*?)</w:t>|</w:p>', dotAll: true);
+  final tagPattern = RegExp(
+    r'<w:t(?:\s[^>]*)?/>|<w:t(?:\s[^>]*)?>(.*?)</w:t>|<w:tab\s*/>'
+    r'|<w:tbl(?:\s[^>]*)?>|</w:tbl>|</w:tc>|</w:tr>|</w:p>',
+    dotAll: true,
+  );
+
+  final blocks = <_DocxBlock>[];
+  final para = StringBuffer();
+  final cell = StringBuffer();
+  var row = <String>[];
+  var rows = <List<String>>[];
+  var tableDepth = 0;
+
+  void flushPara() {
+    final text = _decodeXmlEntities(para.toString()).trim();
+    para.clear();
+    if (text.isNotEmpty) blocks.add(_DocxParagraphs(text));
+  }
+
   for (final m in tagPattern.allMatches(xml)) {
+    final tag = m.group(0)!;
+    final inTable = tableDepth > 0;
     if (m.group(1) != null) {
-      buffer.write(m.group(1));
-    } else {
-      buffer.write('\n');
+      (inTable ? cell : para).write(m.group(1));
+    } else if (tag.startsWith('<w:tab')) {
+      (inTable ? cell : para).write('\t');
+    } else if (tag.startsWith('<w:tbl')) {
+      if (!inTable) flushPara();
+      tableDepth++;
+    } else if (tag == '</w:tbl>') {
+      if (tableDepth > 0) tableDepth--;
+      if (tableDepth == 0 && rows.isNotEmpty) {
+        var width = 0;
+        for (final r in rows) {
+          if (r.length > width) width = r.length;
+        }
+        blocks.add(_DocxTable([
+          for (final r in rows) [...r, ...List.filled(width - r.length, '')],
+        ]));
+        rows = [];
+      }
+    } else if (tag == '</w:tc>' && inTable) {
+      row.add(_decodeXmlEntities(cell.toString().trim()));
+      cell.clear();
+    } else if (tag == '</w:tr>' && inTable) {
+      if (row.isNotEmpty) rows.add(row);
+      row = [];
+    } else if (tag == '</w:p>') {
+      // In a table, a paragraph break stays inside the current cell.
+      inTable ? cell.write(' ') : para.write('\n');
     }
   }
-  return buffer.toString();
+  flushPara();
+  return blocks;
 }
 
 /// Opens a full-screen viewer for [a]. Images, PDFs, spreadsheets, Word docs
@@ -155,7 +261,11 @@ class FileViewerScreen extends StatelessWidget {
 
     if (_spreadsheetExtensions.contains(ext)) {
       try {
-        return _textPane(_spreadsheetToText(bytes), bytes);
+        final sheets = _parseSpreadsheet(bytes);
+        if (sheets.isEmpty) {
+          return _UnsupportedPane(attachment: attachment, bytes: bytes);
+        }
+        return _spreadsheetPane(sheets, bytes);
       } catch (_) {
         return _UnsupportedPane(attachment: attachment, bytes: bytes);
       }
@@ -163,7 +273,7 @@ class FileViewerScreen extends StatelessWidget {
 
     if (ext == 'docx') {
       try {
-        return _textPane(_docxToText(bytes), bytes);
+        return _docxPane(_parseDocx(bytes), bytes);
       } catch (_) {
         return _UnsupportedPane(attachment: attachment, bytes: bytes);
       }
@@ -183,6 +293,112 @@ class FileViewerScreen extends StatelessWidget {
           text,
           style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
         ),
+      ),
+    );
+  }
+
+  /// Word preview: paragraphs as flowing text, tables as bordered grids —
+  /// mirroring the source document instead of flattening rows to lines.
+  Widget _docxPane(List<_DocxBlock> blocks, Uint8List bytes) {
+    return _WithDownloadBar(
+      attachment: attachment,
+      bytes: bytes,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: blocks.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 14),
+        itemBuilder: (context, i) {
+          final block = blocks[i];
+          if (block is _DocxTable) return GridTableView(rows: block.rows);
+          return SelectableText(
+            (block as _DocxParagraphs).text,
+            style: const TextStyle(fontSize: 13.5, height: 1.5),
+          );
+        },
+      ),
+    );
+  }
+
+  /// Spreadsheet preview: one bordered grid per sheet (named when there is
+  /// more than one), instead of a flattened tab-separated text dump.
+  Widget _spreadsheetPane(List<_SheetTable> sheets, Uint8List bytes) {
+    return _WithDownloadBar(
+      attachment: attachment,
+      bytes: bytes,
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: sheets.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 22),
+        itemBuilder: (context, i) {
+          final sheet = sheets[i];
+          if (sheets.length == 1) return GridTableView(rows: sheet.rows);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(sheet.name,
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w700)),
+              const SizedBox(height: 8),
+              GridTableView(rows: sheet.rows),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Renders a parsed table (from a .docx or spreadsheet) as a bordered grid
+/// with a highlighted header row. Scrolls horizontally when wider than the
+/// screen.
+class GridTableView extends StatelessWidget {
+  final List<List<String>> rows;
+  const GridTableView({super.key, required this.rows});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final dark = scheme.brightness == Brightness.dark;
+    final borderColor = dark ? AppColors.navy700 : AppColors.slate200;
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Table(
+        defaultColumnWidth: const IntrinsicColumnWidth(),
+        defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+        border: TableBorder.all(color: borderColor),
+        children: [
+          for (var r = 0; r < rows.length; r++)
+            TableRow(
+              decoration: r == 0
+                  ? BoxDecoration(
+                      color: scheme.primary.withValues(alpha: dark ? 0.2 : 0.08),
+                    )
+                  : null,
+              children: [
+                for (final cell in rows[r])
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 7),
+                    // Long cells (e.g. specifications) wrap instead of
+                    // stretching their column across the whole table.
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 300),
+                      child: SelectableText(
+                        cell,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          height: 1.35,
+                          fontWeight:
+                              r == 0 ? FontWeight.w700 : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+        ],
       ),
     );
   }

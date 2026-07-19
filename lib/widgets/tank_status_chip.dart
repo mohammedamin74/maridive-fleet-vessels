@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../state/alert_thresholds.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
 class TankStatusChip extends StatelessWidget {
   final TankLevelStatus status;
@@ -40,7 +41,7 @@ class TankStatusChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: AppRadius.pill,
       ),
       child: Text(
         label,
