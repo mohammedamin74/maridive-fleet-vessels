@@ -129,6 +129,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidCredentials => 'اسم المستخدم أو كلمة المرور غير صحيحة';
 
   @override
+  String get networkError =>
+      'تعذّر الوصول إلى الخادم — تحقق من الاتصال وحاول مرة أخرى';
+
+  @override
   String get offlineAuthNote => 'حساب أسطول مشترك — سجّل الدخول باسم المستخدم.';
 
   @override
@@ -296,6 +300,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
+  String tankHistoryChartSemantics(int percent) {
+    return 'مخطط سجل مستوى الخزان، حاليًا $percent٪ من السعة';
+  }
+
+  @override
+  String chartEntriesSemantics(String entries) {
+    return 'مخطط: $entries';
+  }
+
+  @override
+  String get tankLevelSemantics => 'مستوى الخزان';
+
+  @override
+  String get navFleet => 'الأسطول';
+
+  @override
+  String get navAnalytics => 'التحليلات';
+
+  @override
+  String get navAssistant => 'المساعد';
+
+  @override
   String get language => 'اللغة';
 
   @override
@@ -423,13 +449,59 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exportFormat => 'صيغة التصدير';
 
   @override
+  String get exportFormatPdf => 'PDF';
+
+  @override
+  String get exportFormatCsv => 'CSV';
+
+  @override
   String get generateReport => 'إنشاء التقرير';
+
+  @override
+  String get reviewReport => 'مراجعة';
+
+  @override
+  String get reportNoEntries => 'لا توجد سجلات';
+
+  @override
+  String get generatedAtLabel => 'تاريخ الإنشاء';
 
   @override
   String get vesselOperations => 'عمليات السفينة';
 
   @override
   String get viewEntries => 'عرض السجلات';
+
+  @override
+  String get bulkImport => 'استيراد جماعي';
+
+  @override
+  String get bulkImportSubtitle => 'مسح عدة ملفات بالذكاء الاصطناعي دفعة واحدة';
+
+  @override
+  String get addFiles => 'إضافة ملفات';
+
+  @override
+  String get bulkImportEmpty =>
+      'أضف ملفات ليتم مسحها وتوجيهها تلقائيًا إلى القسم المناسب.';
+
+  @override
+  String get bulkImportErrors => 'الأخطاء';
+
+  @override
+  String get bulkImportFilesTotal => 'الملفات';
+
+  @override
+  String get bulkImportFilesFailed => 'فشلت';
+
+  @override
+  String get bulkImportDuplicates => 'مكررة';
+
+  @override
+  String get bulkImportUnclassified => 'غير مصنفة';
+
+  @override
+  String get bulkImportAccept => 'قبول';
 
   @override
   String get tankStatusPdf => 'تقرير حالة الخزانات PDF';
@@ -439,6 +511,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get delete => 'حذف';
+
+  @override
+  String get edit => 'تعديل';
+
+  @override
+  String get editRequisition => 'تعديل الطلب';
+
+  @override
+  String get cancel => 'إلغاء';
+
+  @override
+  String get confirmDeleteTitle => 'حذف هذا العنصر؟';
+
+  @override
+  String confirmDeleteMessage(String item) {
+    return 'سيتم حذف \"$item\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.';
+  }
 
   @override
   String openCount(int count) {
@@ -475,6 +564,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get addDefect => 'الإبلاغ عن عطل';
+
+  @override
+  String get editDefect => 'تعديل العطل';
 
   @override
   String get defectTitleLabel => 'العنوان';
@@ -529,6 +621,21 @@ class AppLocalizationsAr extends AppLocalizations {
       two: 'عطلان حرجان',
       one: 'عطل حرج واحد',
       zero: 'لا توجد أعطال حرجة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingSyncBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تغيير بانتظار المزامنة',
+      many: '$count تغييرًا بانتظار المزامنة',
+      few: '$count تغييرات بانتظار المزامنة',
+      two: 'تغييران بانتظار المزامنة',
+      one: 'تغيير واحد بانتظار المزامنة',
+      zero: 'تم مزامنة كل التغييرات',
     );
     return '$_temp0';
   }
@@ -595,6 +702,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get markRejected => 'رفض';
+
+  @override
+  String get analyticsDashboard => 'لوحة التحليلات';
+
+  @override
+  String get allVessels => 'كل السفن';
+
+  @override
+  String get totalDefects => 'إجمالي الأعطال';
+
+  @override
+  String get openDefectsLabel => 'الأعطال المفتوحة';
+
+  @override
+  String get totalRequisitions => 'إجمالي طلبات التوريد';
+
+  @override
+  String get pendingRequisitionsLabel => 'طلبات التوريد المعلقة';
+
+  @override
+  String get defectsByStatus => 'الأعطال حسب الحالة';
+
+  @override
+  String get defectsByPriority => 'الأعطال حسب الأولوية';
+
+  @override
+  String get requisitionsByStatus => 'طلبات التوريد حسب الحالة';
+
+  @override
+  String get requisitionsByDepartment => 'طلبات التوريد حسب القسم';
 
   @override
   String get priorityMedium => 'متوسطة';
@@ -675,7 +812,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get temperatureLabel => 'درجة الحرارة (°م)';
 
   @override
-  String get lastSounding => 'آخر قياس';
+  String get lastSounding => 'آخر قراءة';
 
   @override
   String get justNow => 'الآن';
@@ -726,7 +863,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get soundingHistory24h => 'سجل القياسات';
+  String get soundingHistory24h => 'سجل القراءات';
 
   @override
   String get overfillCritical => 'حرج (فيضان)';
@@ -966,6 +1103,60 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checklistItemsHint => 'بند واحد في كل سطر';
 
   @override
+  String get checklistEngineOilPressure => 'فحص ضغط زيت المحرك الرئيسي';
+
+  @override
+  String get checklistEngineCoolingWaterTemp =>
+      'فحص درجة حرارة مياه تبريد المحرك الرئيسي';
+
+  @override
+  String get checklistBilgesLeaks =>
+      'فحص المستودعات (البيلج) بحثًا عن التسريبات';
+
+  @override
+  String get checklistGeneratorParams => 'فحص معايير تشغيل المولد';
+
+  @override
+  String get checklistMooringLines => 'فحص حبال الرباط والتجهيزات';
+
+  @override
+  String get checklistDeckLighting => 'فحص إضاءة السطح';
+
+  @override
+  String get checklistCargoEquipment =>
+      'فحص معدات الشحن/السطح بحثًا عن الأضرار';
+
+  @override
+  String get checklistLifeboatMechanism => 'فحص آلية تحرير قارب النجاة';
+
+  @override
+  String get checklistFireExtinguisher => 'فحص مقاييس ضغط طفايات الحريق';
+
+  @override
+  String get checklistEmergencyAlarm => 'اختبار نظام الإنذار الطارئ';
+
+  @override
+  String get checklistLifeJackets => 'فحص مخزون وحالة سترات النجاة';
+
+  @override
+  String get checklistRadarArpa => 'اختبار الرادار ونظام ARPA';
+
+  @override
+  String get checklistGpsAccuracy => 'فحص دقة موقع GPS/GNSS';
+
+  @override
+  String get checklistSteeringGear => 'اختبار جهاز التوجيه (يدوي/آلي)';
+
+  @override
+  String get checklistGalleyCleanliness => 'فحص نظافة المطبخ';
+
+  @override
+  String get checklistFoodStorageTemp => 'فحص درجات حرارة تخزين الطعام';
+
+  @override
+  String get checklistPestControl => 'فحص إجراءات مكافحة الآفات';
+
+  @override
   String get taskStatusPending => 'معلقة';
 
   @override
@@ -1136,6 +1327,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد.';
 
   @override
+  String get extractionQuotaExhausted =>
+      'تم استهلاك حصة الذكاء الاصطناعي المجانية لهذا اليوم. حاول مرة أخرى غدًا.';
+
+  @override
   String get crew => 'الطاقم';
 
   @override
@@ -1217,4 +1412,129 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get send => 'إرسال';
+
+  @override
+  String get handover => 'تسليم واستلام الطاقم';
+
+  @override
+  String get handoverSubtitle => 'تقارير تسليم المناوبة والمهام';
+
+  @override
+  String get addHandover => 'تقرير تسليم جديد';
+
+  @override
+  String get noHandovers => 'لا توجد تقارير تسليم بعد.';
+
+  @override
+  String get outgoingOfficerLabel => 'الضابط المُسلِّم';
+
+  @override
+  String get incomingOfficerLabel => 'الضابط المُستلِم';
+
+  @override
+  String get handoverDateLabel => 'تاريخ التسليم';
+
+  @override
+  String get safetySectionLabel => 'السلامة';
+
+  @override
+  String get machinerySectionLabel => 'الآلات والمعدات';
+
+  @override
+  String get pendingDefectsLabel => 'الأعطال المعلقة';
+
+  @override
+  String get bunkersTanksLabel => 'الوقود والخزانات';
+
+  @override
+  String get certsExpiringLabel => 'الشهادات القاربة على الانتهاء';
+
+  @override
+  String certAlarmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شهادة تنتهي خلال 30 يومًا',
+      many: '$count شهادة تنتهي خلال 30 يومًا',
+      few: '$count شهادات تنتهي خلال 30 يومًا',
+      two: 'شهادتان تنتهيان خلال 30 يومًا',
+      one: 'شهادة واحدة تنتهي خلال 30 يومًا',
+      zero: 'لا توجد شهادات تنتهي خلال 30 يومًا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certAlarmTitleExpired(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شهادة منتهية الصلاحية',
+      many: '$count شهادة منتهية الصلاحية',
+      few: '$count شهادات منتهية الصلاحية',
+      two: 'شهادتان منتهيتا الصلاحية',
+      one: 'شهادة واحدة منتهية الصلاحية',
+      zero: 'لا توجد شهادات منتهية',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certAlarmTitleMixed(int expiredCount, int expiringCount) {
+    return '$expiredCount منتهية، $expiringCount تنتهي خلال 30 يومًا';
+  }
+
+  @override
+  String certDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days يوم متبقٍ',
+      many: '$days يومًا متبقيًا',
+      few: '$days أيام متبقية',
+      two: 'يومان متبقيان',
+      one: 'يوم واحد متبقٍ',
+      zero: 'ينتهي اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get certExpiresToday => 'تنتهي اليوم';
+
+  @override
+  String get certExpired => 'منتهية الصلاحية';
+
+  @override
+  String get certStatusValid => 'سارية';
+
+  @override
+  String get remarksLabel => 'ملاحظات';
+
+  @override
+  String get generateDraft => 'مسودة من بيانات السفينة';
+
+  @override
+  String get handoverStatusDraft => 'مسودة';
+
+  @override
+  String get handoverStatusIssued => 'صادر';
+
+  @override
+  String get handoverStatusAcknowledged => 'مُستلَم';
+
+  @override
+  String get issueReport => 'إصدار';
+
+  @override
+  String get acknowledgeReport => 'تأكيد الاستلام';
+
+  @override
+  String get acknowledgedByLabel => 'تم الاستلام بواسطة';
+
+  @override
+  String get exportPdf => 'تصدير PDF';
+
+  @override
+  String get editReport => 'تعديل';
 }

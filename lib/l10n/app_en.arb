@@ -45,6 +45,7 @@
   "passwordLabel": "Password",
   "loginButton": "Log In",
   "invalidCredentials": "Incorrect username or password",
+  "networkError": "Couldn't reach the server — check your connection and try again",
   "offlineAuthNote": "Shared fleet account — sign in with your username.",
   "account": "Account",
   "logOut": "Log Out",
@@ -108,6 +109,26 @@
   "volumeM3": "Volume (m³)",
 
   "settings": "Settings",
+  "tankHistoryChartSemantics": "Tank level history chart, currently {percent}% of capacity",
+  "@tankHistoryChartSemantics": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "chartEntriesSemantics": "Chart: {entries}",
+  "@chartEntriesSemantics": {
+    "placeholders": {
+      "entries": {
+        "type": "String"
+      }
+    }
+  },
+  "tankLevelSemantics": "Tank level",
+  "navFleet": "Fleet",
+  "navAnalytics": "Analytics",
+  "navAssistant": "Assistant",
   "language": "Language",
   "english": "English",
   "arabic": "العربية",
@@ -155,15 +176,36 @@
   "levelLabel": "Level",
   "selectSections": "Select sections",
   "exportFormat": "Export format",
+  "exportFormatPdf": "PDF",
+  "exportFormatCsv": "CSV",
   "generateReport": "Generate report",
+  "reviewReport": "Review",
+  "reportNoEntries": "No entries",
+  "generatedAtLabel": "Generated",
 
   "vesselOperations": "Vessel Operations",
   "viewEntries": "View entries",
+  "bulkImport": "Bulk Import",
+  "bulkImportSubtitle": "AI-scan multiple files at once",
+  "addFiles": "Add files",
+  "bulkImportEmpty": "Add files to scan and route them to the right module automatically.",
+  "bulkImportErrors": "Errors",
+  "bulkImportFilesTotal": "Files",
+  "bulkImportFilesFailed": "Failed",
+  "bulkImportDuplicates": "Duplicates",
+  "bulkImportUnclassified": "Unclassified",
+  "bulkImportAccept": "Accept",
   "tankStatusPdf": "Tank status PDF",
   "save": "Save",
   "delete": "Delete",
   "edit": "Edit",
   "editRequisition": "Edit Requisition",
+  "cancel": "Cancel",
+  "confirmDeleteTitle": "Delete this?",
+  "confirmDeleteMessage": "\"{item}\" will be permanently deleted. This can't be undone.",
+  "@confirmDeleteMessage": {
+    "placeholders": { "item": { "type": "String" } }
+  },
 
   "openCount": "{count, plural, one{1 open} other{{count} open}}",
   "@openCount": {
@@ -176,6 +218,7 @@
 
   "defects": "Defects",
   "addDefect": "Report Defect",
+  "editDefect": "Edit Defect",
   "defectTitleLabel": "Title",
   "defectDescriptionLabel": "Description",
   "severityLabel": "Severity",
@@ -193,6 +236,11 @@
 
   "criticalDefectsTitle": "{count, plural, one{1 critical defect} other{{count} critical defects}}",
   "@criticalDefectsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "pendingSyncBanner": "{count, plural, one{1 change waiting to sync} other{{count} changes waiting to sync}}",
+  "@pendingSyncBanner": {
     "placeholders": { "count": { "type": "int" } }
   },
 
@@ -217,6 +265,17 @@
   "markOrdered": "Mark Ordered",
   "markReceived": "Mark Received",
   "markRejected": "Reject",
+
+  "analyticsDashboard": "Analytics Dashboard",
+  "allVessels": "All Vessels",
+  "totalDefects": "Total Defects",
+  "openDefectsLabel": "Open Defects",
+  "totalRequisitions": "Total Requisitions",
+  "pendingRequisitionsLabel": "Pending Requisitions",
+  "defectsByStatus": "Defects by Status",
+  "defectsByPriority": "Defects by Priority",
+  "requisitionsByStatus": "Requisitions by Status",
+  "requisitionsByDepartment": "Requisitions by Department",
 
   "priorityMedium": "Medium",
   "priorityHigh": "High",
@@ -245,7 +304,7 @@
   "markTechSupApproval": "Mark Tech. Sup. Approved",
 
   "temperatureLabel": "Temperature (°C)",
-  "lastSounding": "Last sounding",
+  "lastSounding": "Last reading",
   "justNow": "Just now",
   "minutesAgo": "{count, plural, one{1 minute ago} other{{count} minutes ago}}",
   "@minutesAgo": {
@@ -259,7 +318,7 @@
   "@daysAgo": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "soundingHistory24h": "Sounding History",
+  "soundingHistory24h": "Reading History",
   "overfillCritical": "Critical (Overfill)",
   "overfillWarning": "Warning (Overfill)",
 
@@ -342,6 +401,23 @@
   "scheduledTimeLabel": "Scheduled Time",
   "checklistItemsLabel": "Checklist Items",
   "checklistItemsHint": "One item per line",
+  "checklistEngineOilPressure": "Check Main Engine Oil Pressure",
+  "checklistEngineCoolingWaterTemp": "Check Main Engine Cooling Water Temperature",
+  "checklistBilgesLeaks": "Inspect Bilges for Leaks",
+  "checklistGeneratorParams": "Check Generator Running Parameters",
+  "checklistMooringLines": "Inspect Mooring Lines & Fittings",
+  "checklistDeckLighting": "Check Deck Lighting",
+  "checklistCargoEquipment": "Inspect Cargo/Deck Equipment for Damage",
+  "checklistLifeboatMechanism": "Inspect Lifeboat Release Mechanism",
+  "checklistFireExtinguisher": "Check Fire Extinguisher Pressure Gauges",
+  "checklistEmergencyAlarm": "Test Emergency Alarm System",
+  "checklistLifeJackets": "Check Life Jacket Stock & Condition",
+  "checklistRadarArpa": "Test Radar & ARPA",
+  "checklistGpsAccuracy": "Check GPS/GNSS Position Accuracy",
+  "checklistSteeringGear": "Test Steering Gear (Manual/Auto)",
+  "checklistGalleyCleanliness": "Check Galley Cleanliness",
+  "checklistFoodStorageTemp": "Check Food Storage Temperatures",
+  "checklistPestControl": "Inspect Pest Control Measures",
   "taskStatusPending": "Pending",
   "taskStatusCompleted": "Completed",
   "taskStatusOverdue": "Overdue",
@@ -399,6 +475,7 @@
   "extractingFile": "Reading file with AI…",
   "extractionFailed": "Couldn't read the file automatically. Please enter the details manually.",
   "extractionNotConfigured": "AI extraction isn't set up yet.",
+  "extractionQuotaExhausted": "Today's free AI quota is used up. Please try again tomorrow.",
   "crew": "Crew",
   "crewListTitle": "Crew List",
   "currentCrew": "Current",
@@ -426,5 +503,49 @@
   "aiUnavailable": "Assistant is temporarily unavailable.",
   "aiBusy": "Assistant is busy — try again in a moment.",
   "aiError": "Something went wrong. Please try again.",
-  "send": "Send"
+  "send": "Send",
+  "handover": "Crew Handover",
+  "handoverSubtitle": "Watch & duty handover reports",
+  "addHandover": "New Handover Report",
+  "noHandovers": "No handover reports yet.",
+  "outgoingOfficerLabel": "Outgoing officer",
+  "incomingOfficerLabel": "Incoming officer",
+  "handoverDateLabel": "Handover date",
+  "safetySectionLabel": "Safety",
+  "machinerySectionLabel": "Machinery & equipment",
+  "pendingDefectsLabel": "Pending defects",
+  "bunkersTanksLabel": "Bunkers & tanks",
+  "certsExpiringLabel": "Certificates expiring",
+  "certAlarmTitle": "{count, plural, one{1 certificate expires within 30 days} other{{count} certificates expire within 30 days}}",
+  "@certAlarmTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "certAlarmTitleExpired": "{count, plural, one{1 certificate has expired} other{{count} certificates have expired}}",
+  "@certAlarmTitleExpired": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "certAlarmTitleMixed": "{expiredCount} expired, {expiringCount} expiring within 30 days",
+  "@certAlarmTitleMixed": {
+    "placeholders": {
+      "expiredCount": { "type": "int" },
+      "expiringCount": { "type": "int" }
+    }
+  },
+  "certDaysLeft": "{days, plural, one{1 day left} other{{days} days left}}",
+  "@certDaysLeft": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "certExpiresToday": "Expires today",
+  "certExpired": "Expired",
+  "certStatusValid": "Valid",
+  "remarksLabel": "Remarks",
+  "generateDraft": "Draft from vessel data",
+  "handoverStatusDraft": "Draft",
+  "handoverStatusIssued": "Issued",
+  "handoverStatusAcknowledged": "Acknowledged",
+  "issueReport": "Issue",
+  "acknowledgeReport": "Acknowledge",
+  "acknowledgedByLabel": "Acknowledged by",
+  "exportPdf": "Export PDF",
+  "editReport": "Edit"
 }

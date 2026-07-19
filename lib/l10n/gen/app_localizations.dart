@@ -338,6 +338,12 @@ abstract class AppLocalizations {
   /// **'Incorrect username or password'**
   String get invalidCredentials;
 
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t reach the server — check your connection and try again'**
+  String get networkError;
+
   /// No description provided for @offlineAuthNote.
   ///
   /// In en, this message translates to:
@@ -620,6 +626,42 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settings;
 
+  /// No description provided for @tankHistoryChartSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank level history chart, currently {percent}% of capacity'**
+  String tankHistoryChartSemantics(int percent);
+
+  /// No description provided for @chartEntriesSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Chart: {entries}'**
+  String chartEntriesSemantics(String entries);
+
+  /// No description provided for @tankLevelSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank level'**
+  String get tankLevelSemantics;
+
+  /// No description provided for @navFleet.
+  ///
+  /// In en, this message translates to:
+  /// **'Fleet'**
+  String get navFleet;
+
+  /// No description provided for @navAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get navAnalytics;
+
+  /// No description provided for @navAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant'**
+  String get navAssistant;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
@@ -848,11 +890,41 @@ abstract class AppLocalizations {
   /// **'Export format'**
   String get exportFormat;
 
+  /// No description provided for @exportFormatPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF'**
+  String get exportFormatPdf;
+
+  /// No description provided for @exportFormatCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'CSV'**
+  String get exportFormatCsv;
+
   /// No description provided for @generateReport.
   ///
   /// In en, this message translates to:
   /// **'Generate report'**
   String get generateReport;
+
+  /// No description provided for @reviewReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewReport;
+
+  /// No description provided for @reportNoEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'No entries'**
+  String get reportNoEntries;
+
+  /// No description provided for @generatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated'**
+  String get generatedAtLabel;
 
   /// No description provided for @vesselOperations.
   ///
@@ -865,6 +937,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View entries'**
   String get viewEntries;
+
+  /// No description provided for @bulkImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Import'**
+  String get bulkImport;
+
+  /// No description provided for @bulkImportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-scan multiple files at once'**
+  String get bulkImportSubtitle;
+
+  /// No description provided for @addFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Add files'**
+  String get addFiles;
+
+  /// No description provided for @bulkImportEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add files to scan and route them to the right module automatically.'**
+  String get bulkImportEmpty;
+
+  /// No description provided for @bulkImportErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors'**
+  String get bulkImportErrors;
+
+  /// No description provided for @bulkImportFilesTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Files'**
+  String get bulkImportFilesTotal;
+
+  /// No description provided for @bulkImportFilesFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get bulkImportFilesFailed;
+
+  /// No description provided for @bulkImportDuplicates.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicates'**
+  String get bulkImportDuplicates;
+
+  /// No description provided for @bulkImportUnclassified.
+  ///
+  /// In en, this message translates to:
+  /// **'Unclassified'**
+  String get bulkImportUnclassified;
+
+  /// No description provided for @bulkImportAccept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get bulkImportAccept;
 
   /// No description provided for @tankStatusPdf.
   ///
@@ -883,6 +1015,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @editRequisition.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Requisition'**
+  String get editRequisition;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirmDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this?'**
+  String get confirmDeleteTitle;
+
+  /// No description provided for @confirmDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'\"{item}\" will be permanently deleted. This can\'t be undone.'**
+  String confirmDeleteMessage(String item);
 
   /// No description provided for @openCount.
   ///
@@ -907,6 +1069,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report Defect'**
   String get addDefect;
+
+  /// No description provided for @editDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Defect'**
+  String get editDefect;
 
   /// No description provided for @defectTitleLabel.
   ///
@@ -997,6 +1165,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{1 critical defect} other{{count} critical defects}}'**
   String criticalDefectsTitle(int count);
+
+  /// No description provided for @pendingSyncBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 change waiting to sync} other{{count} changes waiting to sync}}'**
+  String pendingSyncBanner(int count);
 
   /// No description provided for @requisitions.
   ///
@@ -1123,6 +1297,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reject'**
   String get markRejected;
+
+  /// No description provided for @analyticsDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics Dashboard'**
+  String get analyticsDashboard;
+
+  /// No description provided for @allVessels.
+  ///
+  /// In en, this message translates to:
+  /// **'All Vessels'**
+  String get allVessels;
+
+  /// No description provided for @totalDefects.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Defects'**
+  String get totalDefects;
+
+  /// No description provided for @openDefectsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Defects'**
+  String get openDefectsLabel;
+
+  /// No description provided for @totalRequisitions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Requisitions'**
+  String get totalRequisitions;
+
+  /// No description provided for @pendingRequisitionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Requisitions'**
+  String get pendingRequisitionsLabel;
+
+  /// No description provided for @defectsByStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Defects by Status'**
+  String get defectsByStatus;
+
+  /// No description provided for @defectsByPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'Defects by Priority'**
+  String get defectsByPriority;
+
+  /// No description provided for @requisitionsByStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisitions by Status'**
+  String get requisitionsByStatus;
+
+  /// No description provided for @requisitionsByDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisitions by Department'**
+  String get requisitionsByDepartment;
 
   /// No description provided for @priorityMedium.
   ///
@@ -1283,7 +1517,7 @@ abstract class AppLocalizations {
   /// No description provided for @lastSounding.
   ///
   /// In en, this message translates to:
-  /// **'Last sounding'**
+  /// **'Last reading'**
   String get lastSounding;
 
   /// No description provided for @justNow.
@@ -1313,7 +1547,7 @@ abstract class AppLocalizations {
   /// No description provided for @soundingHistory24h.
   ///
   /// In en, this message translates to:
-  /// **'Sounding History'**
+  /// **'Reading History'**
   String get soundingHistory24h;
 
   /// No description provided for @overfillCritical.
@@ -1766,6 +2000,108 @@ abstract class AppLocalizations {
   /// **'One item per line'**
   String get checklistItemsHint;
 
+  /// No description provided for @checklistEngineOilPressure.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Main Engine Oil Pressure'**
+  String get checklistEngineOilPressure;
+
+  /// No description provided for @checklistEngineCoolingWaterTemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Main Engine Cooling Water Temperature'**
+  String get checklistEngineCoolingWaterTemp;
+
+  /// No description provided for @checklistBilgesLeaks.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Bilges for Leaks'**
+  String get checklistBilgesLeaks;
+
+  /// No description provided for @checklistGeneratorParams.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Generator Running Parameters'**
+  String get checklistGeneratorParams;
+
+  /// No description provided for @checklistMooringLines.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Mooring Lines & Fittings'**
+  String get checklistMooringLines;
+
+  /// No description provided for @checklistDeckLighting.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Deck Lighting'**
+  String get checklistDeckLighting;
+
+  /// No description provided for @checklistCargoEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Cargo/Deck Equipment for Damage'**
+  String get checklistCargoEquipment;
+
+  /// No description provided for @checklistLifeboatMechanism.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Lifeboat Release Mechanism'**
+  String get checklistLifeboatMechanism;
+
+  /// No description provided for @checklistFireExtinguisher.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Fire Extinguisher Pressure Gauges'**
+  String get checklistFireExtinguisher;
+
+  /// No description provided for @checklistEmergencyAlarm.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Emergency Alarm System'**
+  String get checklistEmergencyAlarm;
+
+  /// No description provided for @checklistLifeJackets.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Life Jacket Stock & Condition'**
+  String get checklistLifeJackets;
+
+  /// No description provided for @checklistRadarArpa.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Radar & ARPA'**
+  String get checklistRadarArpa;
+
+  /// No description provided for @checklistGpsAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Check GPS/GNSS Position Accuracy'**
+  String get checklistGpsAccuracy;
+
+  /// No description provided for @checklistSteeringGear.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Steering Gear (Manual/Auto)'**
+  String get checklistSteeringGear;
+
+  /// No description provided for @checklistGalleyCleanliness.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Galley Cleanliness'**
+  String get checklistGalleyCleanliness;
+
+  /// No description provided for @checklistFoodStorageTemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Food Storage Temperatures'**
+  String get checklistFoodStorageTemp;
+
+  /// No description provided for @checklistPestControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect Pest Control Measures'**
+  String get checklistPestControl;
+
   /// No description provided for @taskStatusPending.
   ///
   /// In en, this message translates to:
@@ -2024,6 +2360,12 @@ abstract class AppLocalizations {
   /// **'AI extraction isn\'t set up yet.'**
   String get extractionNotConfigured;
 
+  /// No description provided for @extractionQuotaExhausted.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s free AI quota is used up. Please try again tomorrow.'**
+  String get extractionQuotaExhausted;
+
   /// No description provided for @crew.
   ///
   /// In en, this message translates to:
@@ -2161,6 +2503,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send'**
   String get send;
+
+  /// No description provided for @handover.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew Handover'**
+  String get handover;
+
+  /// No description provided for @handoverSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch & duty handover reports'**
+  String get handoverSubtitle;
+
+  /// No description provided for @addHandover.
+  ///
+  /// In en, this message translates to:
+  /// **'New Handover Report'**
+  String get addHandover;
+
+  /// No description provided for @noHandovers.
+  ///
+  /// In en, this message translates to:
+  /// **'No handover reports yet.'**
+  String get noHandovers;
+
+  /// No description provided for @outgoingOfficerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Outgoing officer'**
+  String get outgoingOfficerLabel;
+
+  /// No description provided for @incomingOfficerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Incoming officer'**
+  String get incomingOfficerLabel;
+
+  /// No description provided for @handoverDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Handover date'**
+  String get handoverDateLabel;
+
+  /// No description provided for @safetySectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety'**
+  String get safetySectionLabel;
+
+  /// No description provided for @machinerySectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Machinery & equipment'**
+  String get machinerySectionLabel;
+
+  /// No description provided for @pendingDefectsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending defects'**
+  String get pendingDefectsLabel;
+
+  /// No description provided for @bunkersTanksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bunkers & tanks'**
+  String get bunkersTanksLabel;
+
+  /// No description provided for @certsExpiringLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates expiring'**
+  String get certsExpiringLabel;
+
+  /// No description provided for @certAlarmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 certificate expires within 30 days} other{{count} certificates expire within 30 days}}'**
+  String certAlarmTitle(int count);
+
+  /// No description provided for @certAlarmTitleExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 certificate has expired} other{{count} certificates have expired}}'**
+  String certAlarmTitleExpired(int count);
+
+  /// No description provided for @certAlarmTitleMixed.
+  ///
+  /// In en, this message translates to:
+  /// **'{expiredCount} expired, {expiringCount} expiring within 30 days'**
+  String certAlarmTitleMixed(int expiredCount, int expiringCount);
+
+  /// No description provided for @certDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{1 day left} other{{days} days left}}'**
+  String certDaysLeft(int days);
+
+  /// No description provided for @certExpiresToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires today'**
+  String get certExpiresToday;
+
+  /// No description provided for @certExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get certExpired;
+
+  /// No description provided for @certStatusValid.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid'**
+  String get certStatusValid;
+
+  /// No description provided for @remarksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remarks'**
+  String get remarksLabel;
+
+  /// No description provided for @generateDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft from vessel data'**
+  String get generateDraft;
+
+  /// No description provided for @handoverStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get handoverStatusDraft;
+
+  /// No description provided for @handoverStatusIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued'**
+  String get handoverStatusIssued;
+
+  /// No description provided for @handoverStatusAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledged'**
+  String get handoverStatusAcknowledged;
+
+  /// No description provided for @issueReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue'**
+  String get issueReport;
+
+  /// No description provided for @acknowledgeReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge'**
+  String get acknowledgeReport;
+
+  /// No description provided for @acknowledgedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledged by'**
+  String get acknowledgedByLabel;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
+
+  /// No description provided for @editReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editReport;
 }
 
 class _AppLocalizationsDelegate

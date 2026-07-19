@@ -129,6 +129,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidCredentials => 'Incorrect username or password';
 
   @override
+  String get networkError =>
+      'Couldn\'t reach the server — check your connection and try again';
+
+  @override
   String get offlineAuthNote =>
       'Shared fleet account — sign in with your username.';
 
@@ -291,6 +295,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
+  String tankHistoryChartSemantics(int percent) {
+    return 'Tank level history chart, currently $percent% of capacity';
+  }
+
+  @override
+  String chartEntriesSemantics(String entries) {
+    return 'Chart: $entries';
+  }
+
+  @override
+  String get tankLevelSemantics => 'Tank level';
+
+  @override
+  String get navFleet => 'Fleet';
+
+  @override
+  String get navAnalytics => 'Analytics';
+
+  @override
+  String get navAssistant => 'Assistant';
+
+  @override
   String get language => 'Language';
 
   @override
@@ -414,13 +440,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportFormat => 'Export format';
 
   @override
+  String get exportFormatPdf => 'PDF';
+
+  @override
+  String get exportFormatCsv => 'CSV';
+
+  @override
   String get generateReport => 'Generate report';
+
+  @override
+  String get reviewReport => 'Review';
+
+  @override
+  String get reportNoEntries => 'No entries';
+
+  @override
+  String get generatedAtLabel => 'Generated';
 
   @override
   String get vesselOperations => 'Vessel Operations';
 
   @override
   String get viewEntries => 'View entries';
+
+  @override
+  String get bulkImport => 'Bulk Import';
+
+  @override
+  String get bulkImportSubtitle => 'AI-scan multiple files at once';
+
+  @override
+  String get addFiles => 'Add files';
+
+  @override
+  String get bulkImportEmpty =>
+      'Add files to scan and route them to the right module automatically.';
+
+  @override
+  String get bulkImportErrors => 'Errors';
+
+  @override
+  String get bulkImportFilesTotal => 'Files';
+
+  @override
+  String get bulkImportFilesFailed => 'Failed';
+
+  @override
+  String get bulkImportDuplicates => 'Duplicates';
+
+  @override
+  String get bulkImportUnclassified => 'Unclassified';
+
+  @override
+  String get bulkImportAccept => 'Accept';
 
   @override
   String get tankStatusPdf => 'Tank status PDF';
@@ -430,6 +502,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get editRequisition => 'Edit Requisition';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirmDeleteTitle => 'Delete this?';
+
+  @override
+  String confirmDeleteMessage(String item) {
+    return '\"$item\" will be permanently deleted. This can\'t be undone.';
+  }
 
   @override
   String openCount(int count) {
@@ -458,6 +547,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addDefect => 'Report Defect';
+
+  @override
+  String get editDefect => 'Edit Defect';
 
   @override
   String get defectTitleLabel => 'Title';
@@ -508,6 +600,17 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: '$count critical defects',
       one: '1 critical defect',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pendingSyncBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes waiting to sync',
+      one: '1 change waiting to sync',
     );
     return '$_temp0';
   }
@@ -574,6 +677,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markRejected => 'Reject';
+
+  @override
+  String get analyticsDashboard => 'Analytics Dashboard';
+
+  @override
+  String get allVessels => 'All Vessels';
+
+  @override
+  String get totalDefects => 'Total Defects';
+
+  @override
+  String get openDefectsLabel => 'Open Defects';
+
+  @override
+  String get totalRequisitions => 'Total Requisitions';
+
+  @override
+  String get pendingRequisitionsLabel => 'Pending Requisitions';
+
+  @override
+  String get defectsByStatus => 'Defects by Status';
+
+  @override
+  String get defectsByPriority => 'Defects by Priority';
+
+  @override
+  String get requisitionsByStatus => 'Requisitions by Status';
+
+  @override
+  String get requisitionsByDepartment => 'Requisitions by Department';
 
   @override
   String get priorityMedium => 'Medium';
@@ -654,7 +787,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get temperatureLabel => 'Temperature (°C)';
 
   @override
-  String get lastSounding => 'Last sounding';
+  String get lastSounding => 'Last reading';
 
   @override
   String get justNow => 'Just now';
@@ -693,7 +826,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get soundingHistory24h => 'Sounding History';
+  String get soundingHistory24h => 'Reading History';
 
   @override
   String get overfillCritical => 'Critical (Overfill)';
@@ -929,6 +1062,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checklistItemsHint => 'One item per line';
 
   @override
+  String get checklistEngineOilPressure => 'Check Main Engine Oil Pressure';
+
+  @override
+  String get checklistEngineCoolingWaterTemp =>
+      'Check Main Engine Cooling Water Temperature';
+
+  @override
+  String get checklistBilgesLeaks => 'Inspect Bilges for Leaks';
+
+  @override
+  String get checklistGeneratorParams => 'Check Generator Running Parameters';
+
+  @override
+  String get checklistMooringLines => 'Inspect Mooring Lines & Fittings';
+
+  @override
+  String get checklistDeckLighting => 'Check Deck Lighting';
+
+  @override
+  String get checklistCargoEquipment =>
+      'Inspect Cargo/Deck Equipment for Damage';
+
+  @override
+  String get checklistLifeboatMechanism => 'Inspect Lifeboat Release Mechanism';
+
+  @override
+  String get checklistFireExtinguisher =>
+      'Check Fire Extinguisher Pressure Gauges';
+
+  @override
+  String get checklistEmergencyAlarm => 'Test Emergency Alarm System';
+
+  @override
+  String get checklistLifeJackets => 'Check Life Jacket Stock & Condition';
+
+  @override
+  String get checklistRadarArpa => 'Test Radar & ARPA';
+
+  @override
+  String get checklistGpsAccuracy => 'Check GPS/GNSS Position Accuracy';
+
+  @override
+  String get checklistSteeringGear => 'Test Steering Gear (Manual/Auto)';
+
+  @override
+  String get checklistGalleyCleanliness => 'Check Galley Cleanliness';
+
+  @override
+  String get checklistFoodStorageTemp => 'Check Food Storage Temperatures';
+
+  @override
+  String get checklistPestControl => 'Inspect Pest Control Measures';
+
+  @override
   String get taskStatusPending => 'Pending';
 
   @override
@@ -1086,6 +1273,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extractionNotConfigured => 'AI extraction isn\'t set up yet.';
 
   @override
+  String get extractionQuotaExhausted =>
+      'Today\'s free AI quota is used up. Please try again tomorrow.';
+
+  @override
   String get crew => 'Crew';
 
   @override
@@ -1164,4 +1355,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get send => 'Send';
+
+  @override
+  String get handover => 'Crew Handover';
+
+  @override
+  String get handoverSubtitle => 'Watch & duty handover reports';
+
+  @override
+  String get addHandover => 'New Handover Report';
+
+  @override
+  String get noHandovers => 'No handover reports yet.';
+
+  @override
+  String get outgoingOfficerLabel => 'Outgoing officer';
+
+  @override
+  String get incomingOfficerLabel => 'Incoming officer';
+
+  @override
+  String get handoverDateLabel => 'Handover date';
+
+  @override
+  String get safetySectionLabel => 'Safety';
+
+  @override
+  String get machinerySectionLabel => 'Machinery & equipment';
+
+  @override
+  String get pendingDefectsLabel => 'Pending defects';
+
+  @override
+  String get bunkersTanksLabel => 'Bunkers & tanks';
+
+  @override
+  String get certsExpiringLabel => 'Certificates expiring';
+
+  @override
+  String certAlarmTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count certificates expire within 30 days',
+      one: '1 certificate expires within 30 days',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certAlarmTitleExpired(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count certificates have expired',
+      one: '1 certificate has expired',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String certAlarmTitleMixed(int expiredCount, int expiringCount) {
+    return '$expiredCount expired, $expiringCount expiring within 30 days';
+  }
+
+  @override
+  String certDaysLeft(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days left',
+      one: '1 day left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get certExpiresToday => 'Expires today';
+
+  @override
+  String get certExpired => 'Expired';
+
+  @override
+  String get certStatusValid => 'Valid';
+
+  @override
+  String get remarksLabel => 'Remarks';
+
+  @override
+  String get generateDraft => 'Draft from vessel data';
+
+  @override
+  String get handoverStatusDraft => 'Draft';
+
+  @override
+  String get handoverStatusIssued => 'Issued';
+
+  @override
+  String get handoverStatusAcknowledged => 'Acknowledged';
+
+  @override
+  String get issueReport => 'Issue';
+
+  @override
+  String get acknowledgeReport => 'Acknowledge';
+
+  @override
+  String get acknowledgedByLabel => 'Acknowledged by';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get editReport => 'Edit';
 }

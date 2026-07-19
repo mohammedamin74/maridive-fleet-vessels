@@ -44,6 +44,7 @@
   "passwordLabel": "كلمة المرور",
   "loginButton": "دخول",
   "invalidCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+  "networkError": "تعذّر الوصول إلى الخادم — تحقق من الاتصال وحاول مرة أخرى",
   "offlineAuthNote": "حساب أسطول مشترك — سجّل الدخول باسم المستخدم.",
   "account": "الحساب",
   "logOut": "تسجيل الخروج",
@@ -107,6 +108,12 @@
   "volumeM3": "الحجم (م³)",
 
   "settings": "الإعدادات",
+  "tankHistoryChartSemantics": "مخطط سجل مستوى الخزان، حاليًا {percent}٪ من السعة",
+  "chartEntriesSemantics": "مخطط: {entries}",
+  "tankLevelSemantics": "مستوى الخزان",
+  "navFleet": "الأسطول",
+  "navAnalytics": "التحليلات",
+  "navAssistant": "المساعد",
   "language": "اللغة",
   "english": "English",
   "arabic": "العربية",
@@ -154,15 +161,36 @@
   "levelLabel": "المستوى",
   "selectSections": "اختر الأقسام",
   "exportFormat": "صيغة التصدير",
+  "exportFormatPdf": "PDF",
+  "exportFormatCsv": "CSV",
   "generateReport": "إنشاء التقرير",
+  "reviewReport": "مراجعة",
+  "reportNoEntries": "لا توجد سجلات",
+  "generatedAtLabel": "تاريخ الإنشاء",
 
   "vesselOperations": "عمليات السفينة",
   "viewEntries": "عرض السجلات",
+  "bulkImport": "استيراد جماعي",
+  "bulkImportSubtitle": "مسح عدة ملفات بالذكاء الاصطناعي دفعة واحدة",
+  "addFiles": "إضافة ملفات",
+  "bulkImportEmpty": "أضف ملفات ليتم مسحها وتوجيهها تلقائيًا إلى القسم المناسب.",
+  "bulkImportErrors": "الأخطاء",
+  "bulkImportFilesTotal": "الملفات",
+  "bulkImportFilesFailed": "فشلت",
+  "bulkImportDuplicates": "مكررة",
+  "bulkImportUnclassified": "غير مصنفة",
+  "bulkImportAccept": "قبول",
   "tankStatusPdf": "تقرير حالة الخزانات PDF",
   "save": "حفظ",
   "delete": "حذف",
   "edit": "تعديل",
   "editRequisition": "تعديل الطلب",
+  "cancel": "إلغاء",
+  "confirmDeleteTitle": "حذف هذا العنصر؟",
+  "confirmDeleteMessage": "سيتم حذف \"{item}\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+  "@confirmDeleteMessage": {
+    "placeholders": { "item": { "type": "String" } }
+  },
 
   "openCount": "{count, plural, zero{لا توجد مفتوحة} one{١ مفتوح} two{٢ مفتوحة} few{{count} مفتوحة} many{{count} مفتوحة} other{{count} مفتوحة}}",
   "@openCount": {
@@ -175,6 +203,7 @@
 
   "defects": "الأعطال",
   "addDefect": "الإبلاغ عن عطل",
+  "editDefect": "تعديل العطل",
   "defectTitleLabel": "العنوان",
   "defectDescriptionLabel": "الوصف",
   "severityLabel": "الخطورة",
@@ -192,6 +221,11 @@
 
   "criticalDefectsTitle": "{count, plural, zero{لا توجد أعطال حرجة} one{عطل حرج واحد} two{عطلان حرجان} few{{count} أعطال حرجة} many{{count} عطلاً حرجًا} other{{count} عطل حرج}}",
   "@criticalDefectsTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "pendingSyncBanner": "{count, plural, zero{تم مزامنة كل التغييرات} one{تغيير واحد بانتظار المزامنة} two{تغييران بانتظار المزامنة} few{{count} تغييرات بانتظار المزامنة} many{{count} تغييرًا بانتظار المزامنة} other{{count} تغيير بانتظار المزامنة}}",
+  "@pendingSyncBanner": {
     "placeholders": { "count": { "type": "int" } }
   },
 
@@ -216,6 +250,17 @@
   "markOrdered": "تحديد كـ تم الطلب",
   "markReceived": "تحديد كـ تم الاستلام",
   "markRejected": "رفض",
+
+  "analyticsDashboard": "لوحة التحليلات",
+  "allVessels": "كل السفن",
+  "totalDefects": "إجمالي الأعطال",
+  "openDefectsLabel": "الأعطال المفتوحة",
+  "totalRequisitions": "إجمالي طلبات التوريد",
+  "pendingRequisitionsLabel": "طلبات التوريد المعلقة",
+  "defectsByStatus": "الأعطال حسب الحالة",
+  "defectsByPriority": "الأعطال حسب الأولوية",
+  "requisitionsByStatus": "طلبات التوريد حسب الحالة",
+  "requisitionsByDepartment": "طلبات التوريد حسب القسم",
 
   "priorityMedium": "متوسطة",
   "priorityHigh": "عالية",
@@ -244,7 +289,7 @@
   "markTechSupApproval": "تحديد كـ معتمد من المشرف الفني",
 
   "temperatureLabel": "درجة الحرارة (°م)",
-  "lastSounding": "آخر قياس",
+  "lastSounding": "آخر قراءة",
   "justNow": "الآن",
   "minutesAgo": "{count, plural, zero{الآن} one{منذ دقيقة واحدة} two{منذ دقيقتين} few{منذ {count} دقائق} many{منذ {count} دقيقة} other{منذ {count} دقيقة}}",
   "@minutesAgo": {
@@ -258,7 +303,7 @@
   "@daysAgo": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "soundingHistory24h": "سجل القياسات",
+  "soundingHistory24h": "سجل القراءات",
   "overfillCritical": "حرج (فيضان)",
   "overfillWarning": "تحذير (فيضان)",
 
@@ -341,6 +386,23 @@
   "scheduledTimeLabel": "الوقت المجدول",
   "checklistItemsLabel": "بنود القائمة",
   "checklistItemsHint": "بند واحد في كل سطر",
+  "checklistEngineOilPressure": "فحص ضغط زيت المحرك الرئيسي",
+  "checklistEngineCoolingWaterTemp": "فحص درجة حرارة مياه تبريد المحرك الرئيسي",
+  "checklistBilgesLeaks": "فحص المستودعات (البيلج) بحثًا عن التسريبات",
+  "checklistGeneratorParams": "فحص معايير تشغيل المولد",
+  "checklistMooringLines": "فحص حبال الرباط والتجهيزات",
+  "checklistDeckLighting": "فحص إضاءة السطح",
+  "checklistCargoEquipment": "فحص معدات الشحن/السطح بحثًا عن الأضرار",
+  "checklistLifeboatMechanism": "فحص آلية تحرير قارب النجاة",
+  "checklistFireExtinguisher": "فحص مقاييس ضغط طفايات الحريق",
+  "checklistEmergencyAlarm": "اختبار نظام الإنذار الطارئ",
+  "checklistLifeJackets": "فحص مخزون وحالة سترات النجاة",
+  "checklistRadarArpa": "اختبار الرادار ونظام ARPA",
+  "checklistGpsAccuracy": "فحص دقة موقع GPS/GNSS",
+  "checklistSteeringGear": "اختبار جهاز التوجيه (يدوي/آلي)",
+  "checklistGalleyCleanliness": "فحص نظافة المطبخ",
+  "checklistFoodStorageTemp": "فحص درجات حرارة تخزين الطعام",
+  "checklistPestControl": "فحص إجراءات مكافحة الآفات",
   "taskStatusPending": "معلقة",
   "taskStatusCompleted": "مكتملة",
   "taskStatusOverdue": "متأخرة",
@@ -398,6 +460,7 @@
   "extractingFile": "جارٍ قراءة الملف بالذكاء الاصطناعي…",
   "extractionFailed": "تعذّرت قراءة الملف تلقائيًا. الرجاء إدخال البيانات يدويًا.",
   "extractionNotConfigured": "ميزة الاستخراج بالذكاء الاصطناعي غير مُفعّلة بعد.",
+  "extractionQuotaExhausted": "تم استهلاك حصة الذكاء الاصطناعي المجانية لهذا اليوم. حاول مرة أخرى غدًا.",
   "crew": "الطاقم",
   "crewListTitle": "قائمة الطاقم",
   "currentCrew": "الحالي",
@@ -425,5 +488,49 @@
   "aiUnavailable": "المساعد غير متاح مؤقتًا.",
   "aiBusy": "المساعد مشغول — حاول مرة أخرى بعد قليل.",
   "aiError": "حدث خطأ ما. حاول مرة أخرى.",
-  "send": "إرسال"
+  "send": "إرسال",
+  "handover": "تسليم واستلام الطاقم",
+  "handoverSubtitle": "تقارير تسليم المناوبة والمهام",
+  "addHandover": "تقرير تسليم جديد",
+  "noHandovers": "لا توجد تقارير تسليم بعد.",
+  "outgoingOfficerLabel": "الضابط المُسلِّم",
+  "incomingOfficerLabel": "الضابط المُستلِم",
+  "handoverDateLabel": "تاريخ التسليم",
+  "safetySectionLabel": "السلامة",
+  "machinerySectionLabel": "الآلات والمعدات",
+  "pendingDefectsLabel": "الأعطال المعلقة",
+  "bunkersTanksLabel": "الوقود والخزانات",
+  "certsExpiringLabel": "الشهادات القاربة على الانتهاء",
+  "certAlarmTitle": "{count, plural, zero{لا توجد شهادات تنتهي خلال 30 يومًا} one{شهادة واحدة تنتهي خلال 30 يومًا} two{شهادتان تنتهيان خلال 30 يومًا} few{{count} شهادات تنتهي خلال 30 يومًا} many{{count} شهادة تنتهي خلال 30 يومًا} other{{count} شهادة تنتهي خلال 30 يومًا}}",
+  "@certAlarmTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "certAlarmTitleExpired": "{count, plural, zero{لا توجد شهادات منتهية} one{شهادة واحدة منتهية الصلاحية} two{شهادتان منتهيتا الصلاحية} few{{count} شهادات منتهية الصلاحية} many{{count} شهادة منتهية الصلاحية} other{{count} شهادة منتهية الصلاحية}}",
+  "@certAlarmTitleExpired": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "certAlarmTitleMixed": "{expiredCount} منتهية، {expiringCount} تنتهي خلال 30 يومًا",
+  "@certAlarmTitleMixed": {
+    "placeholders": {
+      "expiredCount": { "type": "int" },
+      "expiringCount": { "type": "int" }
+    }
+  },
+  "certDaysLeft": "{days, plural, zero{ينتهي اليوم} one{يوم واحد متبقٍ} two{يومان متبقيان} few{{days} أيام متبقية} many{{days} يومًا متبقيًا} other{{days} يوم متبقٍ}}",
+  "@certDaysLeft": {
+    "placeholders": { "days": { "type": "int" } }
+  },
+  "certExpiresToday": "تنتهي اليوم",
+  "certExpired": "منتهية الصلاحية",
+  "certStatusValid": "سارية",
+  "remarksLabel": "ملاحظات",
+  "generateDraft": "مسودة من بيانات السفينة",
+  "handoverStatusDraft": "مسودة",
+  "handoverStatusIssued": "صادر",
+  "handoverStatusAcknowledged": "مُستلَم",
+  "issueReport": "إصدار",
+  "acknowledgeReport": "تأكيد الاستلام",
+  "acknowledgedByLabel": "تم الاستلام بواسطة",
+  "exportPdf": "تصدير PDF",
+  "editReport": "تعديل"
 }
