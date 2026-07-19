@@ -25,7 +25,10 @@ jobs:
 
       - run: flutter pub get
 
-      - run: flutter build web --release --base-href /maridive-fleet-vessels/
+      # --no-web-resources-cdn bundles CanvasKit locally instead of loading it
+      # from gstatic.com, so the app loads on networks where that CDN is
+      # blocked (matches build.yml's build-web job).
+      - run: flutter build web --release --base-href /maridive-fleet-vessels/ --no-web-resources-cdn
 
       - uses: peaceiris/actions-gh-pages@v4
         with:
