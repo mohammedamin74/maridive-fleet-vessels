@@ -148,6 +148,26 @@ class AuthProvider extends ChangeNotifier {
     return _adminAction({'action': 'delete', 'username': username});
   }
 
+  /// Edits another user's username, display name, and/or password in one
+  /// call (admin only). Pass only the fields that changed; [newUsername]
+  /// null/unchanged and [newPassword] null/empty both mean "leave as-is".
+  Future<String?> updateUser({
+    required String username,
+    String? newUsername,
+    String? displayName,
+    String? newPassword,
+  }) {
+    final trimmed = newUsername?.trim().toLowerCase();
+    if (trimmed != null && trimmed.isEmpty) return Future.value('required');
+    final body = <String, dynamic>{'action': 'update', 'username': username};
+    if (trimmed != null && trimmed != username) body['newUsername'] = trimmed;
+    if (displayName != null) body['displayName'] = displayName.trim();
+    if (newPassword != null && newPassword.isNotEmpty) {
+      body['password'] = newPassword;
+    }
+    return _adminAction(body);
+  }
+
   Future<String?> changePassword(String username, String newPassword) async {
     if (newPassword.isEmpty) return 'required';
     // Changing your own password can go straight through the client session.

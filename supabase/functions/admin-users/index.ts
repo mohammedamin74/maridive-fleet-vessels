@@ -78,6 +78,55 @@ Deno.serve(async (req) => {
       return json(200, { ok: true });
     }
 
+    if (action === "update") {
+      if (username === "admin") return json(400, { error: "protectedUser" });
+      const { data: target } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("username", username)
+        .maybeSingle();
+      if (!target) return json(404, { error: "notFound" });
+
+      const newUsername = body.newUsername
+        ? String(body.newUsername).trim().toLowerCase()
+        : username;
+      if (!newUsername) return json(400, { error: "required" });
+
+      const authUpdate: Record<string, unknown> = {};
+      if (newUsername !== username) {
+        authUpdate.email = newUsername + DOMAIN;
+        authUpdate.email_confirm = true;
+      }
+      if (body.password) authUpdate.password = String(body.password);
+      if (Object.keys(authUpdate).length > 0) {
+        const { error } = await admin.auth.admin.updateUserById(
+          target.id,
+          authUpdate,
+        );
+        if (error) {
+          const m = String(error.message).toLowerCase();
+          if (m.includes("already") || m.includes("exists")) {
+            return json(409, { error: "userExists" });
+          }
+          return json(400, { error: error.message });
+        }
+      }
+
+      const profileUpdate: Record<string, unknown> = {};
+      if (newUsername !== username) profileUpdate.username = newUsername;
+      if (body.displayName !== undefined) {
+        profileUpdate.display_name = String(body.displayName).trim();
+      }
+      if (Object.keys(profileUpdate).length > 0) {
+        const { error } = await admin
+          .from("profiles")
+          .update(profileUpdate)
+          .eq("id", target.id);
+        if (error) return json(400, { error: error.message });
+      }
+      return json(200, { ok: true });
+    }
+
     if (action === "delete" || action === "reset") {
       if (username === "admin") return json(400, { error: "protectedUser" });
       const { data: target } = await admin

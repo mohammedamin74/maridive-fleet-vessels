@@ -173,6 +173,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordChanged => 'Password updated';
 
   @override
+  String get editUser => 'Edit User';
+
+  @override
+  String get userUpdated => 'User updated';
+
+  @override
+  String get keepCurrentPasswordHint =>
+      'Leave blank to keep the current password';
+
+  @override
   String get fieldsRequired => 'Username and password are required';
 
   @override

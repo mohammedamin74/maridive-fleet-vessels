@@ -422,6 +422,24 @@ abstract class AppLocalizations {
   /// **'Password updated'**
   String get passwordChanged;
 
+  /// No description provided for @editUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit User'**
+  String get editUser;
+
+  /// No description provided for @userUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'User updated'**
+  String get userUpdated;
+
+  /// No description provided for @keepCurrentPasswordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank to keep the current password'**
+  String get keepCurrentPasswordHint;
+
   /// No description provided for @fieldsRequired.
   ///
   /// In en, this message translates to:

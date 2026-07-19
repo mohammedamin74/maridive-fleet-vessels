@@ -172,6 +172,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordChanged => 'تم تحديث كلمة المرور';
 
   @override
+  String get editUser => 'تعديل المستخدم';
+
+  @override
+  String get userUpdated => 'تم تحديث المستخدم';
+
+  @override
+  String get keepCurrentPasswordHint =>
+      'اتركه فارغًا للاحتفاظ بكلمة المرور الحالية';
+
+  @override
   String get fieldsRequired => 'اسم المستخدم وكلمة المرور مطلوبان';
 
   @override

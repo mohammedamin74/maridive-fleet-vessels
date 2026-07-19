@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../models/app_user.dart';
 import '../state/auth_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/confirm_delete.dart';
@@ -77,10 +78,19 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          tooltip: t.changePassword,
-                          icon: const Icon(Icons.key_outlined),
-                          onPressed: () => _showChangePasswordSheet(
-                              context, t, user.username),
+                          tooltip: t.editUser,
+                          icon: Icon(
+                            Icons.edit_outlined,
+                            color: user.username == 'admin'
+                                ? Theme.of(context)
+                                    .colorScheme
+                                    .onSurface
+                                    .withValues(alpha: 0.25)
+                                : null,
+                          ),
+                          onPressed: user.username == 'admin'
+                              ? null
+                              : () => _showEditUserSheet(context, t, user),
                         ),
                         IconButton(
                           tooltip: t.delete,
@@ -235,8 +245,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     );
   }
 
-  void _showChangePasswordSheet(
-      BuildContext context, AppLocalizations t, String username) {
+  void _showEditUserSheet(
+      BuildContext context, AppLocalizations t, AppUser user) {
+    final userController = TextEditingController(text: user.username);
+    final nameController = TextEditingController(text: user.displayName);
     final passController = TextEditingController();
     bool busy = false;
     String? error;
@@ -258,12 +270,25 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${t.changePassword} · @$username',
+                  Text(t.editUser,
                       style: Theme.of(sheetContext).textTheme.titleLarge),
                   const SizedBox(height: 16),
                   TextField(
+                    controller: userController,
+                    decoration: InputDecoration(labelText: t.usernameLabel),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: t.displayNameLabel),
+                  ),
+                  const SizedBox(height: 14),
+                  TextField(
                     controller: passController,
-                    decoration: InputDecoration(labelText: t.newPasswordLabel),
+                    decoration: InputDecoration(
+                      labelText: t.newPasswordLabel,
+                      helperText: t.keepCurrentPasswordHint,
+                    ),
                   ),
                   if (error != null) ...[
                     const SizedBox(height: 8),
@@ -282,14 +307,17 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                                 busy = true;
                                 error = null;
                               });
-                              final res = await context
-                                  .read<AuthProvider>()
-                                  .changePassword(
-                                      username, passController.text);
+                              final res =
+                                  await context.read<AuthProvider>().updateUser(
+                                        username: user.username,
+                                        newUsername: userController.text,
+                                        displayName: nameController.text,
+                                        newPassword: passController.text,
+                                      );
                               if (!sheetContext.mounted) return;
                               if (res == null) {
                                 Navigator.of(sheetContext).pop();
-                                _toast(context, t.passwordChanged);
+                                _toast(context, t.userUpdated);
                               } else {
                                 setSheet(() {
                                   busy = false;
