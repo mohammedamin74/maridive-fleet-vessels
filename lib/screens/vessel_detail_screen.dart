@@ -16,13 +16,17 @@ import '../state/urgent_notification_provider.dart';
 import '../state/vessel_profile_provider.dart';
 import '../state/vessel_spec_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import '../widgets/category_tile.dart';
 import '../widgets/status_badge.dart';
+import 'analytics_dashboard_screen.dart';
 import 'certification_screen.dart';
 import 'crew_list_screen.dart';
 import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
 import 'export_report_screen.dart';
+import 'handover_list_screen.dart';
+import 'ingestion_batch_screen.dart';
 import 'maintenance_list_screen.dart';
 import 'port_call_list_screen.dart';
 import 'port_requirements_screen.dart';
@@ -67,24 +71,31 @@ class VesselDetailScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: CustomScrollView(
+        child: LayoutBuilder(builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final gutter = AppBreakpoints.pageGutter(width);
+          return CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _VesselHeader(vessel: resolved, t: t)),
+            SliverToBoxAdapter(
+                child: _VesselHeader(
+                    vessel: resolved, t: t, gutter: gutter, width: width)),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
+              padding: gutter.add(const EdgeInsetsDirectional.only(
+                  top: AppSpacing.lg, bottom: AppSpacing.xs)),
               sliver: SliverToBoxAdapter(
                 child: Text(t.tankSystems,
                     style: Theme.of(context).textTheme.titleLarge),
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+              padding: gutter.add(const EdgeInsetsDirectional.only(
+                  top: AppSpacing.xs, bottom: AppSpacing.xs)),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.15,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 240,
+                  mainAxisExtent: 148,
+                  mainAxisSpacing: AppSpacing.sm,
+                  crossAxisSpacing: AppSpacing.sm,
                 ),
                 delegate: SliverChildListDelegate([
                   CategoryTile(
@@ -127,20 +138,22 @@ class VesselDetailScreen extends StatelessWidget {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+              padding: gutter.add(const EdgeInsetsDirectional.only(
+                  top: AppSpacing.sm, bottom: AppSpacing.xs)),
               sliver: SliverToBoxAdapter(
                 child: Text(t.vesselOperations,
                     style: Theme.of(context).textTheme.titleLarge),
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+              padding: gutter.add(const EdgeInsetsDirectional.only(
+                  top: AppSpacing.xs, bottom: 28)),
               sliver: SliverGrid(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 1.15,
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 240,
+                  mainAxisExtent: 148,
+                  mainAxisSpacing: AppSpacing.sm,
+                  crossAxisSpacing: AppSpacing.sm,
                 ),
                 delegate: SliverChildListDelegate([
                   CategoryTile(
@@ -184,6 +197,17 @@ class VesselDetailScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (_) =>
                               RequisitionListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.insights_outlined,
+                    title: t.analyticsDashboard,
+                    subtitle: t.viewEntries,
+                    color: AppColors.teal400,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              AnalyticsDashboardScreen(initialVessel: vessel)),
                     ),
                   ),
                   CategoryTile(
@@ -267,6 +291,16 @@ class VesselDetailScreen extends StatelessWidget {
                     ),
                   ),
                   CategoryTile(
+                    icon: Icons.swap_horiz_outlined,
+                    title: t.handover,
+                    subtitle: t.handoverSubtitle,
+                    color: AppColors.statusPort,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => HandoverListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
                     icon: Icons.picture_as_pdf_outlined,
                     title: t.exportReport,
                     subtitle: t.tankStatusPdf,
@@ -276,11 +310,22 @@ class VesselDetailScreen extends StatelessWidget {
                           builder: (_) => ExportReportScreen(vessel: resolved)),
                     ),
                   ),
+                  CategoryTile(
+                    icon: Icons.dynamic_feed_outlined,
+                    title: t.bulkImport,
+                    subtitle: t.bulkImportSubtitle,
+                    color: AppColors.teal500,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) => IngestionBatchScreen(vessel: resolved)),
+                    ),
+                  ),
                 ]),
               ),
             ),
           ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -299,7 +344,14 @@ class VesselDetailScreen extends StatelessWidget {
 class _VesselHeader extends StatelessWidget {
   final Vessel vessel;
   final AppLocalizations t;
-  const _VesselHeader({required this.vessel, required this.t});
+  final EdgeInsetsDirectional gutter;
+  final double width;
+  const _VesselHeader({
+    required this.vessel,
+    required this.t,
+    required this.gutter,
+    required this.width,
+  });
 
   String _statusLabel(AppLocalizations t, VesselStatus s) => switch (s) {
         VesselStatus.active => t.statusActive,
@@ -369,9 +421,17 @@ class _VesselHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+      // Full-bleed gradient; content is capped to the readable width so the
+      // hero (and its photo) stops stretching into a letterbox on wide
+      // windows and lines up with the grids below.
+      padding: gutter
+          .add(const EdgeInsetsDirectional.only(top: 4, bottom: AppSpacing.xl)),
       decoration: BoxDecoration(gradient: AppColors.heroGradient),
-      child: Column(
+      child: Center(
+        child: ConstrainedBox(
+        constraints:
+            const BoxConstraints(maxWidth: AppBreakpoints.contentMaxWidth),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -446,10 +506,10 @@ class _VesselHeader extends StatelessWidget {
                 if (vessel.photoAsset.isNotEmpty) ...[
                   const SizedBox(height: 16),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: AppRadius.lgAll,
                     child: Image.asset(
                       vessel.photoAsset,
-                      height: 170,
+                      height: width >= AppBreakpoints.expanded ? 220 : 170,
                       width: double.infinity,
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => const SizedBox.shrink(),
@@ -460,6 +520,8 @@ class _VesselHeader extends StatelessWidget {
             ),
           ),
         ],
+        ),
+        ),
       ),
     );
   }
@@ -498,7 +560,7 @@ class _InfoChip extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.65), fontSize: 10),
+                  color: Colors.white.withValues(alpha: 0.65), fontSize: 11),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),

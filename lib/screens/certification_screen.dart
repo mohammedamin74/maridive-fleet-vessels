@@ -10,7 +10,9 @@ import '../models/vessel.dart';
 import '../models/vessel_certificate.dart';
 import '../state/certification_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 import '../widgets/photo_picker.dart';
 
 Color reminderColor(CertReminderStatus s) {
@@ -21,6 +23,48 @@ Color reminderColor(CertReminderStatus s) {
       return AppColors.amber400;
     case CertReminderStatus.red:
       return AppColors.statusMaintenance;
+    case CertReminderStatus.expired:
+      return AppColors.statusExpired;
+  }
+}
+
+/// Persistent red strip shown while any of this vessel's certificates is
+/// expired or inside the 30-day alarm window. Expired and expiring-soon
+/// counts are surfaced separately so an already-expired certificate isn't
+/// misreported as "expires within 30 days".
+class _ExpiryAlarmBanner extends StatelessWidget {
+  final int expiredCount;
+  final int expiringCount;
+  const _ExpiryAlarmBanner(
+      {required this.expiredCount, required this.expiringCount});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    const alarm = AppColors.statusMaintenance;
+    final title = expiredCount == 0
+        ? t.certAlarmTitle(expiringCount)
+        : expiringCount == 0
+            ? t.certAlarmTitleExpired(expiredCount)
+            : t.certAlarmTitleMixed(expiredCount, expiringCount);
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsetsDirectional.fromSTEB(16, 10, 16, 10),
+      color: alarm.withValues(alpha: 0.12),
+      child: Row(
+        children: [
+          const Icon(Icons.notifications_active, color: alarm, size: 18),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                  color: alarm, fontWeight: FontWeight.w700, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -51,6 +95,17 @@ class _CertificationScreenState extends State<CertificationScreen>
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final certs = context.watch<CertificationProvider>();
+    final alarmVesselCerts = certs.alarmVesselCerts([widget.vessel.id]);
+    final alarmCrewCerts = certs.alarmCrewCerts([widget.vessel.id]);
+    final expiredCount = alarmVesselCerts
+            .where((c) => c.reminderStatus == CertReminderStatus.expired)
+            .length +
+        alarmCrewCerts
+            .where((c) => c.reminderStatus == CertReminderStatus.expired)
+            .length;
+    final alarmCount = alarmVesselCerts.length + alarmCrewCerts.length;
+    final expiringCount = alarmCount - expiredCount;
     return Scaffold(
       appBar: AppBar(
         title: Text('${t.certification} — ${widget.vessel.name}'),
@@ -59,6 +114,7 @@ class _CertificationScreenState extends State<CertificationScreen>
           tabs: [Tab(text: t.vesselCerts), Tab(text: t.crewCerts)],
         ),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: t.add,
@@ -68,24 +124,106 @@ class _CertificationScreenState extends State<CertificationScreen>
           ),
         ],
       ),
-      body: TabBarView(
-        controller: _tabController,
+      body: Column(
         children: [
-          _VesselCertsTab(vessel: widget.vessel),
-          _CrewCertsTab(vessel: widget.vessel),
+          if (alarmCount > 0)
+            _ExpiryAlarmBanner(
+                expiredCount: expiredCount, expiringCount: expiringCount),
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _VesselCertsTab(vessel: widget.vessel),
+                _CrewCertsTab(vessel: widget.vessel),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  void _showAddVesselCertSheet(BuildContext context, AppLocalizations t) {
-    final nameController = TextEditingController();
-    final authorityController = TextEditingController();
-    DateTime issueDate = DateTime.now();
-    DateTime expiryDate = DateTime.now().add(const Duration(days: 365));
-    List<Attachment> certFiles = [];
+  /// AI-assisted entry: reads certificate scans / status lists for whichever
+  /// tab is active. Each certificate found is reviewed in the normal add
+  /// sheet before it is saved.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final isVesselTab = _tabController.index == 0;
+    final outcome = await pickAndExtract(context, t,
+        kind: isVesselTab ? 'vessel_certificate' : 'crew_certificate');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
+      if (!context.mounted) return;
+      final label = items.length > 1 ? '(${i + 1}/${items.length})' : null;
+      if (isVesselTab) {
+        await _showAddVesselCertSheet(context, t,
+            prefill: items[i],
+            initialAttachments: [outcome.file],
+            progressLabel: label);
+      } else {
+        await _showAddCrewCertSheet(context, t,
+            prefill: items[i],
+            initialAttachments: [outcome.file],
+            progressLabel: label);
+      }
+    }
+  }
 
-    showModalBottomSheet(
+  Future<void> _showAddVesselCertSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    List<Attachment> initialAttachments = const [],
+    String? progressLabel,
+    VesselCertificate? existing,
+  }) =>
+      showVesselCertSheet(context, t, widget.vessel,
+          prefill: prefill,
+          initialAttachments: initialAttachments,
+          progressLabel: progressLabel,
+          existing: existing);
+
+  Future<void> _showAddCrewCertSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    List<Attachment> initialAttachments = const [],
+    String? progressLabel,
+    CrewCertificate? existing,
+  }) =>
+      showCrewCertSheet(context, t, widget.vessel,
+          prefill: prefill,
+          initialAttachments: initialAttachments,
+          progressLabel: progressLabel,
+          existing: existing);
+}
+
+/// Add/edit sheet for a vessel certificate. Public so [_VesselCertsTab] can
+/// open it pre-filled via [existing] for its Edit action.
+Future<void> showVesselCertSheet(
+  BuildContext context,
+  AppLocalizations t,
+  Vessel vessel, {
+  Map<String, dynamic>? prefill,
+  List<Attachment> initialAttachments = const [],
+  String? progressLabel,
+  VesselCertificate? existing,
+}) {
+    final nameController = TextEditingController(
+        text: existing?.documentName ?? aiStr(prefill, 'documentName'));
+    final authorityController = TextEditingController(
+        text: existing?.issuingAuthority ?? aiStr(prefill, 'issuingAuthority'));
+    DateTime issueDate = existing?.issueDate ??
+        aiDateIn(prefill, 'issueDate', DateTime(2000),
+            DateTime.now().add(const Duration(days: 365))) ??
+        DateTime.now();
+    DateTime expiryDate = existing?.expiryDate ??
+        aiDateIn(prefill, 'expiryDate', DateTime(2000),
+            DateTime.now().add(const Duration(days: 3650))) ??
+        DateTime.now().add(const Duration(days: 365));
+    List<Attachment> certFiles = [...(existing?.attachments ?? initialAttachments)];
+
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -105,7 +243,11 @@ class _CertificationScreenState extends State<CertificationScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addVesselCert,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addVesselCert,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -180,15 +322,26 @@ class _CertificationScreenState extends State<CertificationScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if (nameController.text.trim().isEmpty) return;
-                          context.read<CertificationProvider>().addVesselCert(
-                                vesselId: widget.vessel.id,
-                                documentName: nameController.text.trim(),
-                                issuingAuthority:
-                                    authorityController.text.trim(),
-                                issueDate: issueDate,
-                                expiryDate: expiryDate,
-                                attachments: certFiles,
-                              );
+                          if (existing != null) {
+                            context.read<CertificationProvider>().updateVesselCert(
+                                  id: existing.id,
+                                  documentName: nameController.text.trim(),
+                                  issuingAuthority:
+                                      authorityController.text.trim(),
+                                  issueDate: issueDate,
+                                  expiryDate: expiryDate,
+                                );
+                          } else {
+                            context.read<CertificationProvider>().addVesselCert(
+                                  vesselId: vessel.id,
+                                  documentName: nameController.text.trim(),
+                                  issuingAuthority:
+                                      authorityController.text.trim(),
+                                  issueDate: issueDate,
+                                  expiryDate: expiryDate,
+                                  attachments: certFiles,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
@@ -202,18 +355,37 @@ class _CertificationScreenState extends State<CertificationScreen>
         );
       },
     );
-  }
+}
 
-  void _showAddCrewCertSheet(BuildContext context, AppLocalizations t) {
-    final nameController = TextEditingController();
-    final rankController = TextEditingController();
-    CrewCertType certType = CrewCertType.stcw;
-    DateTime issueDate = DateTime.now();
-    DateTime expiryDate = DateTime.now().add(const Duration(days: 365));
-    String? photoBase64;
-    List<Attachment> certDocs = [];
+/// Add/edit sheet for a crew certificate. Public so [_CrewCertsTab] can open
+/// it pre-filled via [existing] for its Edit action.
+Future<void> showCrewCertSheet(
+  BuildContext context,
+  AppLocalizations t,
+  Vessel vessel, {
+  Map<String, dynamic>? prefill,
+  List<Attachment> initialAttachments = const [],
+  String? progressLabel,
+  CrewCertificate? existing,
+}) {
+    final nameController = TextEditingController(
+        text: existing?.officerName ?? aiStr(prefill, 'officerName'));
+    final rankController =
+        TextEditingController(text: existing?.rank ?? aiStr(prefill, 'rank'));
+    CrewCertType certType = existing?.certType ??
+        aiEnum(prefill, 'certType', CrewCertType.values, CrewCertType.stcw);
+    DateTime issueDate = existing?.issueDate ??
+        aiDateIn(prefill, 'issueDate', DateTime(2000),
+            DateTime.now().add(const Duration(days: 365))) ??
+        DateTime.now();
+    DateTime expiryDate = existing?.expiryDate ??
+        aiDateIn(prefill, 'expiryDate', DateTime(2000),
+            DateTime.now().add(const Duration(days: 3650))) ??
+        DateTime.now().add(const Duration(days: 365));
+    String? photoBase64 = existing?.photoBase64;
+    List<Attachment> certDocs = [...(existing?.attachments ?? initialAttachments)];
 
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -233,7 +405,11 @@ class _CertificationScreenState extends State<CertificationScreen>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addCrewCert,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addCrewCert,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     PhotoPickerStrip(
@@ -335,16 +511,28 @@ class _CertificationScreenState extends State<CertificationScreen>
                       child: ElevatedButton(
                         onPressed: () {
                           if (nameController.text.trim().isEmpty) return;
-                          context.read<CertificationProvider>().addCrewCert(
-                                vesselId: widget.vessel.id,
-                                officerName: nameController.text.trim(),
-                                rank: rankController.text.trim(),
-                                certType: certType,
-                                issueDate: issueDate,
-                                expiryDate: expiryDate,
-                                photoBase64: photoBase64,
-                                attachments: certDocs,
-                              );
+                          if (existing != null) {
+                            context.read<CertificationProvider>().updateCrewCert(
+                                  id: existing.id,
+                                  officerName: nameController.text.trim(),
+                                  rank: rankController.text.trim(),
+                                  certType: certType,
+                                  issueDate: issueDate,
+                                  expiryDate: expiryDate,
+                                  photoBase64: photoBase64,
+                                );
+                          } else {
+                            context.read<CertificationProvider>().addCrewCert(
+                                  vesselId: vessel.id,
+                                  officerName: nameController.text.trim(),
+                                  rank: rankController.text.trim(),
+                                  certType: certType,
+                                  issueDate: issueDate,
+                                  expiryDate: expiryDate,
+                                  photoBase64: photoBase64,
+                                  attachments: certDocs,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
@@ -358,7 +546,6 @@ class _CertificationScreenState extends State<CertificationScreen>
         );
       },
     );
-  }
 }
 
 class _VesselCertsTab extends StatelessWidget {
@@ -407,6 +594,14 @@ class _VesselCertsTab extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  showVesselCertSheet(context, t, vessel, existing: cert);
+                },
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(t.edit),
+              ),
             ],
           ),
         ),
@@ -457,9 +652,15 @@ class _VesselCertsTab extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: t.delete,
-                  onPressed: () => context
-                      .read<CertificationProvider>()
-                      .deleteVesselCert(cert.id),
+                  onPressed: () async {
+                    final ok = await confirmDelete(context,
+                        itemName: cert.documentName);
+                    if (ok && context.mounted) {
+                      context
+                          .read<CertificationProvider>()
+                          .deleteVesselCert(cert.id);
+                    }
+                  },
                 ),
               ],
             ),
@@ -527,6 +728,14 @@ class _CrewCertsTab extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.of(sheetContext).pop();
+                  showCrewCertSheet(context, t, vessel, existing: cert);
+                },
+                icon: const Icon(Icons.edit_outlined),
+                label: Text(t.edit),
+              ),
             ],
           ),
         ),
@@ -580,9 +789,15 @@ class _CrewCertsTab extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.delete_outline),
                   tooltip: t.delete,
-                  onPressed: () => context
-                      .read<CertificationProvider>()
-                      .deleteCrewCert(cert.id),
+                  onPressed: () async {
+                    final ok = await confirmDelete(context,
+                        itemName: '${cert.officerName} — ${cert.rank}');
+                    if (ok && context.mounted) {
+                      context
+                          .read<CertificationProvider>()
+                          .deleteCrewCert(cert.id);
+                    }
+                  },
                 ),
               ],
             ),

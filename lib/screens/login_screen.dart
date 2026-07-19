@@ -38,7 +38,11 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     setState(() {
       _submitting = false;
-      if (result != null) _error = t.invalidCredentials;
+      _error = switch (result) {
+        null => null,
+        'networkError' => t.networkError,
+        _ => t.invalidCredentials,
+      };
     });
     // On success the AuthGate rebuilds automatically into the dashboard.
   }
@@ -59,16 +63,29 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    height: 96,
-                    width: 96,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.heroGradient,
-                      borderRadius: BorderRadius.circular(26),
+                  Center(
+                    child: Container(
+                      height: 96,
+                      width: 96,
+                      padding: const EdgeInsets.all(12),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(26),
+                        border: Border.all(color: AppColors.slate200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.navy900.withValues(alpha: 0.12),
+                            blurRadius: 18,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/branding/mos-logo.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                    child: const Icon(Icons.directions_boat_filled,
-                        color: Colors.white, size: 46),
                   ),
                   const SizedBox(height: 24),
                   Text(

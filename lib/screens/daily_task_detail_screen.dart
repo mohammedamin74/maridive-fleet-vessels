@@ -1,34 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../data/fleet_data.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/daily_task.dart';
 import '../state/daily_tasks_provider.dart';
+import '../state/vessel_profile_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 import 'daily_tasks_list_screen.dart';
 
-class DailyTaskDetailScreen extends StatelessWidget {
+class DailyTaskDetailScreen extends StatefulWidget {
   final DailyTask task;
   const DailyTaskDetailScreen({super.key, required this.task});
+
+  @override
+  State<DailyTaskDetailScreen> createState() => _DailyTaskDetailScreenState();
+}
+
+class _DailyTaskDetailScreenState extends State<DailyTaskDetailScreen> {
+  // Kept alive across provider-triggered rebuilds (e.g. toggling a checkbox)
+  // so text typed into a comment field isn't wiped out mid-edit. Checklist
+  // items are a fixed-size list set at task creation, so indexing is stable.
+  final Map<int, TextEditingController> _commentControllers = {};
+
+  TextEditingController _controllerFor(int index, String initialText) {
+    return _commentControllers.putIfAbsent(
+        index, () => TextEditingController(text: initialText));
+  }
+
+  @override
+  void dispose() {
+    for (final c in _commentControllers.values) {
+      c.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final provider = context.watch<DailyTasksProvider>();
     final current = provider
-        .forVessel(task.vesselId)
-        .firstWhere((x) => x.id == task.id, orElse: () => task);
+        .forVessel(widget.task.vesselId)
+        .firstWhere((x) => x.id == widget.task.id, orElse: () => widget.task);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(current.title),
         actions: [
           IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: t.edit,
+            onPressed: () {
+              final vessel = FleetData.vessels
+                  .firstWhere((v) => v.id == current.vesselId);
+              final resolved =
+                  context.read<VesselProfileProvider>().resolve(vessel);
+              showDailyTaskSheet(context, t, resolved, existing: current);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline),
             tooltip: t.delete,
-            onPressed: () {
-              provider.delete(current.id);
-              Navigator.of(context).pop();
+            onPressed: () async {
+              final ok =
+                  await confirmDelete(context, itemName: current.title);
+              if (ok) {
+                provider.delete(current.id);
+                if (context.mounted) Navigator.of(context).pop();
+              }
             },
           ),
         ],
@@ -52,8 +93,7 @@ class DailyTaskDetailScreen extends StatelessWidget {
             child: Column(
               children: List.generate(current.checklistItems.length, (i) {
                 final item = current.checklistItems[i];
-                final commentController =
-                    TextEditingController(text: item.comment);
+                final commentController = _controllerFor(i, item.comment);
                 return Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

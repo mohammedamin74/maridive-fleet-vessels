@@ -6,6 +6,8 @@ import '../models/urgent_notification.dart';
 import '../models/vessel.dart';
 import '../state/urgent_notification_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
+import '../widgets/confirm_delete.dart';
 
 String alertTypeLabel(AppLocalizations t, AlertType type) {
   switch (type) {
@@ -122,6 +124,7 @@ class _UrgentNotificationsScreenState extends State<UrgentNotificationsScreen> {
       appBar: AppBar(
         title: Text('${t.urgentNotifications} — ${vessel.name}'),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
               icon: const Icon(Icons.add),
               tooltip: t.addUrgentNotification,
@@ -246,10 +249,24 @@ class _UrgentNotificationsScreenState extends State<UrgentNotificationsScreen> {
                         icon: const Icon(Icons.check, size: 18),
                         label: Text(t.markCompleted),
                       ),
-                    TextButton.icon(
+                    OutlinedButton.icon(
                       onPressed: () {
-                        provider.delete(n.id);
                         Navigator.of(sheetContext).pop();
+                        _showAddSheet(context, t, existing: n);
+                      },
+                      icon: const Icon(Icons.edit_outlined),
+                      label: Text(t.edit),
+                    ),
+                    TextButton.icon(
+                      onPressed: () async {
+                        final ok = await confirmDelete(sheetContext,
+                            itemName: n.description);
+                        if (ok) {
+                          provider.delete(n.id);
+                          if (sheetContext.mounted) {
+                            Navigator.of(sheetContext).pop();
+                          }
+                        }
                       },
                       icon: const Icon(Icons.delete_outline,
                           color: AppColors.statusMaintenance),
@@ -267,13 +284,27 @@ class _UrgentNotificationsScreenState extends State<UrgentNotificationsScreen> {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final locationController = TextEditingController();
-    final descController = TextEditingController();
-    final assigneeController = TextEditingController();
-    AlertType alertType = AlertType.other;
-    bool isAction = false;
-    DateTime? dueDate;
+  /// AI-assisted entry: extract an alert from an incident message/report,
+  /// reviewed in the normal add sheet before saving.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome =
+        await pickAndExtract(context, t, kind: 'urgent_notification');
+    if (outcome == null || !context.mounted) return;
+    _showAddSheet(context, t, prefill: outcome.result.fields);
+  }
+
+  void _showAddSheet(BuildContext context, AppLocalizations t,
+      {Map<String, dynamic>? prefill, UrgentNotification? existing}) {
+    final locationController = TextEditingController(
+        text: existing?.location ?? aiStr(prefill, 'location'));
+    final descController = TextEditingController(
+        text: existing?.description ?? aiStr(prefill, 'description'));
+    final assigneeController =
+        TextEditingController(text: existing?.assignee ?? '');
+    AlertType alertType = existing?.alertType ??
+        aiEnum(prefill, 'alertType', AlertType.values, AlertType.other);
+    bool isAction = existing?.isAction ?? false;
+    DateTime? dueDate = existing?.dueDate;
     final locale = Localizations.localeOf(context).languageCode;
     final dueFmt = DateFormat.yMMMd(locale);
 
@@ -295,7 +326,7 @@ class _UrgentNotificationsScreenState extends State<UrgentNotificationsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addUrgentNotification,
+                    Text(existing != null ? t.edit : t.addUrgentNotification,
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<AlertType>(
@@ -374,21 +405,34 @@ class _UrgentNotificationsScreenState extends State<UrgentNotificationsScreen> {
                             backgroundColor: AppColors.statusMaintenance),
                         onPressed: () {
                           if (descController.text.trim().isEmpty) return;
-                          context.read<UrgentNotificationProvider>().add(
-                                vesselId: vessel.id,
-                                alertType: alertType,
-                                location: locationController.text.trim(),
-                                description: descController.text.trim(),
-                                isAction: isAction,
-                                assignee: isAction &&
-                                        assigneeController.text.trim().isNotEmpty
-                                    ? assigneeController.text.trim()
-                                    : null,
-                                dueDate: isAction ? dueDate : null,
-                              );
+                          final assignee = isAction &&
+                                  assigneeController.text.trim().isNotEmpty
+                              ? assigneeController.text.trim()
+                              : null;
+                          if (existing != null) {
+                            context.read<UrgentNotificationProvider>().update(
+                                  id: existing.id,
+                                  alertType: alertType,
+                                  location: locationController.text.trim(),
+                                  description: descController.text.trim(),
+                                  isAction: isAction,
+                                  assignee: assignee,
+                                  dueDate: isAction ? dueDate : null,
+                                );
+                          } else {
+                            context.read<UrgentNotificationProvider>().add(
+                                  vesselId: vessel.id,
+                                  alertType: alertType,
+                                  location: locationController.text.trim(),
+                                  description: descController.text.trim(),
+                                  isAction: isAction,
+                                  assignee: assignee,
+                                  dueDate: isAction ? dueDate : null,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
-                        child: Text(t.raiseAlert),
+                        child: Text(existing != null ? t.save : t.raiseAlert),
                       ),
                     ),
                   ],

@@ -5,10 +5,11 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
 import '../models/requisition.dart';
 import '../models/vessel.dart';
-import '../services/extraction_service.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 
 class RequisitionListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -98,11 +99,7 @@ class RequisitionListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.requisitions} — ${vessel.name}'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.document_scanner_outlined),
-            tooltip: t.extractFromFile,
-            onPressed: () => _extractFromFile(context, t),
-          ),
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: t.addRequisition,
@@ -356,9 +353,15 @@ class RequisitionListScreen extends StatelessWidget {
                           label: Text(t.edit),
                         ),
                         TextButton.icon(
-                          onPressed: () {
-                            data.deleteRequisition(req.id);
-                            Navigator.of(sheetContext).pop();
+                          onPressed: () async {
+                            final ok = await confirmDelete(sheetContext,
+                                itemName: req.itemName);
+                            if (ok) {
+                              data.deleteRequisition(req.id);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            }
                           },
                           icon: const Icon(Icons.delete_outline,
                               color: AppColors.statusMaintenance),
@@ -387,30 +390,30 @@ class RequisitionListScreen extends StatelessWidget {
     Requisition? existing,
   }) {
     final itemController = TextEditingController(
-        text: existing?.itemName ?? _str(prefill, 'itemName'));
+        text: existing?.itemName ?? aiStr(prefill, 'itemName'));
     final partNumberController = TextEditingController(
-        text: existing?.partNumber ?? _str(prefill, 'partNumber'));
+        text: existing?.partNumber ?? aiStr(prefill, 'partNumber'));
     final oemController = TextEditingController(
-        text: existing?.oemManufacturer ?? _str(prefill, 'oemManufacturer'));
+        text: existing?.oemManufacturer ?? aiStr(prefill, 'oemManufacturer'));
     final qtyController = TextEditingController(
         text: existing != null
             ? _fmtQty(existing.quantity)
-            : _numStr(prefill, 'quantity', '1'));
+            : aiNumStr(prefill, 'quantity', '1'));
     final stockController = TextEditingController(
         text: existing != null ? _fmtQty(existing.quantityInStock) : '0');
     final unitController = TextEditingController(
-        text: existing?.unit ?? _strOr(prefill, 'unit', 'pcs'));
+        text: existing?.unit ?? aiStrOr(prefill, 'unit', 'pcs'));
     final priceController = TextEditingController(
         text: existing != null
             ? existing.unitPrice.toString()
-            : _numStr(prefill, 'unitPrice', '0'));
+            : aiNumStr(prefill, 'unitPrice', '0'));
     final notesController = TextEditingController(
-        text: existing?.notes ?? _str(prefill, 'notes'));
+        text: existing?.notes ?? aiStr(prefill, 'notes'));
     RequisitionPriority priority = existing?.priority ??
-        _enumFrom(RequisitionPriority.values, _str(prefill, 'priority'),
+        aiEnum(prefill, 'priority', RequisitionPriority.values,
             RequisitionPriority.normal);
     RequisitionDepartment department = existing?.department ??
-        _enumFrom(RequisitionDepartment.values, _str(prefill, 'department'),
+        aiEnum(prefill, 'department', RequisitionDepartment.values,
             RequisitionDepartment.deck);
     DateTime? requiredDeliveryDate = existing?.requiredDeliveryDate;
     List<Attachment> newFiles = [
@@ -656,104 +659,22 @@ class RequisitionListScreen extends StatelessWidget {
     );
   }
 
-  static String _str(Map<String, dynamic>? m, String key) {
-    final v = m?[key];
-    return v == null ? '' : v.toString();
-  }
-
-  static String _strOr(Map<String, dynamic>? m, String key, String fallback) {
-    final s = _str(m, key);
-    return s.isEmpty ? fallback : s;
-  }
-
-  static String _numStr(Map<String, dynamic>? m, String key, String fallback) {
-    final v = m?[key];
-    if (v is num) {
-      return v == v.roundToDouble() ? v.toInt().toString() : v.toString();
-    }
-    return fallback;
-  }
-
-  static T _enumFrom<T extends Enum>(List<T> values, String name, T fallback) {
-    for (final v in values) {
-      if (v.name == name) return v;
-    }
-    return fallback;
-  }
-
-  /// AI-assisted entry: pick a file, upload it, ask the `extract` function to
-  /// read it, then open the add sheet pre-filled with the result for review.
+  /// AI-assisted entry: each requisition row the AI finds in the file is
+  /// reviewed (and editable) in the normal add sheet before it is saved.
   Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
-
-    final picked = await pickAttachment();
-    if (picked == null) return;
-    if (!picked.isCloud) {
-      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
-      return;
-    }
-    if (!context.mounted) return;
-
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => _ExtractingDialog(message: t.extractingFile),
-    );
-
-    try {
-      final items = await ExtractionService.extractList(
-          storagePath: picked.storagePath!, kind: 'requisition');
-      navigator.pop();
+    final outcome = await pickAndExtract(context, t, kind: 'requisition');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
       if (!context.mounted) return;
-      if (items.isEmpty) {
-        messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
-        return;
-      }
-      // Review each row one at a time — the same editable-before-saving sheet
-      // used for a single item, just sequenced across every row found.
-      for (var i = 0; i < items.length; i++) {
-        if (!context.mounted) return;
-        await _showAddRequisitionSheet(
-          context,
-          t,
-          prefill: items[i],
-          initialAttachments: [picked],
-          progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
-        );
-      }
-    } on ExtractionException catch (e) {
-      navigator.pop();
-      final msg = e.code == 'not_configured'
-          ? t.extractionNotConfigured
-          : t.extractionFailed;
-      messenger.showSnackBar(SnackBar(content: Text(msg)));
-    } catch (_) {
-      navigator.pop();
-      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
+      await _showAddRequisitionSheet(
+        context,
+        t,
+        prefill: items[i],
+        initialAttachments: [outcome.file],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
     }
-  }
-}
-
-/// Small modal shown while the AI reads an uploaded file.
-class _ExtractingDialog extends StatelessWidget {
-  final String message;
-  const _ExtractingDialog({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      content: Row(
-        children: [
-          const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(strokeWidth: 2)),
-          const SizedBox(width: 16),
-          Expanded(child: Text(message)),
-        ],
-      ),
-    );
   }
 }
 

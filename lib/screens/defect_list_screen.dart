@@ -5,11 +5,13 @@ import '../l10n/gen/app_localizations.dart';
 import '../models/attachment.dart';
 import '../models/defect.dart';
 import '../models/vessel.dart';
-import '../services/extraction_service.dart';
 import '../services/report_service.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
+import '../widgets/export_feedback.dart';
 
 class DefectListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -92,18 +94,15 @@ class DefectListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.defects} — ${vessel.name}'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.document_scanner_outlined),
-            tooltip: t.extractFromFile,
-            onPressed: () => _extractFromFile(context, t),
-          ),
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
             tooltip: t.exportReport,
             onPressed: defects.isEmpty
                 ? null
-                : () => ReportService.exportDefectsReport(
-                    vessel: vessel, defects: defects),
+                : () => exportPdfWithFeedback(context, t,
+                    () => ReportService.exportDefectsReport(
+                        vessel: vessel, defects: defects)),
           ),
           IconButton(
             icon: const Icon(Icons.add),
@@ -289,10 +288,24 @@ class DefectListScreen extends StatelessWidget {
                             },
                             child: Text(t.reopen),
                           ),
-                        TextButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () {
-                            data.deleteDefect(defect.id);
                             Navigator.of(sheetContext).pop();
+                            _showAddDefectSheet(context, t, existing: defect);
+                          },
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(t.edit),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final ok = await confirmDelete(sheetContext,
+                                itemName: defect.title);
+                            if (ok) {
+                              data.deleteDefect(defect.id);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            }
                           },
                           icon: const Icon(Icons.delete_outline,
                               color: AppColors.statusMaintenance),
@@ -312,26 +325,31 @@ class DefectListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddDefectSheet(
+  Future<void> _showAddDefectSheet(
     BuildContext context,
     AppLocalizations t, {
     Map<String, dynamic>? prefill,
     List<Attachment> initialAttachments = const [],
+    String? progressLabel,
+    Defect? existing,
   }) {
-    final titleController = TextEditingController(text: _str(prefill, 'title'));
-    final descController =
-        TextEditingController(text: _str(prefill, 'description'));
-    final officerController =
-        TextEditingController(text: _str(prefill, 'assignedOfficer'));
-    final sparePartsController =
-        TextEditingController(text: _str(prefill, 'requiredSpareParts'));
-    DefectPriority priority = _enumFrom(
-        DefectPriority.values, _str(prefill, 'priority'), DefectPriority.low);
-    DefectLocation location = _enumFrom(DefectLocation.values,
-        _str(prefill, 'location'), DefectLocation.engineRoom);
-    List<Attachment> files = [...initialAttachments];
+    final titleController = TextEditingController(
+        text: existing?.title ?? aiStr(prefill, 'title'));
+    final descController = TextEditingController(
+        text: existing?.description ?? aiStr(prefill, 'description'));
+    final officerController = TextEditingController(
+        text: existing?.assignedOfficer ?? aiStr(prefill, 'assignedOfficer'));
+    final sparePartsController = TextEditingController(
+        text: existing?.requiredSpareParts ??
+            aiStr(prefill, 'requiredSpareParts'));
+    DefectPriority priority = existing?.priority ??
+        aiEnum(prefill, 'priority', DefectPriority.values, DefectPriority.low);
+    DefectLocation location = existing?.location ??
+        aiEnum(prefill, 'location', DefectLocation.values,
+            DefectLocation.engineRoom);
+    List<Attachment> files = [...(existing?.attachments ?? initialAttachments)];
 
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -349,7 +367,15 @@ class DefectListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(prefill != null ? t.reviewExtractedDefect : t.addDefect,
+                    Text(
+                        [
+                          existing != null
+                              ? t.editDefect
+                              : prefill != null
+                                  ? t.reviewExtractedDefect
+                                  : t.addDefect,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -428,17 +454,32 @@ class DefectListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
-                          context.read<TankDataProvider>().addDefect(
-                                vesselId: vessel.id,
-                                title: titleController.text.trim(),
-                                description: descController.text.trim(),
-                                location: location,
-                                priority: priority,
-                                assignedOfficer: officerController.text.trim(),
-                                requiredSpareParts:
-                                    sparePartsController.text.trim(),
-                                attachments: files,
-                              );
+                          if (existing != null) {
+                            context.read<TankDataProvider>().updateDefect(
+                                  id: existing.id,
+                                  title: titleController.text.trim(),
+                                  description: descController.text.trim(),
+                                  location: location,
+                                  priority: priority,
+                                  assignedOfficer:
+                                      officerController.text.trim(),
+                                  requiredSpareParts:
+                                      sparePartsController.text.trim(),
+                                );
+                          } else {
+                            context.read<TankDataProvider>().addDefect(
+                                  vesselId: vessel.id,
+                                  title: titleController.text.trim(),
+                                  description: descController.text.trim(),
+                                  location: location,
+                                  priority: priority,
+                                  assignedOfficer:
+                                      officerController.text.trim(),
+                                  requiredSpareParts:
+                                      sparePartsController.text.trim(),
+                                  attachments: files,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
@@ -454,77 +495,23 @@ class DefectListScreen extends StatelessWidget {
     );
   }
 
-  static String _str(Map<String, dynamic>? m, String key) {
-    final v = m?[key];
-    return v == null ? '' : v.toString();
-  }
-
-  static T _enumFrom<T extends Enum>(List<T> values, String name, T fallback) {
-    for (final v in values) {
-      if (v.name == name) return v;
-    }
-    return fallback;
-  }
-
-  /// AI-assisted entry: pick a file, upload it, ask the `extract` function to
-  /// read it, then open the add sheet pre-filled with the result for review.
+  /// AI-assisted entry: each defect row the AI finds in the file (a single
+  /// report, or a defect register/log listing many) is reviewed (and
+  /// editable) in the normal add sheet before it is saved.
   Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
-
-    final picked = await pickAttachment();
-    if (picked == null) return;
-    if (!picked.isCloud) {
-      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
-      return;
-    }
-    if (!context.mounted) return;
-
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => _ExtractingDialog(message: t.extractingFile),
-    );
-
-    try {
-      final data = await ExtractionService.extract(
-          storagePath: picked.storagePath!, kind: 'defect');
-      navigator.pop(); // dismiss the loading dialog
+    final outcome = await pickAndExtract(context, t, kind: 'defect');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
       if (!context.mounted) return;
-      _showAddDefectSheet(context, t,
-          prefill: data, initialAttachments: [picked]);
-    } on ExtractionException catch (e) {
-      navigator.pop();
-      final msg = e.code == 'not_configured'
-          ? t.extractionNotConfigured
-          : t.extractionFailed;
-      messenger.showSnackBar(SnackBar(content: Text(msg)));
-    } catch (_) {
-      navigator.pop();
-      messenger.showSnackBar(SnackBar(content: Text(t.extractionFailed)));
+      await _showAddDefectSheet(
+        context,
+        t,
+        prefill: items[i],
+        initialAttachments: [outcome.file],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
     }
-  }
-}
-
-/// Small modal shown while the AI reads an uploaded file.
-class _ExtractingDialog extends StatelessWidget {
-  final String message;
-  const _ExtractingDialog({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      content: Row(
-        children: [
-          const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(strokeWidth: 2)),
-          const SizedBox(width: 16),
-          Expanded(child: Text(message)),
-        ],
-      ),
-    );
   }
 }
 

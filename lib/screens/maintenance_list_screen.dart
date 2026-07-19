@@ -7,7 +7,9 @@ import '../models/maintenance_record.dart';
 import '../models/vessel.dart';
 import '../state/maintenance_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 
 class MaintenanceListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -47,6 +49,7 @@ class MaintenanceListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.maintenance} — ${vessel.name}'),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: t.add,
@@ -197,10 +200,24 @@ class MaintenanceListScreen extends StatelessWidget {
                             },
                             child: Text(t.reopen),
                           ),
-                        TextButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () {
-                            provider.delete(rec.id);
                             Navigator.of(sheetContext).pop();
+                            _showAddSheet(context, t, existing: rec);
+                          },
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(t.edit),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final ok = await confirmDelete(sheetContext,
+                                itemName: rec.title);
+                            if (ok) {
+                              provider.delete(rec.id);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            }
                           },
                           icon: const Icon(Icons.delete_outline,
                               color: AppColors.statusMaintenance),
@@ -220,14 +237,44 @@ class MaintenanceListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final titleController = TextEditingController();
-    final descController = TextEditingController();
-    final performedByController = TextEditingController();
-    DateTime dueDate = DateTime.now().add(const Duration(days: 7));
-    List<Attachment> newFiles = [];
+  /// AI-assisted entry: each work order the AI finds in the file is reviewed
+  /// (and editable) in the normal add sheet before it is saved.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome = await pickAndExtract(context, t, kind: 'maintenance');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
+      if (!context.mounted) return;
+      await _showAddSheet(
+        context,
+        t,
+        prefill: items[i],
+        initialAttachments: [outcome.file],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
+    }
+  }
 
-    showModalBottomSheet(
+  Future<void> _showAddSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    List<Attachment> initialAttachments = const [],
+    String? progressLabel,
+    MaintenanceRecord? existing,
+  }) {
+    final titleController = TextEditingController(
+        text: existing?.title ?? aiStr(prefill, 'title'));
+    final descController = TextEditingController(
+        text: existing?.description ?? aiStr(prefill, 'description'));
+    final performedByController = TextEditingController(
+        text: existing?.performedBy ?? aiStr(prefill, 'performedBy'));
+    DateTime dueDate = existing?.dueDate ??
+        aiDate(prefill, 'dueDate') ??
+        DateTime.now().add(const Duration(days: 7));
+    List<Attachment> newFiles = [...(existing?.attachments ?? initialAttachments)];
+
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -247,7 +294,11 @@ class MaintenanceListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addMaintenance,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addMaintenance,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -306,14 +357,26 @@ class MaintenanceListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
-                          context.read<MaintenanceProvider>().add(
-                                vesselId: vessel.id,
-                                title: titleController.text.trim(),
-                                description: descController.text.trim(),
-                                performedBy: performedByController.text.trim(),
-                                dueDate: dueDate,
-                                attachments: newFiles,
-                              );
+                          if (existing != null) {
+                            context.read<MaintenanceProvider>().update(
+                                  id: existing.id,
+                                  title: titleController.text.trim(),
+                                  description: descController.text.trim(),
+                                  performedBy:
+                                      performedByController.text.trim(),
+                                  dueDate: dueDate,
+                                );
+                          } else {
+                            context.read<MaintenanceProvider>().add(
+                                  vesselId: vessel.id,
+                                  title: titleController.text.trim(),
+                                  description: descController.text.trim(),
+                                  performedBy:
+                                      performedByController.text.trim(),
+                                  dueDate: dueDate,
+                                  attachments: newFiles,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),

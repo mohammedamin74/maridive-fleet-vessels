@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../state/auth_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/confirm_delete.dart';
 
 class UserManagementScreen extends StatefulWidget {
   const UserManagementScreen({super.key});
@@ -95,6 +96,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                           onPressed: locked
                               ? null
                               : () async {
+                                  final ok = await confirmDelete(context,
+                                      itemName: user.displayName.isEmpty
+                                          ? user.username
+                                          : user.displayName);
+                                  if (!ok || !context.mounted) return;
                                   final err = await context
                                       .read<AuthProvider>()
                                       .removeUser(user.username);

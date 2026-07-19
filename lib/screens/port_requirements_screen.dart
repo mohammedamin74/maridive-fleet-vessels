@@ -7,7 +7,9 @@ import '../models/port_requirement.dart';
 import '../models/vessel.dart';
 import '../state/port_requirement_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 
 String requirementCategoryLabel(AppLocalizations t, RequirementCategory c) {
   switch (c) {
@@ -59,6 +61,7 @@ class PortRequirementsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.portRequirementsTitle} — ${vessel.name}'),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
             icon: const Icon(Icons.add),
             tooltip: t.addRequirement,
@@ -238,10 +241,24 @@ class PortRequirementsScreen extends StatelessWidget {
                             icon: const Icon(Icons.undo, size: 18),
                             label: Text(t.markPending),
                           ),
-                        TextButton.icon(
+                        OutlinedButton.icon(
                           onPressed: () {
-                            provider.delete(req.id);
                             Navigator.of(sheetContext).pop();
+                            _showAddSheet(context, t, existing: req);
+                          },
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(t.edit),
+                        ),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final ok = await confirmDelete(sheetContext,
+                                itemName: req.title);
+                            if (ok) {
+                              provider.delete(req.id);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            }
                           },
                           icon: const Icon(Icons.delete_outline,
                               color: AppColors.statusMaintenance),
@@ -261,14 +278,44 @@ class PortRequirementsScreen extends StatelessWidget {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final titleController = TextEditingController();
-    final portController = TextEditingController();
-    final notesController = TextEditingController();
-    RequirementCategory category = RequirementCategory.documents;
-    List<Attachment> newFiles = [];
+  /// AI-assisted entry: each requirement found in the file is reviewed (and
+  /// editable) in the normal add sheet before it is saved.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome = await pickAndExtract(context, t, kind: 'port_requirement');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
+      if (!context.mounted) return;
+      await _showAddSheet(
+        context,
+        t,
+        prefill: items[i],
+        initialAttachments: [outcome.file],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
+    }
+  }
 
-    showModalBottomSheet(
+  Future<void> _showAddSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    List<Attachment> initialAttachments = const [],
+    String? progressLabel,
+    PortRequirement? existing,
+  }) {
+    final titleController = TextEditingController(
+        text: existing?.title ?? aiStr(prefill, 'title'));
+    final portController = TextEditingController(
+        text: existing?.portName ?? aiStr(prefill, 'portName'));
+    final notesController = TextEditingController(
+        text: existing?.notes ?? aiStr(prefill, 'notes'));
+    RequirementCategory category = existing?.category ??
+        aiEnum(prefill, 'category', RequirementCategory.values,
+            RequirementCategory.documents);
+    List<Attachment> newFiles = [...(existing?.attachments ?? initialAttachments)];
+
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -286,7 +333,11 @@ class PortRequirementsScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addRequirement,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addRequirement,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -336,14 +387,24 @@ class PortRequirementsScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
-                          context.read<PortRequirementProvider>().add(
-                                vesselId: vessel.id,
-                                title: titleController.text.trim(),
-                                portName: portController.text.trim(),
-                                category: category,
-                                notes: notesController.text.trim(),
-                                attachments: newFiles,
-                              );
+                          if (existing != null) {
+                            context.read<PortRequirementProvider>().update(
+                                  id: existing.id,
+                                  title: titleController.text.trim(),
+                                  portName: portController.text.trim(),
+                                  category: category,
+                                  notes: notesController.text.trim(),
+                                );
+                          } else {
+                            context.read<PortRequirementProvider>().add(
+                                  vesselId: vessel.id,
+                                  title: titleController.text.trim(),
+                                  portName: portController.text.trim(),
+                                  category: category,
+                                  notes: notesController.text.trim(),
+                                  attachments: newFiles,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),

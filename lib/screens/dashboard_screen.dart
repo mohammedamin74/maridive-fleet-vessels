@@ -4,17 +4,18 @@ import 'package:provider/provider.dart';
 import '../data/fleet_data.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
+import '../state/certification_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
 import '../state/vessel_profile_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import '../widgets/alerts_panel.dart';
+import '../widgets/cert_alerts_panel.dart';
 import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/urgent_alerts_banner.dart';
 import '../widgets/vessel_card.dart';
-import 'ai_assistant_screen.dart';
-import 'settings_screen.dart';
 import 'vessel_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -53,78 +54,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
         vessels.where((v) => v.status == VesselStatus.active).length;
     final portCount =
         vessels.where((v) => v.status == VesselStatus.port).length;
-    final avgFuel = vessels.isEmpty
-        ? 0.0
-        : vessels.fold<double>(0, (sum, v) => sum + data.avgFuelPercent(v)) /
-            vessels.length;
+    final fuelReports =
+        vessels.map((v) => data.avgFuelPercent(v)).whereType<double>().toList();
+    final avgFuel = fuelReports.isEmpty
+        ? null
+        : fuelReports.reduce((a, b) => a + b) / fuelReports.length;
     final alerts = data.alertsFor(vessels);
     final criticalDefects = data.criticalOpenDefects(vessels);
     final urgentNotifications = context
         .watch<UrgentNotificationProvider>()
         .unacknowledgedFleetWide(vessels.map((v) => v.id).toList());
+    final certs = context.watch<CertificationProvider>();
+    final vesselIds = vessels.map((v) => v.id).toList();
+    final alarmVesselCerts = certs.alarmVesselCerts(vesselIds);
+    final alarmCrewCerts = certs.alarmCrewCerts(vesselIds);
+    final certAlarmCount = alarmVesselCerts.length + alarmCrewCerts.length;
 
     return Scaffold(
       body: SafeArea(
         bottom: false,
-        child: CustomScrollView(
+        child: LayoutBuilder(builder: (context, constraints) {
+          final gutter = AppBreakpoints.pageGutter(constraints.maxWidth);
+          return CustomScrollView(
           slivers: [
             SliverToBoxAdapter(
               child: _Header(
                 t: t,
+                gutter: gutter,
                 activeCount: activeCount,
                 portCount: portCount,
                 alertCount: alerts.length +
                     criticalDefects.length +
-                    urgentNotifications.length,
+                    urgentNotifications.length +
+                    certAlarmCount,
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              sliver: SliverToBoxAdapter(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: StatTile(
-                        icon: Icons.directions_boat_filled,
-                        value: '${vessels.length}',
-                        label: t.totalVessels,
-                        accent: AppColors.teal400,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: StatTile(
-                        icon: Icons.check_circle,
-                        value: '$activeCount',
-                        label: t.activeVessels,
-                        accent: AppColors.statusActive,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: StatTile(
-                        icon: Icons.anchor,
-                        value: '$portCount',
-                        label: t.inPort,
-                        accent: AppColors.statusPort,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: StatTile(
-                        icon: Icons.speed,
-                        value: '${(avgFuel * 100).round()}%',
-                        label: t.avgFuelLevel,
-                        accent: AppColors.amber400,
-                      ),
-                    ),
-                  ],
+              padding: gutter
+                  .add(const EdgeInsetsDirectional.only(top: AppSpacing.md)),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 260,
+                  mainAxisExtent: 128,
+                  mainAxisSpacing: AppSpacing.sm,
+                  crossAxisSpacing: AppSpacing.sm,
                 ),
+                delegate: SliverChildListDelegate([
+                  StatTile(
+                    icon: Icons.directions_boat_filled,
+                    value: '${vessels.length}',
+                    label: t.totalVessels,
+                    accent: AppColors.teal400,
+                  ),
+                  StatTile(
+                    icon: Icons.check_circle,
+                    value: '$activeCount',
+                    label: t.activeVessels,
+                    accent: AppColors.statusActive,
+                  ),
+                  StatTile(
+                    icon: Icons.anchor,
+                    value: '$portCount',
+                    label: t.inPort,
+                    accent: AppColors.statusPort,
+                  ),
+                  StatTile(
+                    icon: Icons.speed,
+                    value: avgFuel == null ? t.noData : '${(avgFuel * 100).round()}%',
+                    label: t.avgFuelLevel,
+                    accent: AppColors.amber400,
+                  ),
+                ]),
               ),
             ),
             if (urgentNotifications.isNotEmpty)
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                padding: gutter
+                    .add(const EdgeInsetsDirectional.only(top: AppSpacing.md)),
                 sliver: SliverToBoxAdapter(
                   child: UrgentAlertsBanner(
                       notifications: urgentNotifications, vessels: vessels),
@@ -132,19 +138,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             if (alerts.isNotEmpty)
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                padding: gutter
+                    .add(const EdgeInsetsDirectional.only(top: AppSpacing.sm)),
                 sliver: SliverToBoxAdapter(child: AlertsPanel(alerts: alerts)),
               ),
             if (criticalDefects.isNotEmpty)
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                padding: gutter
+                    .add(const EdgeInsetsDirectional.only(top: AppSpacing.sm)),
                 sliver: SliverToBoxAdapter(
                   child:
                       DefectsPanel(defects: criticalDefects, vessels: vessels),
                 ),
               ),
+            if (certAlarmCount > 0)
+              SliverPadding(
+                padding: gutter
+                    .add(const EdgeInsetsDirectional.only(top: AppSpacing.sm)),
+                sliver: SliverToBoxAdapter(
+                  child: CertAlertsPanel(
+                    vesselCerts: alarmVesselCerts,
+                    crewCerts: alarmCrewCerts,
+                    vessels: vessels,
+                  ),
+                ),
+              ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 4),
+              padding: gutter.add(const EdgeInsetsDirectional.only(
+                  top: AppSpacing.xl, bottom: AppSpacing.xxs)),
               sliver: SliverToBoxAdapter(
                 child: Row(
                   children: [
@@ -155,7 +176,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           .titleLarge
                           ?.copyWith(fontWeight: FontWeight.w800),
                     ),
-                    const SizedBox(width: 8),
+                    Gaps.w8,
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
@@ -164,7 +185,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             .colorScheme
                             .primary
                             .withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: AppRadius.pill,
                       ),
                       child: Text(
                         '${filtered.length}',
@@ -179,7 +200,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              padding: gutter
+                  .add(const EdgeInsetsDirectional.only(top: AppSpacing.xs)),
               sliver: SliverToBoxAdapter(
                 child: TextField(
                   controller: _searchController,
@@ -192,7 +214,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 0, 4),
+              padding: EdgeInsetsDirectional.only(
+                  start: gutter.start,
+                  top: AppSpacing.sm,
+                  bottom: AppSpacing.xxs),
               sliver: SliverToBoxAdapter(
                 child: SizedBox(
                   height: 36,
@@ -247,7 +272,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (filtered.isEmpty)
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 48),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
                   child: Center(
                     child: Text(t.noResults,
                         style: Theme.of(context).textTheme.bodyMedium),
@@ -256,25 +282,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-                sliver: SliverList.separated(
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final vessel = filtered[index];
-                    return VesselCard(
-                      vessel: vessel,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => VesselDetailScreen(vessel: vessel),
+                padding: gutter.add(const EdgeInsetsDirectional.only(
+                    top: AppSpacing.xs, bottom: AppSpacing.xl)),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 540,
+                    mainAxisExtent: 144,
+                    mainAxisSpacing: AppSpacing.sm,
+                    crossAxisSpacing: AppSpacing.sm,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    childCount: filtered.length,
+                    (context, index) {
+                      final vessel = filtered[index];
+                      return VesselCard(
+                        vessel: vessel,
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => VesselDetailScreen(vessel: vessel),
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
           ],
-        ),
+          );
+        }),
       ),
     );
   }
@@ -282,12 +317,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 class _Header extends StatelessWidget {
   final AppLocalizations t;
+  final EdgeInsetsDirectional gutter;
   final int activeCount;
   final int portCount;
   final int alertCount;
 
   const _Header({
     required this.t,
+    required this.gutter,
     required this.activeCount,
     required this.portCount,
     required this.alertCount,
@@ -299,7 +336,10 @@ class _Header extends StatelessWidget {
     final today = DateFormat('EEEE, d MMMM yyyy', locale).format(DateTime.now());
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 14, 20, 22),
+      // Full-bleed gradient, but the content inside shares the page gutter so
+      // the hero text lines up with the slivers below on wide windows.
+      padding: gutter
+          .add(const EdgeInsetsDirectional.only(top: 14, bottom: 22)),
       decoration: BoxDecoration(
         gradient: AppColors.heroGradient,
         borderRadius: const BorderRadius.vertical(
@@ -322,15 +362,18 @@ class _Header extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.14),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(13),
                   border: Border.all(
                       color: Colors.white.withValues(alpha: 0.18)),
                 ),
                 alignment: Alignment.center,
-                child: const Icon(Icons.directions_boat_filled,
-                    color: Colors.white, size: 24),
+                child: Image.asset(
+                  'assets/branding/mos-logo.png',
+                  fit: BoxFit.contain,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -355,21 +398,6 @@ class _Header extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const AiAssistantScreen()),
-                ),
-                icon: const Icon(Icons.smart_toy_outlined,
-                    color: Colors.white),
-                tooltip: t.aiAssistant,
-              ),
-              IconButton(
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                ),
-                icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                tooltip: t.settings,
               ),
             ],
           ),

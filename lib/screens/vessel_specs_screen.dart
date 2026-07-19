@@ -8,6 +8,7 @@ import '../models/vessel_spec.dart';
 import '../state/vessel_spec_provider.dart';
 import '../theme/app_colors.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
 
 class VesselSpecsScreen extends StatelessWidget {
   final Vessel vessel;
@@ -135,16 +136,36 @@ class VesselSpecsScreen extends StatelessWidget {
                       },
                     ),
                     const SizedBox(height: 20),
-                    TextButton.icon(
-                      onPressed: () {
-                        provider.delete(spec.id);
-                        Navigator.of(sheetContext).pop();
-                      },
-                      icon: const Icon(Icons.delete_outline,
-                          color: AppColors.statusMaintenance),
-                      label: Text(t.delete,
-                          style: const TextStyle(
-                              color: AppColors.statusMaintenance)),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.of(sheetContext).pop();
+                            _showAddSheet(context, t, existing: spec);
+                          },
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(t.edit),
+                        ),
+                        const SizedBox(width: 10),
+                        TextButton.icon(
+                          onPressed: () async {
+                            final ok = await confirmDelete(sheetContext,
+                                itemName: spec.title);
+                            if (ok) {
+                              provider.delete(spec.id);
+                              if (sheetContext.mounted) {
+                                Navigator.of(sheetContext).pop();
+                              }
+                            }
+                          },
+                          icon: const Icon(Icons.delete_outline,
+                              color: AppColors.statusMaintenance),
+                          label: Text(t.delete,
+                              style: const TextStyle(
+                                  color: AppColors.statusMaintenance)),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -156,10 +177,11 @@ class VesselSpecsScreen extends StatelessWidget {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final titleController = TextEditingController();
-    final notesController = TextEditingController();
-    List<Attachment> newFiles = [];
+  void _showAddSheet(BuildContext context, AppLocalizations t,
+      {VesselSpec? existing}) {
+    final titleController = TextEditingController(text: existing?.title ?? '');
+    final notesController = TextEditingController(text: existing?.notes ?? '');
+    List<Attachment> newFiles = [...(existing?.attachments ?? const [])];
 
     showModalBottomSheet(
       context: context,
@@ -179,7 +201,7 @@ class VesselSpecsScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addSpec,
+                    Text(existing != null ? t.edit : t.addSpec,
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -211,12 +233,20 @@ class VesselSpecsScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
-                          context.read<VesselSpecProvider>().add(
-                                vesselId: vessel.id,
-                                title: titleController.text.trim(),
-                                notes: notesController.text.trim(),
-                                attachments: newFiles,
-                              );
+                          if (existing != null) {
+                            context.read<VesselSpecProvider>().update(
+                                  id: existing.id,
+                                  title: titleController.text.trim(),
+                                  notes: notesController.text.trim(),
+                                );
+                          } else {
+                            context.read<VesselSpecProvider>().add(
+                                  vesselId: vessel.id,
+                                  title: titleController.text.trim(),
+                                  notes: notesController.text.trim(),
+                                  attachments: newFiles,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),

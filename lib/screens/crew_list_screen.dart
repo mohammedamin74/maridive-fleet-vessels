@@ -6,6 +6,8 @@ import '../models/crew_member.dart';
 import '../models/vessel.dart';
 import '../state/crew_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
+import '../widgets/confirm_delete.dart';
 
 class CrewListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -26,6 +28,7 @@ class CrewListScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text('${t.crewListTitle} — ${vessel.name}'),
           actions: [
+            AiFillAction(onPressed: () => _extractFromFile(context, t)),
             IconButton(
               icon: const Icon(Icons.person_add_alt_1_outlined),
               tooltip: t.addCrew,
@@ -119,10 +122,24 @@ class CrewListScreen extends StatelessWidget {
                       icon: const Icon(Icons.login, size: 18),
                       label: Text(t.reactivateCrew),
                     ),
-                  TextButton.icon(
+                  OutlinedButton.icon(
                     onPressed: () {
-                      provider.delete(m.id);
                       Navigator.of(sheetContext).pop();
+                      _showAddSheet(context, t, existing: m);
+                    },
+                    icon: const Icon(Icons.edit_outlined),
+                    label: Text(t.edit),
+                  ),
+                  TextButton.icon(
+                    onPressed: () async {
+                      final ok =
+                          await confirmDelete(sheetContext, itemName: m.name);
+                      if (ok) {
+                        provider.delete(m.id);
+                        if (sheetContext.mounted) {
+                          Navigator.of(sheetContext).pop();
+                        }
+                      }
                     },
                     icon: const Icon(Icons.delete_outline,
                         color: AppColors.statusMaintenance),
@@ -162,16 +179,49 @@ class CrewListScreen extends StatelessWidget {
         ),
       );
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final nameController = TextEditingController();
-    final rankController = TextEditingController();
-    final nationalityController = TextEditingController();
-    final notesController = TextEditingController();
-    DateTime signOnDate = DateTime.now();
+  /// AI-assisted entry: reads a crew list / sign-on document; each crew
+  /// member found is reviewed in the normal add sheet before saving. The
+  /// extraction prompt forbids passport/ID numbers, and everything is
+  /// editable here before it persists.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome = await pickAndExtract(context, t, kind: 'crew');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
+      if (!context.mounted) return;
+      await _showAddSheet(
+        context,
+        t,
+        prefill: items[i],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
+    }
+  }
+
+  Future<void> _showAddSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    String? progressLabel,
+    CrewMember? existing,
+  }) {
+    final nameController = TextEditingController(
+        text: existing?.name ?? aiStr(prefill, 'name'));
+    final rankController = TextEditingController(
+        text: existing?.rank ?? aiStr(prefill, 'rank'));
+    final nationalityController = TextEditingController(
+        text: existing?.nationality ?? aiStr(prefill, 'nationality'));
+    final notesController = TextEditingController(
+        text: existing?.notes ?? aiStr(prefill, 'notes'));
+    // Clamped to the sheet's date-picker bounds (now.year-5 .. now.year+1).
+    DateTime signOnDate = existing?.signOnDate ??
+        aiDateIn(prefill, 'signOnDate', DateTime(DateTime.now().year - 5),
+            DateTime(DateTime.now().year + 1)) ??
+        DateTime.now();
     final locale = Localizations.localeOf(context).languageCode;
     final dateFmt = DateFormat.yMMMd(locale);
 
-    showModalBottomSheet(
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -189,7 +239,11 @@ class CrewListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addCrew,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addCrew,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -251,14 +305,27 @@ class CrewListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (nameController.text.trim().isEmpty) return;
-                          context.read<CrewProvider>().add(
-                                vesselId: vessel.id,
-                                name: nameController.text.trim(),
-                                rank: rankController.text.trim(),
-                                nationality: nationalityController.text.trim(),
-                                signOnDate: signOnDate,
-                                notes: notesController.text.trim(),
-                              );
+                          if (existing != null) {
+                            context.read<CrewProvider>().update(
+                                  id: existing.id,
+                                  name: nameController.text.trim(),
+                                  rank: rankController.text.trim(),
+                                  nationality:
+                                      nationalityController.text.trim(),
+                                  signOnDate: signOnDate,
+                                  notes: notesController.text.trim(),
+                                );
+                          } else {
+                            context.read<CrewProvider>().add(
+                                  vesselId: vessel.id,
+                                  name: nameController.text.trim(),
+                                  rank: rankController.text.trim(),
+                                  nationality:
+                                      nationalityController.text.trim(),
+                                  signOnDate: signOnDate,
+                                  notes: notesController.text.trim(),
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),

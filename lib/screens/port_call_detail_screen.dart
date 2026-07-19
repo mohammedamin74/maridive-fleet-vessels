@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../data/fleet_data.dart';
 import '../models/port_call.dart';
 import '../state/port_call_provider.dart';
+import '../state/vessel_profile_provider.dart';
 import '../widgets/attachment_picker.dart';
+import '../widgets/confirm_delete.dart';
+import 'port_call_list_screen.dart' show showPortCallSheet;
 
 class PortCallDetailScreen extends StatelessWidget {
   final PortCall portCall;
@@ -25,9 +29,22 @@ class PortCallDetailScreen extends StatelessWidget {
         title: Text(call.portName),
         actions: [
           IconButton(
+            icon: const Icon(Icons.edit_outlined),
+            tooltip: t.edit,
+            onPressed: () {
+              final base =
+                  FleetData.vessels.firstWhere((v) => v.id == call.vesselId);
+              final resolved =
+                  context.read<VesselProfileProvider>().resolve(base);
+              showPortCallSheet(context, t, resolved, existing: call);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.delete_outline),
             tooltip: t.delete,
-            onPressed: () {
+            onPressed: () async {
+              final ok = await confirmDelete(context, itemName: call.portName);
+              if (!ok || !context.mounted) return;
               context.read<PortCallProvider>().delete(call.id);
               Navigator.of(context).pop();
             },

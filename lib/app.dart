@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'l10n/gen/app_localizations.dart';
-import 'screens/dashboard_screen.dart';
+import 'screens/home_shell.dart';
 import 'screens/login_screen.dart';
 import 'state/app_state.dart';
 import 'state/auth_provider.dart';
@@ -28,8 +28,9 @@ class MaridiveFleetApp extends StatelessWidget {
   }
 }
 
-/// Shows the login screen until a user signs in, then the dashboard. Because
-/// the signed-in user is held in memory, every app launch starts here.
+/// Shows the login screen until a user signs in, then the adaptive shell
+/// (rail/bar + tabs). Because the signed-in user is held in memory, every
+/// app launch starts here.
 class _AuthGate extends StatelessWidget {
   const _AuthGate();
 
@@ -41,8 +42,6 @@ class _AuthGate extends StatelessWidget {
         body: Center(child: CircularProgressIndicator()),
       );
     }
-    return auth.isAuthenticated
-        ? const DashboardScreen()
-        : const LoginScreen();
+    return auth.isAuthenticated ? const HomeShell() : const LoginScreen();
   }
 }

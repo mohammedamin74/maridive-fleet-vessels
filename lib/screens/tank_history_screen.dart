@@ -3,8 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/tank.dart';
+import '../models/tank_reading.dart';
 import '../state/tank_data_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/confirm_delete.dart';
 import '../widgets/tank_history_chart.dart';
 
 class TankHistoryScreen extends StatelessWidget {
@@ -18,6 +20,68 @@ class TankHistoryScreen extends StatelessWidget {
     required this.tank,
     required this.accent,
   });
+
+  Future<void> _editReading(BuildContext context, AppLocalizations t,
+      TankReading reading, Tank tank) async {
+    final levelController =
+        TextEditingController(text: reading.levelM3.toString());
+    final tempController = TextEditingController(
+        text: reading.temperatureC?.toString() ?? '');
+    final action = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(t.edit),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: levelController,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              decoration: InputDecoration(
+                  labelText: t.currentVolume, suffixText: t.cubicMeters),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: tempController,
+              keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true, signed: true),
+              decoration:
+                  InputDecoration(labelText: t.temperatureLabel, suffixText: '°C'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop('delete'),
+            child: Text(t.delete,
+                style: const TextStyle(color: AppColors.statusMaintenance)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(t.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop('save'),
+            child: Text(t.save),
+          ),
+        ],
+      ),
+    );
+    if (!context.mounted || action == null) return;
+    final data = context.read<TankDataProvider>();
+    if (action == 'delete') {
+      final ok = await confirmDelete(context,
+          itemName: '${reading.levelM3.toStringAsFixed(1)} m³');
+      if (ok && context.mounted) data.deleteReading(reading);
+      return;
+    }
+    final level = double.tryParse(levelController.text);
+    if (level == null) return;
+    final clamped = level.clamp(0, tank.capacityM3).toDouble();
+    final temp = double.tryParse(tempController.text);
+    await data.updateReading(reading, levelM3: clamped, temperatureC: temp);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +120,9 @@ class TankHistoryScreen extends StatelessWidget {
                     prev == null ? null : reading.levelM3 - prev.levelM3;
 
                 return Card(
-                  child: Padding(
+                  child: InkWell(
+                    onTap: () => _editReading(context, t, reading, tank),
+                    child: Padding(
                     padding: const EdgeInsets.all(14),
                     child: Row(
                       children: [
@@ -113,6 +179,7 @@ class TankHistoryScreen extends StatelessWidget {
                             ],
                           ),
                       ],
+                    ),
                     ),
                   ),
                 );

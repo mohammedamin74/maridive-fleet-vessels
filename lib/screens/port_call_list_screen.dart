@@ -6,6 +6,7 @@ import '../models/port_call.dart';
 import '../models/vessel.dart';
 import '../state/port_call_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
 import 'port_call_detail_screen.dart';
 
 class PortCallListScreen extends StatelessWidget {
@@ -46,6 +47,7 @@ class PortCallListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.portCalls} — ${vessel.name}'),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
           IconButton(
               icon: const Icon(Icons.add),
               tooltip: t.add,
@@ -120,18 +122,56 @@ class PortCallListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final portController = TextEditingController();
-    final agentNameController = TextEditingController();
-    final agentContactController = TextEditingController();
-    final mgoController = TextEditingController(text: '0');
-    final hfoController = TextEditingController(text: '0');
-    final fwController = TextEditingController(text: '0');
-    final provisionsController = TextEditingController();
-    final sludgeQtyController = TextEditingController(text: '0');
-    DateTime arrivalEta = DateTime.now().add(const Duration(days: 1));
-    DateTime? pilotBoardingTime;
-    bool sludgeRequired = false;
+  /// AI-assisted entry: extract port call logistics from an agent message /
+  /// pre-arrival notice, reviewed in the normal add sheet before saving.
+  /// (The source file can be attached from the port call's detail screen.)
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome = await pickAndExtract(context, t, kind: 'port_call');
+    if (outcome == null || !context.mounted) return;
+    showPortCallSheet(context, t, vessel, prefill: outcome.result.fields);
+  }
+
+  void _showAddSheet(BuildContext context, AppLocalizations t,
+          {Map<String, dynamic>? prefill}) =>
+      showPortCallSheet(context, t, vessel, prefill: prefill);
+}
+
+/// Add/edit sheet for a port call. Public so [PortCallDetailScreen] can open
+/// it pre-filled via [existing] for its Edit action.
+void showPortCallSheet(BuildContext context, AppLocalizations t, Vessel vessel,
+    {Map<String, dynamic>? prefill, PortCall? existing}) {
+    final portController = TextEditingController(
+        text: existing?.portName ?? aiStr(prefill, 'portName'));
+    final agentNameController = TextEditingController(
+        text: existing?.agentName ?? aiStr(prefill, 'agentName'));
+    final agentContactController = TextEditingController(
+        text: existing?.agentContact ?? aiStr(prefill, 'agentContact'));
+    final mgoController = TextEditingController(
+        text: existing != null
+            ? existing.bunkersMgoRequired.toString()
+            : aiNumStr(prefill, 'bunkersMgoRequired', '0'));
+    final hfoController = TextEditingController(
+        text: existing != null
+            ? existing.bunkersHfoRequired.toString()
+            : aiNumStr(prefill, 'bunkersHfoRequired', '0'));
+    final fwController = TextEditingController(
+        text: existing != null
+            ? existing.freshWaterRequired.toString()
+            : aiNumStr(prefill, 'freshWaterRequired', '0'));
+    final provisionsController = TextEditingController(
+        text: existing?.provisionsRequired ??
+            aiStr(prefill, 'provisionsRequired'));
+    final sludgeQtyController = TextEditingController(
+        text: existing != null
+            ? existing.sludgeQuantity.toString()
+            : aiNumStr(prefill, 'sludgeQuantity', '0'));
+    DateTime arrivalEta = existing?.arrivalEta ??
+        aiDate(prefill, 'arrivalEta') ??
+        DateTime.now().add(const Duration(days: 1));
+    DateTime? pilotBoardingTime =
+        existing?.pilotBoardingTime ?? aiDate(prefill, 'pilotBoardingTime');
+    bool sludgeRequired =
+        existing?.sludgeDisposalRequired ?? aiBool(prefill, 'sludgeDisposalRequired');
 
     showModalBottomSheet(
       context: context,
@@ -153,7 +193,7 @@ class PortCallListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addPortCall,
+                    Text(existing != null ? t.edit : t.addPortCall,
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     TextField(
@@ -170,7 +210,7 @@ class PortCallListScreen extends StatelessWidget {
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
-                        if (date == null) return;
+                        if (date == null || !sheetContext.mounted) return;
                         final time = await showTimePicker(
                           context: sheetContext,
                           initialTime: TimeOfDay.fromDateTime(arrivalEta),
@@ -200,7 +240,7 @@ class PortCallListScreen extends StatelessWidget {
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
-                        if (date == null) return;
+                        if (date == null || !sheetContext.mounted) return;
                         final time = await showTimePicker(
                           context: sheetContext,
                           initialTime: TimeOfDay.fromDateTime(base),
@@ -302,27 +342,51 @@ class PortCallListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (portController.text.trim().isEmpty) return;
-                          context.read<PortCallProvider>().add(
-                                vesselId: vessel.id,
-                                portName: portController.text.trim(),
-                                arrivalEta: arrivalEta,
-                                pilotBoardingTime: pilotBoardingTime,
-                                agentName: agentNameController.text.trim(),
-                                agentContact:
-                                    agentContactController.text.trim(),
-                                bunkersMgoRequired:
-                                    double.tryParse(mgoController.text) ?? 0,
-                                bunkersHfoRequired:
-                                    double.tryParse(hfoController.text) ?? 0,
-                                freshWaterRequired:
-                                    double.tryParse(fwController.text) ?? 0,
-                                provisionsRequired:
-                                    provisionsController.text.trim(),
-                                sludgeDisposalRequired: sludgeRequired,
-                                sludgeQuantity:
-                                    double.tryParse(sludgeQtyController.text) ??
-                                        0,
-                              );
+                          if (existing != null) {
+                            context.read<PortCallProvider>().update(
+                                  id: existing.id,
+                                  portName: portController.text.trim(),
+                                  arrivalEta: arrivalEta,
+                                  pilotBoardingTime: pilotBoardingTime,
+                                  agentName: agentNameController.text.trim(),
+                                  agentContact:
+                                      agentContactController.text.trim(),
+                                  bunkersMgoRequired:
+                                      double.tryParse(mgoController.text) ?? 0,
+                                  bunkersHfoRequired:
+                                      double.tryParse(hfoController.text) ?? 0,
+                                  freshWaterRequired:
+                                      double.tryParse(fwController.text) ?? 0,
+                                  provisionsRequired:
+                                      provisionsController.text.trim(),
+                                  sludgeDisposalRequired: sludgeRequired,
+                                  sludgeQuantity: double.tryParse(
+                                          sludgeQtyController.text) ??
+                                      0,
+                                );
+                          } else {
+                            context.read<PortCallProvider>().add(
+                                  vesselId: vessel.id,
+                                  portName: portController.text.trim(),
+                                  arrivalEta: arrivalEta,
+                                  pilotBoardingTime: pilotBoardingTime,
+                                  agentName: agentNameController.text.trim(),
+                                  agentContact:
+                                      agentContactController.text.trim(),
+                                  bunkersMgoRequired:
+                                      double.tryParse(mgoController.text) ?? 0,
+                                  bunkersHfoRequired:
+                                      double.tryParse(hfoController.text) ?? 0,
+                                  freshWaterRequired:
+                                      double.tryParse(fwController.text) ?? 0,
+                                  provisionsRequired:
+                                      provisionsController.text.trim(),
+                                  sludgeDisposalRequired: sludgeRequired,
+                                  sludgeQuantity: double.tryParse(
+                                          sludgeQtyController.text) ??
+                                      0,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
@@ -336,5 +400,4 @@ class PortCallListScreen extends StatelessWidget {
         );
       },
     );
-  }
 }

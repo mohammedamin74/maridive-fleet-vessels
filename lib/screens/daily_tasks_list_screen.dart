@@ -7,7 +7,10 @@ import '../models/vessel.dart';
 import '../services/report_service.dart';
 import '../state/daily_tasks_provider.dart';
 import '../theme/app_colors.dart';
+import '../widgets/ai_fill.dart';
+import '../widgets/export_feedback.dart';
 import 'daily_task_detail_screen.dart';
+import 'report_preview_screen.dart';
 
 String taskCategoryLabel(AppLocalizations t, TaskCategory c) {
   switch (c) {
@@ -46,35 +49,71 @@ String taskStatusLabel(AppLocalizations t, TaskStatus s) {
   }
 }
 
-const Map<TaskCategory, List<String>> defaultChecklistsByCategory = {
-  TaskCategory.engineRoomRounds: [
-    'Check Main Engine Oil Pressure',
-    'Check Main Engine Cooling Water Temperature',
-    'Inspect Bilges for Leaks',
-    'Check Generator Running Parameters',
-  ],
-  TaskCategory.deckRounds: [
-    'Inspect Mooring Lines & Fittings',
-    'Check Deck Lighting',
-    'Inspect Cargo/Deck Equipment for Damage',
-  ],
-  TaskCategory.safetyEquipmentChecks: [
-    'Inspect Lifeboat Release Mechanism',
-    'Check Fire Extinguisher Pressure Gauges',
-    'Test Emergency Alarm System',
-    'Check Life Jacket Stock & Condition',
-  ],
-  TaskCategory.navigationEquipmentTests: [
-    'Test Radar & ARPA',
-    'Check GPS/GNSS Position Accuracy',
-    'Test Steering Gear (Manual/Auto)',
-  ],
-  TaskCategory.galleyHygieneInspections: [
-    'Check Galley Cleanliness',
-    'Check Food Storage Temperatures',
-    'Inspect Pest Control Measures',
-  ],
-};
+List<String> defaultChecklistFor(AppLocalizations t, TaskCategory c) {
+  switch (c) {
+    case TaskCategory.engineRoomRounds:
+      return [
+        t.checklistEngineOilPressure,
+        t.checklistEngineCoolingWaterTemp,
+        t.checklistBilgesLeaks,
+        t.checklistGeneratorParams,
+      ];
+    case TaskCategory.deckRounds:
+      return [
+        t.checklistMooringLines,
+        t.checklistDeckLighting,
+        t.checklistCargoEquipment,
+      ];
+    case TaskCategory.safetyEquipmentChecks:
+      return [
+        t.checklistLifeboatMechanism,
+        t.checklistFireExtinguisher,
+        t.checklistEmergencyAlarm,
+        t.checklistLifeJackets,
+      ];
+    case TaskCategory.navigationEquipmentTests:
+      return [
+        t.checklistRadarArpa,
+        t.checklistGpsAccuracy,
+        t.checklistSteeringGear,
+      ];
+    case TaskCategory.galleyHygieneInspections:
+      return [
+        t.checklistGalleyCleanliness,
+        t.checklistFoodStorageTemp,
+        t.checklistPestControl,
+      ];
+  }
+}
+
+/// Mirrors [ReportService.exportDailyTasksReport]'s columns so the in-app
+/// review shows exactly what the PDF export would contain.
+ReportSection _dailyTasksSection(AppLocalizations t, List<DailyTask> tasks) {
+  return ReportSection(
+    t.dailyTasks,
+    [
+      t.taskTitleLabel,
+      t.taskCategoryLabel,
+      t.frequencyLabel,
+      t.scheduledTimeLabel,
+      t.status,
+      t.checklistItemsLabel,
+      t.attachmentsLabel,
+    ],
+    tasks.map((task) {
+      final checkedCount = task.checklistItems.where((c) => c.checked).length;
+      return [
+        task.title,
+        taskCategoryLabel(t, task.category),
+        taskFrequencyLabel(t, task.frequency),
+        DateFormat.yMMMd().add_Hm().format(task.scheduledTime),
+        task.isOverdue ? t.taskStatusOverdue : taskStatusLabel(t, task.status),
+        '$checkedCount/${task.checklistItems.length}',
+        task.attachments.isEmpty ? '—' : '${task.attachments.length}',
+      ];
+    }).toList(),
+  );
+}
 
 class DailyTasksListScreen extends StatelessWidget {
   final Vessel vessel;
@@ -104,13 +143,25 @@ class DailyTasksListScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('${t.dailyTasks} — ${vessel.name}'),
         actions: [
+          AiFillAction(onPressed: () => _extractFromFile(context, t)),
+          IconButton(
+            icon: const Icon(Icons.visibility_outlined),
+            tooltip: t.reviewReport,
+            onPressed: tasks.isEmpty
+                ? null
+                : () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ReportPreviewScreen(
+                        vessel: vessel,
+                        sections: [_dailyTasksSection(t, tasks)]))),
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf_outlined),
             tooltip: t.exportReport,
             onPressed: tasks.isEmpty
                 ? null
-                : () => ReportService.exportDailyTasksReport(
-                    vessel: vessel, tasks: tasks),
+                : () => exportPdfWithFeedback(context, t,
+                    () => ReportService.exportDailyTasksReport(
+                        vessel: vessel, tasks: tasks)),
           ),
           IconButton(
               icon: const Icon(Icons.add),
@@ -209,18 +260,63 @@ class DailyTasksListScreen extends StatelessWidget {
     );
   }
 
-  void _showAddSheet(BuildContext context, AppLocalizations t) {
-    final titleController = TextEditingController();
-    final assignedController = TextEditingController();
-    final checklistController = TextEditingController(
-      text: defaultChecklistsByCategory[TaskCategory.engineRoomRounds]!
-          .join('\n'),
-    );
-    TaskCategory category = TaskCategory.engineRoomRounds;
-    TaskFrequency frequency = TaskFrequency.daily;
-    DateTime scheduledTime = DateTime.now();
+  /// AI-assisted entry: each task/round found in a work plan is reviewed in
+  /// the normal add sheet before it is saved.
+  Future<void> _extractFromFile(BuildContext context, AppLocalizations t) async {
+    final outcome = await pickAndExtract(context, t, kind: 'daily_task');
+    if (outcome == null) return;
+    final items = outcome.result.items ?? [];
+    for (var i = 0; i < items.length; i++) {
+      if (!context.mounted) return;
+      await _showAddSheet(
+        context,
+        t,
+        prefill: items[i],
+        progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
+      );
+    }
+  }
 
-    showModalBottomSheet(
+  Future<void> _showAddSheet(
+    BuildContext context,
+    AppLocalizations t, {
+    Map<String, dynamic>? prefill,
+    String? progressLabel,
+    DailyTask? existing,
+  }) =>
+      showDailyTaskSheet(context, t, vessel,
+          prefill: prefill, progressLabel: progressLabel, existing: existing);
+}
+
+/// Add/edit sheet for a daily task. Public so [DailyTaskDetailScreen] can
+/// open it pre-filled via [existing] for its Edit action.
+Future<void> showDailyTaskSheet(
+  BuildContext context,
+  AppLocalizations t,
+  Vessel vessel, {
+  Map<String, dynamic>? prefill,
+  String? progressLabel,
+  DailyTask? existing,
+}) {
+    TaskCategory category = existing?.category ??
+        aiEnum(prefill, 'category', TaskCategory.values,
+            TaskCategory.engineRoomRounds);
+    final titleController = TextEditingController(
+        text: existing?.title ?? aiStr(prefill, 'title'));
+    final assignedController = TextEditingController(
+        text: existing?.assignedTo ?? aiStr(prefill, 'assignedTo'));
+    final checklistController = TextEditingController(
+      text: existing != null
+          ? existing.checklistItems.map((c) => c.label).join('\n')
+          : defaultChecklistFor(t, category).join('\n'),
+    );
+    TaskFrequency frequency = existing?.frequency ??
+        aiEnum(prefill, 'frequency', TaskFrequency.values, TaskFrequency.daily);
+    DateTime scheduledTime = existing?.scheduledTime ??
+        aiDate(prefill, 'scheduledTime') ??
+        DateTime.now();
+
+    return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (sheetContext) {
@@ -240,7 +336,11 @@ class DailyTasksListScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(t.addDailyTask,
+                    Text(
+                        [
+                          existing != null ? t.edit : t.addDailyTask,
+                          if (progressLabel != null) progressLabel,
+                        ].join(' '),
                         style: Theme.of(sheetContext).textTheme.titleLarge),
                     const SizedBox(height: 16),
                     DropdownButtonFormField<TaskCategory>(
@@ -256,7 +356,7 @@ class DailyTasksListScreen extends StatelessWidget {
                         setState(() {
                           category = v;
                           checklistController.text =
-                              defaultChecklistsByCategory[v]!.join('\n');
+                              defaultChecklistFor(t, v).join('\n');
                         });
                       },
                     ),
@@ -292,7 +392,7 @@ class DailyTasksListScreen extends StatelessWidget {
                           lastDate:
                               DateTime.now().add(const Duration(days: 365)),
                         );
-                        if (date == null) return;
+                        if (date == null || !sheetContext.mounted) return;
                         final time = await showTimePicker(
                           context: sheetContext,
                           initialTime: TimeOfDay.fromDateTime(scheduledTime),
@@ -328,20 +428,31 @@ class DailyTasksListScreen extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {
                           if (titleController.text.trim().isEmpty) return;
-                          final labels = checklistController.text
-                              .split('\n')
-                              .map((l) => l.trim())
-                              .where((l) => l.isNotEmpty)
-                              .toList();
-                          context.read<DailyTasksProvider>().add(
-                                vesselId: vessel.id,
-                                category: category,
-                                title: titleController.text.trim(),
-                                assignedTo: assignedController.text.trim(),
-                                frequency: frequency,
-                                scheduledTime: scheduledTime,
-                                checklistLabels: labels,
-                              );
+                          if (existing != null) {
+                            context.read<DailyTasksProvider>().update(
+                                  id: existing.id,
+                                  category: category,
+                                  title: titleController.text.trim(),
+                                  assignedTo: assignedController.text.trim(),
+                                  frequency: frequency,
+                                  scheduledTime: scheduledTime,
+                                );
+                          } else {
+                            final labels = checklistController.text
+                                .split('\n')
+                                .map((l) => l.trim())
+                                .where((l) => l.isNotEmpty)
+                                .toList();
+                            context.read<DailyTasksProvider>().add(
+                                  vesselId: vessel.id,
+                                  category: category,
+                                  title: titleController.text.trim(),
+                                  assignedTo: assignedController.text.trim(),
+                                  frequency: frequency,
+                                  scheduledTime: scheduledTime,
+                                  checklistLabels: labels,
+                                );
+                          }
                           Navigator.of(sheetContext).pop();
                         },
                         child: Text(t.save),
@@ -355,5 +466,4 @@ class DailyTasksListScreen extends StatelessWidget {
         );
       },
     );
-  }
 }

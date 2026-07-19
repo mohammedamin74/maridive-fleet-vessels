@@ -2,19 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../l10n/gen/app_localizations.dart';
+import '../models/crew_certificate.dart';
 import '../models/crew_member.dart';
 import '../models/defect.dart';
 import '../models/port_requirement.dart';
 import '../models/requisition.dart';
 import '../models/tank.dart';
 import '../models/vessel.dart';
+import '../models/vessel_certificate.dart';
 import '../services/report_service.dart';
+import '../state/certification_provider.dart';
 import '../state/crew_provider.dart';
 import '../state/daily_tasks_provider.dart';
 import '../state/port_call_provider.dart';
 import '../state/port_requirement_provider.dart';
 import '../state/tank_data_provider.dart';
 import 'port_requirements_screen.dart' show requirementCategoryLabel;
+import 'report_preview_screen.dart';
 
 /// One selectable module in the unified export (Request 7).
 enum ExportModule {
@@ -25,6 +29,7 @@ enum ExportModule {
   portRequirements,
   crew,
   dailyTasks,
+  certificates,
 }
 
 enum ExportFormat { pdf, csv }
@@ -60,6 +65,8 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
         return t.crew;
       case ExportModule.dailyTasks:
         return t.dailyTasks;
+      case ExportModule.certificates:
+        return t.certification;
     }
   }
 
@@ -92,28 +99,51 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           SegmentedButton<ExportFormat>(
-            segments: const [
-              ButtonSegment(value: ExportFormat.pdf, label: Text('PDF')),
-              ButtonSegment(value: ExportFormat.csv, label: Text('CSV')),
+            segments: [
+              ButtonSegment(
+                  value: ExportFormat.pdf, label: Text(t.exportFormatPdf)),
+              ButtonSegment(
+                  value: ExportFormat.csv, label: Text(t.exportFormatCsv)),
             ],
             selected: {_format},
             onSelectionChanged: (s) => setState(() => _format = s.first),
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: _selected.isEmpty || _busy ? null : () => _generate(t),
-              icon: _busy
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2))
-                  : const Icon(Icons.download_outlined),
-              label: Text(t.generateReport),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _selected.isEmpty || _busy ? null : () => _review(),
+                  icon: const Icon(Icons.visibility_outlined),
+                  label: Text(t.reviewReport),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _selected.isEmpty || _busy ? null : () => _generate(t),
+                  icon: _busy
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2))
+                      : const Icon(Icons.download_outlined),
+                  label: Text(t.generateReport),
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  void _review() {
+    final t = AppLocalizations.of(context)!;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            ReportPreviewScreen(vessel: vessel, sections: _buildSections(t)),
       ),
     );
   }
@@ -129,8 +159,8 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
       } else {
         await ReportService.exportUnifiedCsv(
             vessel: vessel, sections: sections);
-        messenger.showSnackBar(SnackBar(content: Text(t.fileSaved)));
       }
+      messenger.showSnackBar(SnackBar(content: Text(t.fileSaved)));
     } catch (_) {
       messenger.showSnackBar(SnackBar(content: Text(t.downloadFailed)));
     } finally {
@@ -203,7 +233,7 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
     if (_selected.contains(ExportModule.portCalls)) {
       sections.add(ReportSection(
         t.portCalls,
-        [t.portNameLabel, 'ETA', t.status],
+        [t.portNameLabel, t.arrivalEtaLabel, t.status],
         context.read<PortCallProvider>().forVessel(vessel.id).map((p) {
           return [
             p.portName,
@@ -268,10 +298,58 @@ class _ExportReportScreenState extends State<ExportReportScreen> {
       ));
     }
 
+    if (_selected.contains(ExportModule.certificates)) {
+      final certs = context.read<CertificationProvider>();
+      sections.add(ReportSection(
+        t.vesselCerts,
+        [t.documentNameLabel, t.issuingAuthorityLabel, t.issueDateLabel, t.expiryDateLabel, t.status],
+        certs.vesselCertsFor(vessel.id).map((c) {
+          return [
+            c.documentName,
+            c.issuingAuthority,
+            dateFmt.format(c.issueDate),
+            dateFmt.format(c.expiryDate),
+            c.reminderStatus == CertReminderStatus.expired
+                ? t.certExpired
+                : t.certStatusValid,
+          ];
+        }).toList(),
+      ));
+      sections.add(ReportSection(
+        t.crewCerts,
+        [t.officerNameLabel, t.rankLabel, t.certTypeLabel, t.issueDateLabel, t.expiryDateLabel, t.status],
+        certs.crewCertsFor(vessel.id).map((c) {
+          return [
+            c.officerName,
+            c.rank,
+            _certType(t, c.certType),
+            dateFmt.format(c.issueDate),
+            dateFmt.format(c.expiryDate),
+            c.reminderStatus == CertReminderStatus.expired
+                ? t.certExpired
+                : t.certStatusValid,
+          ];
+        }).toList(),
+      ));
+    }
+
     return sections;
   }
 
   // --- localized enum labels ---
+
+  String _certType(AppLocalizations t, CrewCertType c) {
+    switch (c) {
+      case CrewCertType.coc:
+        return t.certTypeCoc;
+      case CrewCertType.stcw:
+        return t.certTypeStcw;
+      case CrewCertType.medical:
+        return t.certTypeMedical;
+      case CrewCertType.other:
+        return t.certTypeOther;
+    }
+  }
 
   String _tankCategoryLabel(AppLocalizations t, TankCategory c) {
     switch (c) {

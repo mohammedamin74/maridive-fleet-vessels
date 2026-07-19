@@ -792,7 +792,7 @@ class FleetData {
       workingPort: 'Tripoli',
       crew: 50,
       status: VesselStatus.active,
-      tanks: const [
+      tanks: [
         Tank(
             id: 'fo-1p',
             name: 'No.1 F.O.T. (P)',
