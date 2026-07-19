@@ -104,6 +104,37 @@ class PortCallProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required String portName,
+    required DateTime arrivalEta,
+    DateTime? pilotBoardingTime,
+    String agentName = '',
+    String agentContact = '',
+    double bunkersMgoRequired = 0,
+    double bunkersHfoRequired = 0,
+    double freshWaterRequired = 0,
+    String provisionsRequired = '',
+    bool sludgeDisposalRequired = false,
+    double sludgeQuantity = 0,
+  }) async {
+    final call = _byId(id);
+    if (call == null) return;
+    await _save(call.copyWith(
+      portName: portName,
+      arrivalEta: arrivalEta,
+      pilotBoardingTime: pilotBoardingTime,
+      agentName: agentName,
+      agentContact: agentContact,
+      bunkersMgoRequired: bunkersMgoRequired,
+      bunkersHfoRequired: bunkersHfoRequired,
+      freshWaterRequired: freshWaterRequired,
+      provisionsRequired: provisionsRequired,
+      sludgeDisposalRequired: sludgeDisposalRequired,
+      sludgeQuantity: sludgeQuantity,
+    ));
+  }
+
   Future<void> toggleChecklistItem(String id, int index, bool checked) async {
     final call = _byId(id);
     if (call == null) return;

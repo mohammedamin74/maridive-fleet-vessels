@@ -6,9 +6,9 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import '../models/daily_task.dart';
 import '../models/defect.dart';
+import '../models/handover_report.dart';
 import '../models/tank.dart';
 import '../models/vessel.dart';
 import '../state/alert_thresholds.dart';
@@ -69,7 +69,7 @@ class ReportService {
         header: (context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text('Maridive Fleet Vessels — Fleet Report',
+            pw.Text('Maridive Fleet Vessels - Fleet Report',
                 style: pw.TextStyle(
                     fontSize: 15,
                     fontWeight: pw.FontWeight.bold,
@@ -104,7 +104,7 @@ class ReportService {
             if (s.rows.isEmpty)
               pw.Padding(
                 padding: const pw.EdgeInsets.only(bottom: 4),
-                child: pw.Text('— No entries —',
+                child: pw.Text('No entries',
                     style: pw.TextStyle(
                         fontSize: 9,
                         color: PdfColors.grey600,
@@ -114,6 +114,7 @@ class ReportService {
               pw.TableHelper.fromTextArray(
                 headers: s.headers,
                 data: s.rows,
+                columnWidths: _columnWidths(s.headers, s.rows),
                 headerStyle: pw.TextStyle(
                     fontWeight: pw.FontWeight.bold,
                     fontSize: 8.5,
@@ -135,7 +136,7 @@ class ReportService {
     );
 
     final fileName = '${vessel.name.replaceAll(' ', '_')}_Fleet_Report.pdf';
-    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+    await _savePdf(await doc.save(), fileName);
   }
 
   /// Unified multi-module CSV (Request 7): section blocks separated by a blank
@@ -156,11 +157,55 @@ class ReportService {
     }
     final bytes = Uint8List.fromList(
         [0xEF, 0xBB, 0xBF, ...utf8.encode(buf.toString())]);
-    await FileSaver.instance.saveFile(
+    await FileSaver.instance.saveAs(
       name: '${vessel.name.replaceAll(' ', '_')}_Fleet_Report',
       bytes: bytes,
       fileExtension: 'csv',
       mimeType: MimeType.csv,
+    );
+  }
+
+  // Table.layout() sizes unconstrained (IntrinsicColumnWidth) columns by
+  // splitting page width in proportion to each column's longest unwrapped
+  // line. One free-text column (a title/description) can be many times
+  // wider than a "Status" or date column, which starves the short columns
+  // down to a sliver — cellPadding alone can exceed the space left, forcing
+  // a character-per-line wrap. Columns whose longest value is short get a
+  // fixed width sized to that content instead; only genuinely long-text
+  // columns share the remaining space via flex.
+  static const _narrowCharLimit = 16;
+  static const _narrowCharWidth = 4.6;
+  static const _narrowMinWidth = 42.0;
+  static const _narrowMaxWidth = 110.0;
+
+  static Map<int, pw.TableColumnWidth> _columnWidths(
+      List<String> headers, List<List<String>> rows) {
+    final widths = <int, pw.TableColumnWidth>{};
+    for (var i = 0; i < headers.length; i++) {
+      var maxLen = headers[i].length;
+      for (final row in rows) {
+        if (i < row.length && row[i].length > maxLen) maxLen = row[i].length;
+      }
+      widths[i] = maxLen <= _narrowCharLimit
+          ? pw.FixedColumnWidth((maxLen * _narrowCharWidth + 14)
+              .clamp(_narrowMinWidth, _narrowMaxWidth))
+          : pw.FlexColumnWidth(maxLen.toDouble());
+    }
+    return widths;
+  }
+
+  /// Opens the native Save As dialog so the user picks the destination
+  /// (Downloads, Desktop, or any other folder) instead of the file always
+  /// landing in a fixed location.
+  static Future<void> _savePdf(Uint8List bytes, String fileNameWithExt) async {
+    final name = fileNameWithExt.endsWith('.pdf')
+        ? fileNameWithExt.substring(0, fileNameWithExt.length - 4)
+        : fileNameWithExt;
+    await FileSaver.instance.saveAs(
+      name: name,
+      bytes: bytes,
+      fileExtension: 'pdf',
+      mimeType: MimeType.pdf,
     );
   }
 
@@ -175,8 +220,18 @@ class ReportService {
     required Vessel vessel,
     required TankDataProvider data,
   }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
     final doc = pw.Document();
     final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    const tankHeaders = [
+      'Tank',
+      'Category',
+      'Current (m³)',
+      'Capacity (m³)',
+      'Level',
+      'Status'
+    ];
 
     final rows = vessel.tanks.map((tank) {
       final current = data.currentLevel(vessel.id, tank.id);
@@ -201,8 +256,11 @@ class ReportService {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text(
-              'Maridive Fleet Vessels — Daily Tank Status Report',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+              'Maridive Fleet Vessels - Daily Tank Status Report',
+              style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback),
             ),
             pw.SizedBox(height: 2),
             pw.Text('Generated: $generatedAt',
@@ -213,40 +271,37 @@ class ReportService {
         ),
         build: (context) => [
           pw.Text(vessel.name,
-              style:
-                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback)),
           pw.SizedBox(height: 2),
           pw.Text(vessel.type,
-              style:
-                  const pw.TextStyle(fontSize: 11, color: PdfColors.grey700)),
+              style: pw.TextStyle(
+                  fontSize: 11, color: PdfColors.grey700, fontFallback: fallback)),
           pw.SizedBox(height: 10),
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
-              _infoBlock('IMO Number', vessel.imo),
-              _infoBlock('Home Port', vessel.homePort),
-              _infoBlock('Crew', '${vessel.crew}'),
-              _infoBlock('Status', vessel.statusKey),
+              _infoBlock('IMO Number', vessel.imo, fallback),
+              _infoBlock('Home Port', vessel.homePort, fallback),
+              _infoBlock('Crew', '${vessel.crew}', fallback),
+              _infoBlock('Status', vessel.statusKey, fallback),
             ],
           ),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: [
-              'Tank',
-              'Category',
-              'Current (m³)',
-              'Capacity (m³)',
-              'Level',
-              'Status'
-            ],
+            headers: tankHeaders,
             data: rows,
+            columnWidths: _columnWidths(tankHeaders, rows),
             headerStyle: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold,
                 fontSize: 9,
-                color: PdfColors.white),
+                color: PdfColors.white,
+                fontFallback: fallback),
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
-            cellStyle: const pw.TextStyle(fontSize: 8.5),
+            cellStyle: pw.TextStyle(fontSize: 8.5, fontFallback: fallback),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,
@@ -264,21 +319,32 @@ class ReportService {
     );
 
     final fileName = '${vessel.name.replaceAll(' ', '_')}_Tank_Report.pdf';
-    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+    await _savePdf(await doc.save(), fileName);
   }
 
   static Future<void> exportDailyTasksReport({
     required Vessel vessel,
     required List<DailyTask> tasks,
   }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
     final doc = pw.Document();
     final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
     final dateFmt = DateFormat('yyyy-MM-dd HH:mm');
+    const taskHeaders = [
+      'Task',
+      'Category',
+      'Frequency',
+      'Scheduled',
+      'Status',
+      'Checklist',
+      'Files'
+    ];
 
     final rows = tasks.map((task) {
       final checkedCount = task.checklistItems.where((c) => c.checked).length;
       final fileNames = task.attachments.isEmpty
-          ? '—'
+          ? '-'
           : task.attachments.map((a) => a.name).join(', ');
       return [
         task.title,
@@ -299,8 +365,11 @@ class ReportService {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text(
-              'Maridive Fleet Vessels — Daily Tasks Report',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+              'Maridive Fleet Vessels - Daily Tasks Report',
+              style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback),
             ),
             pw.SizedBox(height: 2),
             pw.Text('Generated: $generatedAt',
@@ -311,31 +380,27 @@ class ReportService {
         ),
         build: (context) => [
           pw.Text(vessel.name,
-              style:
-                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback)),
           pw.SizedBox(height: 2),
           pw.Text(vessel.type,
-              style:
-                  const pw.TextStyle(fontSize: 11, color: PdfColors.grey700)),
+              style: pw.TextStyle(
+                  fontSize: 11, color: PdfColors.grey700, fontFallback: fallback)),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: [
-              'Task',
-              'Category',
-              'Frequency',
-              'Scheduled',
-              'Status',
-              'Checklist',
-              'Files'
-            ],
+            headers: taskHeaders,
             data: rows,
+            columnWidths: _columnWidths(taskHeaders, rows),
             headerStyle: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold,
                 fontSize: 9,
-                color: PdfColors.white),
+                color: PdfColors.white,
+                fontFallback: fallback),
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
-            cellStyle: const pw.TextStyle(fontSize: 8),
+            cellStyle: pw.TextStyle(fontSize: 8, fontFallback: fallback),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,
@@ -355,20 +420,30 @@ class ReportService {
 
     final fileName =
         '${vessel.name.replaceAll(' ', '_')}_Daily_Tasks_Report.pdf';
-    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+    await _savePdf(await doc.save(), fileName);
   }
 
   static Future<void> exportDefectsReport({
     required Vessel vessel,
     required List<Defect> defects,
   }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
     final doc = pw.Document();
     final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
     final dateFmt = DateFormat('yyyy-MM-dd');
+    const defectHeaders = [
+      'Defect',
+      'Location',
+      'Priority',
+      'Status',
+      'Reported',
+      'Files'
+    ];
 
     final rows = defects.map((defect) {
       final fileNames = defect.attachments.isEmpty
-          ? '—'
+          ? '-'
           : defect.attachments.map((a) => a.name).join(', ');
       return [
         defect.title,
@@ -388,8 +463,11 @@ class ReportService {
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
             pw.Text(
-              'Maridive Fleet Vessels — Defects Report',
-              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
+              'Maridive Fleet Vessels - Defects Report',
+              style: pw.TextStyle(
+                  fontSize: 16,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback),
             ),
             pw.SizedBox(height: 2),
             pw.Text('Generated: $generatedAt',
@@ -400,30 +478,27 @@ class ReportService {
         ),
         build: (context) => [
           pw.Text(vessel.name,
-              style:
-                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
+              style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback)),
           pw.SizedBox(height: 2),
           pw.Text(vessel.type,
-              style:
-                  const pw.TextStyle(fontSize: 11, color: PdfColors.grey700)),
+              style: pw.TextStyle(
+                  fontSize: 11, color: PdfColors.grey700, fontFallback: fallback)),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: [
-              'Defect',
-              'Location',
-              'Priority',
-              'Status',
-              'Reported',
-              'Files'
-            ],
+            headers: defectHeaders,
             data: rows,
+            columnWidths: _columnWidths(defectHeaders, rows),
             headerStyle: pw.TextStyle(
                 fontWeight: pw.FontWeight.bold,
                 fontSize: 9,
-                color: PdfColors.white),
+                color: PdfColors.white,
+                fontFallback: fallback),
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
-            cellStyle: const pw.TextStyle(fontSize: 8.5),
+            cellStyle: pw.TextStyle(fontSize: 8.5, fontFallback: fallback),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,
@@ -441,7 +516,7 @@ class ReportService {
     );
 
     final fileName = '${vessel.name.replaceAll(' ', '_')}_Defects_Report.pdf';
-    await Printing.sharePdf(bytes: await doc.save(), filename: fileName);
+    await _savePdf(await doc.save(), fileName);
   }
 
   static String _defectLocationLabel(DefectLocation l) {
@@ -522,7 +597,121 @@ class ReportService {
     }
   }
 
-  static pw.Widget _infoBlock(String label, String value) {
+  /// Formal one-document PDF of a crew handover report: header block with the
+  /// two officers and date, one titled paragraph per section, and signature
+  /// lines for outgoing/incoming officers at the end.
+  static Future<void> exportHandoverReport({
+    required Vessel vessel,
+    required HandoverReport report,
+  }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
+    final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    final handoverDate = DateFormat('yyyy-MM-dd').format(report.handoverDate);
+    final doc = pw.Document();
+
+    final sections = <(String, String)>[
+      ('Safety', report.safety),
+      ('Machinery & Equipment', report.machinery),
+      ('Pending Defects', report.pendingDefects),
+      ('Bunkers & Tanks', report.bunkersAndTanks),
+      ('Certificates Expiring', report.certificatesExpiring),
+      ('Remarks', report.remarks),
+    ];
+
+    pw.Widget signatureLine(String role, String name) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Container(
+                width: 180, height: 0.8, color: PdfColors.grey800),
+            pw.SizedBox(height: 4),
+            pw.Text(name,
+                style: pw.TextStyle(fontSize: 10, fontFallback: fallback)),
+            pw.Text(role,
+                style: const pw.TextStyle(
+                    fontSize: 8, color: PdfColors.grey600)),
+          ],
+        );
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(28),
+        header: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('Maridive Fleet Vessels - Crew Handover Report',
+                style: pw.TextStyle(
+                    fontSize: 15,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 2),
+            pw.Text('Generated: $generatedAt',
+                style: const pw.TextStyle(
+                    fontSize: 9, color: PdfColors.grey700)),
+            pw.Divider(),
+          ],
+        ),
+        build: (context) => [
+          pw.Text(vessel.name,
+              style: pw.TextStyle(
+                  fontSize: 20,
+                  fontWeight: pw.FontWeight.bold,
+                  fontFallback: fallback)),
+          pw.SizedBox(height: 10),
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              _infoBlock('Outgoing Officer', report.outgoingOfficer, fallback),
+              _infoBlock('Incoming Officer', report.incomingOfficer, fallback),
+              _infoBlock('Rank', report.rank, fallback),
+              _infoBlock('Handover Date', handoverDate, fallback),
+              _infoBlock('Status', report.status.name.toUpperCase(), fallback),
+            ],
+          ),
+          pw.SizedBox(height: 16),
+          for (final (title, body) in sections) ...[
+            pw.Text(title,
+                style: pw.TextStyle(
+                    fontSize: 12,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 4),
+            pw.Container(
+              width: double.infinity,
+              padding: const pw.EdgeInsets.all(8),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColors.grey400, width: 0.4),
+                borderRadius: pw.BorderRadius.circular(3),
+              ),
+              child: pw.Text(body.isEmpty ? '-' : body,
+                  style: pw.TextStyle(fontSize: 9.5, fontFallback: fallback)),
+            ),
+            pw.SizedBox(height: 10),
+          ],
+          pw.SizedBox(height: 22),
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              signatureLine('Outgoing Officer', report.outgoingOfficer),
+              signatureLine(
+                  'Incoming Officer',
+                  report.acknowledgedBy.isNotEmpty
+                      ? report.acknowledgedBy
+                      : report.incomingOfficer),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    final fileName =
+        '${vessel.name.replaceAll(' ', '_')}_Handover_$handoverDate.pdf';
+    await _savePdf(await doc.save(), fileName);
+  }
+
+  static pw.Widget _infoBlock(
+      String label, String value, List<pw.Font> fontFallback) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
@@ -530,7 +719,10 @@ class ReportService {
             style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600)),
         pw.SizedBox(height: 2),
         pw.Text(value,
-            style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
+            style: pw.TextStyle(
+                fontSize: 11,
+                fontWeight: pw.FontWeight.bold,
+                fontFallback: fontFallback)),
       ],
     );
   }

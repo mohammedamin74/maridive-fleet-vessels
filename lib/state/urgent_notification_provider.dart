@@ -100,6 +100,27 @@ class UrgentNotificationProvider extends ChangeNotifier {
     return null;
   }
 
+  Future<void> update({
+    required String id,
+    required AlertType alertType,
+    required String location,
+    required String description,
+    bool isAction = false,
+    String? assignee,
+    DateTime? dueDate,
+  }) async {
+    final current = _byId(id);
+    if (current == null) return;
+    await _save(current.copyWith(
+      alertType: alertType,
+      location: location,
+      description: description,
+      isAction: isAction,
+      assignee: assignee,
+      dueDate: dueDate,
+    ));
+  }
+
   Future<void> updateStatus(String id, EscalationStatus status) async {
     final current = _byId(id);
     if (current == null) return;

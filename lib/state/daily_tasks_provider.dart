@@ -96,6 +96,25 @@ class DailyTasksProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required TaskCategory category,
+    required String title,
+    required String assignedTo,
+    required TaskFrequency frequency,
+    required DateTime scheduledTime,
+  }) async {
+    final task = _byId(id);
+    if (task == null) return;
+    await _save(task.copyWith(
+      category: category,
+      title: title,
+      assignedTo: assignedTo,
+      frequency: frequency,
+      scheduledTime: scheduledTime,
+    ));
+  }
+
   Future<void> updateStatus(String id, TaskStatus status) async {
     final task = _byId(id);
     if (task == null) return;

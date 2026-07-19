@@ -24,9 +24,11 @@ TankLevelStatus levelStatusFor(
   if (!hasReading) return TankLevelStatus.noData;
   if (percent < AlertThresholds.lowCritical) return TankLevelStatus.critical;
   if (percent < AlertThresholds.lowWarning) return TankLevelStatus.warning;
-  if (percent >= AlertThresholds.highCritical)
+  if (percent >= AlertThresholds.highCritical) {
     return TankLevelStatus.highCritical;
-  if (percent >= AlertThresholds.highWarning)
+  }
+  if (percent >= AlertThresholds.highWarning) {
     return TankLevelStatus.highWarning;
+  }
   return TankLevelStatus.normal;
 }

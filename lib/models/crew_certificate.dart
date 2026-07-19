@@ -1,7 +1,12 @@
 import 'attachment.dart';
 import 'vessel_certificate.dart';
+import '../services/clock.dart';
 
 enum CrewCertType { coc, stcw, medical, other }
+
+/// Sentinel distinguishing "leave photoBase64 unchanged" from "explicitly
+/// clear it to null" in [CrewCertificate.copyWith].
+const Object _unset = Object();
 
 class CrewCertificate {
   final String id;
@@ -26,20 +31,31 @@ class CrewCertificate {
     this.attachments = const [],
   });
 
-  CrewCertificate copyWith({List<Attachment>? attachments}) => CrewCertificate(
+  CrewCertificate copyWith({
+    String? officerName,
+    String? rank,
+    CrewCertType? certType,
+    DateTime? issueDate,
+    DateTime? expiryDate,
+    Object? photoBase64 = _unset,
+    List<Attachment>? attachments,
+  }) =>
+      CrewCertificate(
         id: id,
         vesselId: vesselId,
-        officerName: officerName,
-        rank: rank,
-        certType: certType,
-        issueDate: issueDate,
-        expiryDate: expiryDate,
-        photoBase64: photoBase64,
+        officerName: officerName ?? this.officerName,
+        rank: rank ?? this.rank,
+        certType: certType ?? this.certType,
+        issueDate: issueDate ?? this.issueDate,
+        expiryDate: expiryDate ?? this.expiryDate,
+        photoBase64:
+            photoBase64 == _unset ? this.photoBase64 : photoBase64 as String?,
         attachments: attachments ?? this.attachments,
       );
 
   CertReminderStatus get reminderStatus {
-    final daysLeft = expiryDate.difference(DateTime.now()).inDays;
+    final daysLeft = expiryDate.difference(clockNow()).inDays;
+    if (daysLeft < 0) return CertReminderStatus.expired;
     if (daysLeft <= 30) return CertReminderStatus.red;
     if (daysLeft <= 90) return CertReminderStatus.amber;
     return CertReminderStatus.green;

@@ -21,11 +21,13 @@ class VesselSpec {
     required this.createdAt,
   });
 
-  VesselSpec copyWith({List<Attachment>? attachments}) => VesselSpec(
+  VesselSpec copyWith(
+          {String? title, String? notes, List<Attachment>? attachments}) =>
+      VesselSpec(
         id: id,
         vesselId: vesselId,
-        title: title,
-        notes: notes,
+        title: title ?? this.title,
+        notes: notes ?? this.notes,
         attachments: attachments ?? this.attachments,
         createdAt: createdAt,
       );

@@ -1,6 +1,7 @@
 import 'attachment.dart';
+import '../services/clock.dart';
 
-enum CertReminderStatus { green, amber, red }
+enum CertReminderStatus { green, amber, red, expired }
 
 class VesselCertificate {
   final String id;
@@ -21,19 +22,26 @@ class VesselCertificate {
     this.attachments = const [],
   });
 
-  VesselCertificate copyWith({List<Attachment>? attachments}) =>
+  VesselCertificate copyWith({
+    String? documentName,
+    String? issuingAuthority,
+    DateTime? issueDate,
+    DateTime? expiryDate,
+    List<Attachment>? attachments,
+  }) =>
       VesselCertificate(
         id: id,
         vesselId: vesselId,
-        documentName: documentName,
-        issuingAuthority: issuingAuthority,
-        issueDate: issueDate,
-        expiryDate: expiryDate,
+        documentName: documentName ?? this.documentName,
+        issuingAuthority: issuingAuthority ?? this.issuingAuthority,
+        issueDate: issueDate ?? this.issueDate,
+        expiryDate: expiryDate ?? this.expiryDate,
         attachments: attachments ?? this.attachments,
       );
 
   CertReminderStatus get reminderStatus {
-    final daysLeft = expiryDate.difference(DateTime.now()).inDays;
+    final daysLeft = expiryDate.difference(clockNow()).inDays;
+    if (daysLeft < 0) return CertReminderStatus.expired;
     if (daysLeft <= 30) return CertReminderStatus.red;
     if (daysLeft <= 90) return CertReminderStatus.amber;
     return CertReminderStatus.green;

@@ -1,3 +1,5 @@
+import '../services/clock.dart';
+
 enum AlertType { fire, flooding, engineFailure, routing, other }
 
 enum EscalationStatus { notAcknowledged, acknowledged, resolved }
@@ -54,9 +56,12 @@ class UrgentNotification {
       isAction &&
       actionStatus != ActionStatus.completed &&
       dueDate != null &&
-      dueDate!.isBefore(DateTime.now());
+      dueDate!.isBefore(clockNow());
 
   UrgentNotification copyWith({
+    AlertType? alertType,
+    String? location,
+    String? description,
     EscalationStatus? escalationStatus,
     bool? isAction,
     String? assignee,
@@ -67,9 +72,9 @@ class UrgentNotification {
       UrgentNotification(
         id: id,
         vesselId: vesselId,
-        alertType: alertType,
-        location: location,
-        description: description,
+        alertType: alertType ?? this.alertType,
+        location: location ?? this.location,
+        description: description ?? this.description,
         timestamp: timestamp,
         escalationStatus: escalationStatus ?? this.escalationStatus,
         isAction: isAction ?? this.isAction,

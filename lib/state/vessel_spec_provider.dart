@@ -137,6 +137,16 @@ class VesselSpecProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required String title,
+    required String notes,
+  }) async {
+    final spec = _byId(id);
+    if (spec == null) return;
+    await _save(spec.copyWith(title: title, notes: notes));
+  }
+
   Future<void> addAttachment(String id, Attachment attachment) async {
     final spec = _byId(id);
     if (spec == null) return;

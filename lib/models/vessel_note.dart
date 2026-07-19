@@ -15,10 +15,11 @@ class VesselNote {
     required this.timestamp,
   });
 
-  VesselNote copyWith({List<Attachment>? attachments}) => VesselNote(
+  VesselNote copyWith({String? text, List<Attachment>? attachments}) =>
+      VesselNote(
         id: id,
         vesselId: vesselId,
-        text: text,
+        text: text ?? this.text,
         attachments: attachments ?? this.attachments,
         timestamp: timestamp,
       );

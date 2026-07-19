@@ -99,6 +99,23 @@ class PortRequirementProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required String title,
+    String portName = '',
+    RequirementCategory category = RequirementCategory.documents,
+    String notes = '',
+  }) async {
+    final req = _byId(id);
+    if (req == null) return;
+    await _save(req.copyWith(
+      title: title,
+      portName: portName,
+      category: category,
+      notes: notes,
+    ));
+  }
+
   Future<void> updateStatus(String id, RequirementStatus status) async {
     final req = _byId(id);
     if (req == null) return;

@@ -16,6 +16,17 @@ class TankReading {
   String get storageKey =>
       '$vesselId|$tankId|${timestamp.microsecondsSinceEpoch}';
 
+  /// Only levelM3/temperatureC are editable — vesselId/tankId/timestamp make
+  /// up [storageKey], the row's identity in Storage, so changing them here
+  /// would silently create a new row instead of updating this one.
+  TankReading copyWith({double? levelM3, double? temperatureC}) => TankReading(
+        vesselId: vesselId,
+        tankId: tankId,
+        levelM3: levelM3 ?? this.levelM3,
+        temperatureC: temperatureC ?? this.temperatureC,
+        timestamp: timestamp,
+      );
+
   Map<String, dynamic> toMap() => {
         'vesselId': vesselId,
         'tankId': tankId,

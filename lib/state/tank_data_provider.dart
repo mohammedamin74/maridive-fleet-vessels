@@ -130,12 +130,37 @@ class TankDataProvider extends ChangeNotifier {
     await _readings.put(reading.storageKey, reading.vesselId, reading.toMap());
   }
 
-  double avgFuelPercent(Vessel vessel) {
-    final fuelTanks = vessel.tanksOf(TankCategory.fuelOil);
-    if (fuelTanks.isEmpty) return 0;
+  /// Only levelM3/temperatureC are editable — see [TankReading.copyWith].
+  Future<void> updateReading(TankReading reading,
+      {required double levelM3, double? temperatureC}) async {
+    final updated =
+        reading.copyWith(levelM3: levelM3, temperatureC: temperatureC);
+    final idx =
+        _readingsCache.indexWhere((r) => r.storageKey == reading.storageKey);
+    if (idx < 0) return;
+    _readingsCache[idx] = updated;
+    notifyListeners();
+    await _readings.put(updated.storageKey, updated.vesselId, updated.toMap());
+  }
+
+  Future<void> deleteReading(TankReading reading) async {
+    _readingsCache.removeWhere((r) => r.storageKey == reading.storageKey);
+    notifyListeners();
+    await _readings.remove(reading.storageKey);
+  }
+
+  /// Average fuel level across tanks that have at least one logged reading.
+  /// Returns null when no fuel tank has ever been read, rather than
+  /// silently counting unread tanks as 0% and dragging the average down.
+  double? avgFuelPercent(Vessel vessel) {
+    final readTanks = vessel
+        .tanksOf(TankCategory.fuelOil)
+        .where((t) => hasReading(vessel.id, t.id))
+        .toList();
+    if (readTanks.isEmpty) return null;
     final total =
-        fuelTanks.fold<double>(0, (sum, t) => sum + percentFor(vessel.id, t));
-    return total / fuelTanks.length;
+        readTanks.fold<double>(0, (sum, t) => sum + percentFor(vessel.id, t));
+    return total / readTanks.length;
   }
 
   List<TankAlert> alertsFor(List<Vessel> vessels) {
@@ -197,6 +222,12 @@ class TankDataProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> updateNote(String noteId, String text) async {
+    final note = _noteById(noteId);
+    if (note == null) return;
+    await _saveNote(note.copyWith(text: text));
+  }
+
   Future<void> addNoteAttachment(String noteId, Attachment attachment) async {
     final note = _noteById(noteId);
     if (note == null) return;
@@ -218,6 +249,10 @@ class TankDataProvider extends ChangeNotifier {
   }
 
   // --- Defects ---
+
+  /// Fleet-wide, unfiltered — used by the analytics dashboard to aggregate
+  /// across all vessels. Per-vessel screens should keep using [defectsFor].
+  List<Defect> get allDefects => List.unmodifiable(_defectsCache);
 
   List<Defect> defectsFor(String vesselId) {
     final list = _defectsCache.where((d) => d.vesselId == vesselId).toList();
@@ -282,6 +317,27 @@ class TankDataProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> updateDefect({
+    required String id,
+    required String title,
+    required String description,
+    required DefectLocation location,
+    required DefectPriority priority,
+    String assignedOfficer = '',
+    String requiredSpareParts = '',
+  }) async {
+    final defect = _defectById(id);
+    if (defect == null) return;
+    await _saveDefect(defect.copyWith(
+      title: title,
+      description: description,
+      location: location,
+      priority: priority,
+      assignedOfficer: assignedOfficer,
+      requiredSpareParts: requiredSpareParts,
+    ));
+  }
+
   Future<void> updateDefectStatus(String id, DefectStatus status) async {
     final defect = _defectById(id);
     if (defect == null) return;
@@ -315,6 +371,11 @@ class TankDataProvider extends ChangeNotifier {
   }
 
   // --- Requisitions ---
+
+  /// Fleet-wide, unfiltered — used by the analytics dashboard to aggregate
+  /// across all vessels. Per-vessel screens should keep using
+  /// [requisitionsFor].
+  List<Requisition> get allRequisitions => List.unmodifiable(_requisitionsCache);
 
   List<Requisition> requisitionsFor(String vesselId) {
     final list =

@@ -57,7 +57,11 @@ class AuthProvider extends ChangeNotifier {
     _current = row != null ? AppUser.fromProfile(row) : null;
   }
 
-  /// Returns null on success, or an error code ('invalidCredentials').
+  /// Returns null on success, or an error code: 'invalidCredentials' (the
+  /// username/password really are wrong) or 'networkError' (the request
+  /// never reached the server — offline, timeout, DNS — so the credentials
+  /// were never actually checked). Conflating the two used to tell an
+  /// offline mariner their password was wrong.
   Future<String?> login(String username, String password) async {
     try {
       await _sb.auth.signInWithPassword(
@@ -68,9 +72,11 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return _current == null ? 'invalidCredentials' : null;
     } on AuthException {
+      // The server responded — it rejected the credentials.
       return 'invalidCredentials';
     } catch (_) {
-      return 'invalidCredentials';
+      // No response reached us at all: connectivity, not credentials.
+      return 'networkError';
     }
   }
 

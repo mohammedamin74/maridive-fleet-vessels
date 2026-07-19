@@ -110,6 +110,25 @@ class CrewProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required String name,
+    String rank = '',
+    String nationality = '',
+    required DateTime signOnDate,
+    String notes = '',
+  }) async {
+    final member = _byId(id);
+    if (member == null) return;
+    await _save(member.copyWith(
+      name: name,
+      rank: rank,
+      nationality: nationality,
+      signOnDate: signOnDate,
+      notes: notes,
+    ));
+  }
+
   /// Move a member to the Previous list (history), stamping the sign-off date.
   Future<void> signOff(String id, {DateTime? date}) async {
     final member = _byId(id);

@@ -3,6 +3,10 @@ import 'checklist_item.dart';
 
 enum PortCallStatus { upcoming, arrived, departed }
 
+/// Sentinel distinguishing "leave pilotBoardingTime unchanged" from
+/// "explicitly clear it to null" in [PortCall.copyWith].
+const Object _unset = Object();
+
 const List<String> defaultCustomsChecklistLabels = [
   'Crew List',
   'Cargo Manifest',
@@ -50,24 +54,39 @@ class PortCall {
     required this.createdAt,
   });
 
-  PortCall copyWith(
-          {PortCallStatus? status,
-          List<ChecklistItem>? customsChecklist,
-          List<Attachment>? attachments}) =>
+  PortCall copyWith({
+    String? portName,
+    DateTime? arrivalEta,
+    Object? pilotBoardingTime = _unset,
+    String? agentName,
+    String? agentContact,
+    double? bunkersMgoRequired,
+    double? bunkersHfoRequired,
+    double? freshWaterRequired,
+    String? provisionsRequired,
+    bool? sludgeDisposalRequired,
+    double? sludgeQuantity,
+    PortCallStatus? status,
+    List<ChecklistItem>? customsChecklist,
+    List<Attachment>? attachments,
+  }) =>
       PortCall(
         id: id,
         vesselId: vesselId,
-        portName: portName,
-        arrivalEta: arrivalEta,
-        pilotBoardingTime: pilotBoardingTime,
-        agentName: agentName,
-        agentContact: agentContact,
-        bunkersMgoRequired: bunkersMgoRequired,
-        bunkersHfoRequired: bunkersHfoRequired,
-        freshWaterRequired: freshWaterRequired,
-        provisionsRequired: provisionsRequired,
-        sludgeDisposalRequired: sludgeDisposalRequired,
-        sludgeQuantity: sludgeQuantity,
+        portName: portName ?? this.portName,
+        arrivalEta: arrivalEta ?? this.arrivalEta,
+        pilotBoardingTime: pilotBoardingTime == _unset
+            ? this.pilotBoardingTime
+            : pilotBoardingTime as DateTime?,
+        agentName: agentName ?? this.agentName,
+        agentContact: agentContact ?? this.agentContact,
+        bunkersMgoRequired: bunkersMgoRequired ?? this.bunkersMgoRequired,
+        bunkersHfoRequired: bunkersHfoRequired ?? this.bunkersHfoRequired,
+        freshWaterRequired: freshWaterRequired ?? this.freshWaterRequired,
+        provisionsRequired: provisionsRequired ?? this.provisionsRequired,
+        sludgeDisposalRequired:
+            sludgeDisposalRequired ?? this.sludgeDisposalRequired,
+        sludgeQuantity: sludgeQuantity ?? this.sludgeQuantity,
         customsChecklist: customsChecklist ?? this.customsChecklist,
         status: status ?? this.status,
         attachments: attachments ?? this.attachments,

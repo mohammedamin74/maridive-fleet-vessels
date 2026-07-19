@@ -1,5 +1,6 @@
 import 'attachment.dart';
 import 'checklist_item.dart';
+import '../services/clock.dart';
 
 enum TaskCategory {
   engineRoomRounds,
@@ -44,9 +45,14 @@ class DailyTask {
   /// in progress after its scheduled time has passed is overdue. This
   /// avoids needing a background job to flip a stored status.
   bool get isOverdue =>
-      status != TaskStatus.completed && DateTime.now().isAfter(scheduledTime);
+      status != TaskStatus.completed && clockNow().isAfter(scheduledTime);
 
   DailyTask copyWith({
+    TaskCategory? category,
+    String? title,
+    String? assignedTo,
+    TaskFrequency? frequency,
+    DateTime? scheduledTime,
     TaskStatus? status,
     List<ChecklistItem>? checklistItems,
     List<Attachment>? attachments,
@@ -54,11 +60,11 @@ class DailyTask {
       DailyTask(
         id: id,
         vesselId: vesselId,
-        category: category,
-        title: title,
-        assignedTo: assignedTo,
-        frequency: frequency,
-        scheduledTime: scheduledTime,
+        category: category ?? this.category,
+        title: title ?? this.title,
+        assignedTo: assignedTo ?? this.assignedTo,
+        frequency: frequency ?? this.frequency,
+        scheduledTime: scheduledTime ?? this.scheduledTime,
         status: status ?? this.status,
         checklistItems: checklistItems ?? this.checklistItems,
         attachments: attachments ?? this.attachments,

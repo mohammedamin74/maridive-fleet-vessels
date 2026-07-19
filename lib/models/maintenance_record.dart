@@ -29,16 +29,20 @@ class MaintenanceRecord {
   });
 
   MaintenanceRecord copyWith({
+    String? title,
+    String? description,
+    String? performedBy,
+    DateTime? dueDate,
     MaintenanceStatus? status,
     List<Attachment>? attachments,
   }) =>
       MaintenanceRecord(
         id: id,
         vesselId: vesselId,
-        title: title,
-        description: description,
-        performedBy: performedBy,
-        dueDate: dueDate,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        performedBy: performedBy ?? this.performedBy,
+        dueDate: dueDate ?? this.dueDate,
         status: status ?? this.status,
         attachments: attachments ?? this.attachments,
         createdAt: createdAt,

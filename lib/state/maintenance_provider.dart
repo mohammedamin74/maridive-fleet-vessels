@@ -86,6 +86,23 @@ class MaintenanceProvider extends ChangeNotifier {
     ));
   }
 
+  Future<void> update({
+    required String id,
+    required String title,
+    required String description,
+    required String performedBy,
+    required DateTime dueDate,
+  }) async {
+    final rec = _byId(id);
+    if (rec == null) return;
+    await _save(rec.copyWith(
+      title: title,
+      description: description,
+      performedBy: performedBy,
+      dueDate: dueDate,
+    ));
+  }
+
   Future<void> updateStatus(String id, MaintenanceStatus status) async {
     final rec = _byId(id);
     if (rec == null) return;

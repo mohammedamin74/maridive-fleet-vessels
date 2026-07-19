@@ -36,19 +36,25 @@ class Defect {
   });
 
   Defect copyWith(
-          {DefectStatus? status,
+          {String? title,
+          String? description,
+          DefectLocation? location,
+          DefectPriority? priority,
+          String? assignedOfficer,
+          String? requiredSpareParts,
+          DefectStatus? status,
           String? actionTaken,
           List<Attachment>? attachments}) =>
       Defect(
         id: id,
         vesselId: vesselId,
-        title: title,
-        description: description,
-        location: location,
-        priority: priority,
+        title: title ?? this.title,
+        description: description ?? this.description,
+        location: location ?? this.location,
+        priority: priority ?? this.priority,
         status: status ?? this.status,
-        assignedOfficer: assignedOfficer,
-        requiredSpareParts: requiredSpareParts,
+        assignedOfficer: assignedOfficer ?? this.assignedOfficer,
+        requiredSpareParts: requiredSpareParts ?? this.requiredSpareParts,
         actionTaken: actionTaken ?? this.actionTaken,
         attachments: attachments ?? this.attachments,
         reportedAt: reportedAt,

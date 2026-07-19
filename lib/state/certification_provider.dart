@@ -84,6 +84,30 @@ class CertificationProvider extends ChangeNotifier {
     return list;
   }
 
+  /// Certificates inside the 30-day alarm window (or already expired) —
+  /// these raise the red dashboard alarm, unlike the wider amber reminder.
+  List<VesselCertificate> alarmVesselCerts(List<String> vesselIds) {
+    final list = _vesselCache
+        .where((c) =>
+            vesselIds.contains(c.vesselId) &&
+            (c.reminderStatus == CertReminderStatus.red ||
+                c.reminderStatus == CertReminderStatus.expired))
+        .toList();
+    list.sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
+    return list;
+  }
+
+  List<CrewCertificate> alarmCrewCerts(List<String> vesselIds) {
+    final list = _crewCache
+        .where((c) =>
+            vesselIds.contains(c.vesselId) &&
+            (c.reminderStatus == CertReminderStatus.red ||
+                c.reminderStatus == CertReminderStatus.expired))
+        .toList();
+    list.sort((a, b) => a.expiryDate.compareTo(b.expiryDate));
+    return list;
+  }
+
   // --- Vessel certificates ---
 
   Future<void> _saveVesselCert(VesselCertificate cert) async {
@@ -120,6 +144,23 @@ class CertificationProvider extends ChangeNotifier {
       issueDate: issueDate,
       expiryDate: expiryDate,
       attachments: attachments,
+    ));
+  }
+
+  Future<void> updateVesselCert({
+    required String id,
+    required String documentName,
+    required String issuingAuthority,
+    required DateTime issueDate,
+    required DateTime expiryDate,
+  }) async {
+    final cert = _vesselCertById(id);
+    if (cert == null) return;
+    await _saveVesselCert(cert.copyWith(
+      documentName: documentName,
+      issuingAuthority: issuingAuthority,
+      issueDate: issueDate,
+      expiryDate: expiryDate,
     ));
   }
 
@@ -183,6 +224,27 @@ class CertificationProvider extends ChangeNotifier {
       expiryDate: expiryDate,
       photoBase64: photoBase64,
       attachments: attachments,
+    ));
+  }
+
+  Future<void> updateCrewCert({
+    required String id,
+    required String officerName,
+    required String rank,
+    required CrewCertType certType,
+    required DateTime issueDate,
+    required DateTime expiryDate,
+    String? photoBase64,
+  }) async {
+    final cert = _crewCertById(id);
+    if (cert == null) return;
+    await _saveCrewCert(cert.copyWith(
+      officerName: officerName,
+      rank: rank,
+      certType: certType,
+      issueDate: issueDate,
+      expiryDate: expiryDate,
+      photoBase64: photoBase64,
     ));
   }
 
