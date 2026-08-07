@@ -51,3 +51,6 @@ app.*.map.json
 
 # Local distribution zips (not tracked)
 /dist/
+
+# Supabase CLI local scratch state
+supabase/.temp/
