@@ -43,11 +43,13 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 // Rate-limited models reject in <1s, so a long chain is nearly free to walk;
 // the slow-but-accurate hy3 sits late so faster models get first shot while
 // hy3 still inherits most of the time budget when they're all rate-limited.
+// Chain refreshed 2026-08-07: qwen3-next, tencent/hy3 and llama-3.3 were
+// delisted from OpenRouter (the hy3 delisting is what killed the assistant
+// function, which had no chain). Only currently-listed :free models below.
 const TEXT_MODELS = [
-  "qwen/qwen3-next-80b-a3b-instruct:free",
   "nvidia/nemotron-3-super-120b-a12b:free",
-  "tencent/hy3:free",
-  "meta-llama/llama-3.3-70b-instruct:free",
+  "nvidia/nemotron-3-nano-30b-a3b:free",
+  "nvidia/nemotron-nano-9b-v2:free",
   // Last: measured hanging for 67s without answering on 2026-07-15, which
   // starved the models after it — only safe in the final slot.
   "openai/gpt-oss-20b:free",

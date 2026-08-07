@@ -13,7 +13,15 @@
 // ---------------------------------------------------------------------------
 
 const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY") ?? "";
-const MODEL = "tencent/hy3:free";
+// Free models get delisted without warning (tencent/hy3:free vanished in
+// Aug 2026 and silently broke this function), so walk a fallback chain like
+// `extract` does instead of pinning one model. Free-only: hard constraint.
+const MODELS = [
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "nvidia/nemotron-3-nano-30b-a3b:free",
+  "nvidia/nemotron-nano-9b-v2:free",
+  "openai/gpt-oss-20b:free",
+];
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 const SYSTEM_PROMPT =
@@ -85,34 +93,46 @@ Deno.serve(async (req) => {
       content: String(m?.content ?? "").slice(0, MAX_CHARS),
     }));
 
-    const orRes = await fetch(OPENROUTER_URL, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "authorization": `Bearer ${OPENROUTER_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...trimmed],
-        max_tokens: 512,
-      }),
-    });
+    let sawRateLimit = false;
+    let lastFail = "";
+    for (const model of MODELS) {
+      const orRes = await fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "system", content: SYSTEM_PROMPT }, ...trimmed],
+          max_tokens: 512,
+        }),
+      });
 
-    if (orRes.status === 429) {
+      if (orRes.status === 429) {
+        sawRateLimit = true;
+        await orRes.body?.cancel();
+        continue;
+      }
+      if (!orRes.ok) {
+        const detail = await orRes.text();
+        lastFail = `ai_failed_${orRes.status}_${detail.slice(0, 200)}`;
+        continue;
+      }
+
+      const dj = await orRes.json();
+      const text = dj?.choices?.[0]?.message?.content;
+      if (!text) {
+        lastFail = "empty_reply";
+        continue;
+      }
+      return json({ text });
+    }
+
+    if (sawRateLimit && !lastFail) {
       return json({ error: "rate_limited" }, 429);
     }
-    if (!orRes.ok) {
-      const detail = await orRes.text();
-      return json({ error: `ai_failed_${orRes.status}_${detail.slice(0, 400)}` }, 502);
-    }
-
-    const dj = await orRes.json();
-    const text = dj?.choices?.[0]?.message?.content;
-    if (!text) {
-      return json({ error: "empty_reply" }, 502);
-    }
-
-    return json({ text });
+    return json({ error: lastFail || "ai_failed" }, 502);
   } catch (e) {
     return json({ error: "unexpected", detail: String(e) }, 500);
   }
