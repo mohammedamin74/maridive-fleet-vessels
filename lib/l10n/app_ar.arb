@@ -1,8 +1,6 @@
 {
   "@@locale": "ar",
-
   "appTitle": "أسطول ماريديف",
-
   "dashboardTitle": "لوحة تحكم الأسطول",
   "dashboardSubtitle": "سفن الدعم البحري · ليبيا",
   "fleetOverview": "نظرة عامة على الأسطول",
@@ -11,12 +9,10 @@
   "inPort": "في الميناء",
   "underMaintenance": "صيانة",
   "avgFuelLevel": "متوسط الوقود",
-
   "statusActive": "نشطة",
   "statusStandby": "احتياط",
   "statusInPort": "في الميناء",
   "statusMaintenance": "صيانة",
-
   "searchVessels": "البحث عن سفينة...",
   "noResults": "لا توجد سفن مطابقة لبحثك",
   "filterAll": "الكل",
@@ -67,34 +63,37 @@
   "actionFailed": "فشل الإجراء — تحقق من الاتصال وحاول مرة أخرى",
   "filesCount": "{count, plural, zero{لا ملفات} one{ملف واحد} two{ملفان} few{{count} ملفات} many{{count} ملفًا} other{{count} ملف}}",
   "@filesCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "vesselDetails": "تفاصيل السفينة",
   "imoNumber": "رقم IMO",
   "vesselType": "نوع السفينة",
   "homePort": "الميناء الرئيسي",
   "crewOnBoard": "الطاقم على متن السفينة",
   "lastUpdated": "آخر تحديث",
-
   "tankSystems": "أنظمة الخزانات",
   "categoryFuelOil": "خزانات وقود الديزل",
   "categoryBrineMud": "خزانات المحلول الملحي / الطين",
   "categoryLubeHydraulic": "زيت التشحيم والهيدروليك",
   "categoryOther": "خزانات أخرى",
   "categorySoundingTables": "جداول السبر",
-
   "tanksInCategory": "{count, plural, zero{لا خزانات} one{خزان واحد} two{خزانان} few{{count} خزانات} many{{count} خزانًا} other{{count} خزان}}",
   "@tanksInCategory": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "selectTank": "اختر الخزان",
   "tankLevel": "مستوى الخزان",
   "tankPercent": "نسبة الخزان",
   "capacity": "السعة",
   "currentVolume": "الحجم الحالي",
-
   "pumpCalculator": "حاسبة الضخ",
   "quantityToPumpOut": "الكمية المراد ضخها",
   "stopPumpingAtLevel": "إيقاف الضخ عند المستوى",
@@ -102,14 +101,16 @@
   "calculate": "احسب",
   "reset": "إعادة تعيين",
   "enterAValue": "أدخل قيمة",
-
   "soundingTableTitle": "{tank} — جدول السبر",
   "@soundingTableTitle": {
-    "placeholders": { "tank": { "type": "String" } }
+    "placeholders": {
+      "tank": {
+        "type": "String"
+      }
+    }
   },
   "levelCm": "المستوى (سم)",
   "volumeM3": "الحجم (م³)",
-
   "settings": "الإعدادات",
   "tankHistoryChartSemantics": "مخطط سجل مستوى الخزان، حاليًا {percent}٪ من السعة",
   "chartEntriesSemantics": "مخطط: {entries}",
@@ -125,7 +126,6 @@
   "themeLight": "فاتح",
   "about": "حول التطبيق",
   "aboutBody": "يساعد تطبيق أسطول ماريديف الطواقم وموظفي الشاطئ على مراقبة مستويات خزانات الوقود والطين والتشحيم والهيدروليك عبر أسطول سفن الدعم البحري العاملة في ليبيا.",
-
   "back": "رجوع",
   "close": "إغلاق",
   "refresh": "تحديث",
@@ -135,7 +135,6 @@
   "gallons": "غالون",
   "cubicMeters": "م³",
   "percent": "٪",
-
   "updateLevel": "تحديث المستوى الحالي",
   "newReading": "قراءة جديدة",
   "saveReading": "حفظ",
@@ -143,20 +142,20 @@
   "viewHistory": "عرض سجل القراءات",
   "readingHistory": "سجل القراءات",
   "noHistory": "لم يتم تسجيل أي قراءات بعد",
-
   "criticalLevel": "حرج",
   "warningLevel": "تحذير",
   "noData": "لا توجد بيانات",
-
   "alertsTitle": "{count, plural, zero{لا توجد خزانات تحتاج انتباه} one{خزان واحد يحتاج انتباه} two{خزانان يحتاجان انتباه} few{{count} خزانات تحتاج انتباه} many{{count} خزانًا يحتاج انتباه} other{{count} خزان يحتاج انتباه}}",
   "@alertsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "logbook": "سجل السفينة",
   "addNoteHint": "أضف ملاحظة...",
   "noNotes": "لا توجد ملاحظات بعد",
-
   "exportReport": "تصدير التقرير",
   "status": "الحالة",
   "tankLabel": "الخزان",
@@ -170,7 +169,6 @@
   "reviewReport": "مراجعة",
   "reportNoEntries": "لا توجد سجلات",
   "generatedAtLabel": "تاريخ الإنشاء",
-
   "vesselOperations": "عمليات السفينة",
   "viewEntries": "عرض السجلات",
   "bulkImport": "استيراد جماعي",
@@ -192,18 +190,28 @@
   "confirmDeleteTitle": "حذف هذا العنصر؟",
   "confirmDeleteMessage": "سيتم حذف \"{item}\" نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
   "@confirmDeleteMessage": {
-    "placeholders": { "item": { "type": "String" } }
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
   },
-
   "openCount": "{count, plural, zero{لا توجد مفتوحة} one{١ مفتوح} two{٢ مفتوحة} few{{count} مفتوحة} many{{count} مفتوحة} other{{count} مفتوحة}}",
   "@openCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "pendingCount": "{count, plural, zero{لا توجد معلقة} one{١ معلق} two{٢ معلقة} few{{count} معلقة} many{{count} معلقة} other{{count} معلقة}}",
   "@pendingCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "defects": "الأعطال",
   "addDefect": "الإبلاغ عن عطل",
   "editDefect": "تعديل العطل",
@@ -218,20 +226,25 @@
   "statusClosedDefect": "مغلق",
   "noDefects": "لا توجد أعطال مسجلة",
   "reportedOn": "تاريخ الإبلاغ",
-  "markInProgress": "قيد المعالجة",
+  "markInProgress": "قيد التنفيذ",
   "markClosed": "إغلاق",
   "reopen": "إعادة فتح",
-
   "criticalDefectsTitle": "{count, plural, zero{لا توجد أعطال حرجة} one{عطل حرج واحد} two{عطلان حرجان} few{{count} أعطال حرجة} many{{count} عطلاً حرجًا} other{{count} عطل حرج}}",
   "@criticalDefectsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "pendingSyncBanner": "{count, plural, zero{تم مزامنة كل التغييرات} one{تغيير واحد بانتظار المزامنة} two{تغييران بانتظار المزامنة} few{{count} تغييرات بانتظار المزامنة} many{{count} تغييرًا بانتظار المزامنة} other{{count} تغيير بانتظار المزامنة}}",
   "@pendingSyncBanner": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "requisitions": "طلبات التوريد",
   "addRequisition": "طلب توريد جديد",
   "itemNameLabel": "اسم الصنف",
@@ -253,7 +266,6 @@
   "markOrdered": "تحديد كـ تم الطلب",
   "markReceived": "تحديد كـ تم الاستلام",
   "markRejected": "رفض",
-
   "analyticsDashboard": "لوحة التحليلات",
   "allVessels": "كل السفن",
   "totalDefects": "إجمالي الأعطال",
@@ -264,7 +276,6 @@
   "defectsByPriority": "الأعطال حسب الأولوية",
   "requisitionsByStatus": "طلبات التوريد حسب الحالة",
   "requisitionsByDepartment": "طلبات التوريد حسب القسم",
-
   "priorityMedium": "متوسطة",
   "priorityHigh": "عالية",
   "locationLabel": "الموقع",
@@ -290,26 +301,36 @@
   "reqStatusTechSup": "اعتماد المشرف الفني",
   "markHodApproval": "تحديد كـ معتمد من رئيس القسم",
   "markTechSupApproval": "تحديد كـ معتمد من المشرف الفني",
-
   "temperatureLabel": "درجة الحرارة (°م)",
   "lastSounding": "آخر قراءة",
   "justNow": "الآن",
   "minutesAgo": "{count, plural, zero{الآن} one{منذ دقيقة واحدة} two{منذ دقيقتين} few{منذ {count} دقائق} many{منذ {count} دقيقة} other{منذ {count} دقيقة}}",
   "@minutesAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "hoursAgo": "{count, plural, zero{الآن} one{منذ ساعة واحدة} two{منذ ساعتين} few{منذ {count} ساعات} many{منذ {count} ساعة} other{منذ {count} ساعة}}",
   "@hoursAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "daysAgo": "{count, plural, zero{الآن} one{منذ يوم واحد} two{منذ يومين} few{منذ {count} أيام} many{منذ {count} يومًا} other{منذ {count} يوم}}",
   "@daysAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "soundingHistory24h": "سجل القراءات",
   "overfillCritical": "حرج (فيضان)",
   "overfillWarning": "تحذير (فيضان)",
-
   "portCalls": "زيارات الموانئ",
   "noPortCalls": "لا توجد زيارات موانئ مجدولة",
   "addPortCall": "إضافة زيارة ميناء",
@@ -328,7 +349,6 @@
   "portStatusArrived": "وصلت",
   "portStatusDeparted": "غادرت",
   "customsChecklistLabel": "قائمة الجمارك والمستندات",
-
   "certification": "الشهادات",
   "vesselCerts": "شهادات السفينة",
   "crewCerts": "شهادات الطاقم",
@@ -349,7 +369,6 @@
   "addPhoto": "إضافة صورة",
   "addFile": "إضافة ملف",
   "attachmentsLabel": "المرفقات",
-
   "urgentNotifications": "الإشعارات العاجلة",
   "noUrgentNotifications": "لا توجد إشعارات عاجلة",
   "addUrgentNotification": "رفع إشعار عاجل",
@@ -368,9 +387,12 @@
   "raiseAlert": "رفع الإشعار",
   "urgentAlertsTitle": "{count, plural, zero{لا توجد إشعارات عاجلة} one{إشعار عاجل واحد} two{إشعاران عاجلان} few{{count} إشعارات عاجلة} many{{count} إشعارًا عاجلًا} other{{count} إشعار عاجل}}",
   "@urgentAlertsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "dailyTasks": "المهام اليومية",
   "noDailyTasks": "لا توجد مهام يومية بعد",
   "addDailyTask": "إضافة مهمة يومية",
@@ -381,7 +403,7 @@
   "categoryNavigationEquipment": "اختبار معدات الملاحة",
   "categoryGalleyHygiene": "فحص نظافة المطبخ",
   "taskTitleLabel": "عنوان المهمة",
-  "assignedToLabel": "مسندة إلى",
+  "assignedToLabel": "مُسند إلى",
   "frequencyLabel": "التكرار",
   "frequencyDaily": "يوميًا",
   "frequencyEveryWatch": "كل وردية",
@@ -414,24 +436,34 @@
   "markCompleted": "تحديد كـ مكتملة",
   "upcomingCount": "{count, plural, zero{لا توجد قادمة} one{١ قادمة} two{٢ قادمة} few{{count} قادمة} many{{count} قادمة} other{{count} قادمة}}",
   "@upcomingCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "unacknowledgedCount": "{count, plural, zero{لا توجد غير مُقرّة} one{١ غير مُقرّ} two{٢ غير مُقرّة} few{{count} غير مُقرّة} many{{count} غير مُقرّة} other{{count} غير مُقرّة}}",
   "@unacknowledgedCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "overdueCount": "{count, plural, zero{لا توجد متأخرة} one{١ متأخرة} two{٢ متأخرة} few{{count} متأخرة} many{{count} متأخرة} other{{count} متأخرة}}",
   "@overdueCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "assignToManagement": "إسناد إلى الإدارة",
   "dueDateLabel": "تاريخ الاستحقاق",
   "setDueDate": "تحديد تاريخ الاستحقاق",
   "managementAction": "إجراء إداري",
-  "markInProgress": "قيد التنفيذ",
   "noAssignedActions": "لا توجد إجراءات مُسندة",
   "unassignedLabel": "غير مُسند",
-  "filterAll": "الكل",
   "filterActions": "الإجراءات",
   "downloadFile": "تنزيل",
   "previewUnavailable": "لا تتوفر معاينة لهذا النوع من الملفات. نزّله لفتحه في تطبيق آخر.",
@@ -451,11 +483,18 @@
   "reqStatusReady": "جاهز",
   "reqStatusPendingLabel": "قيد الانتظار",
   "markReady": "تحديد كجاهز",
-  "markPending": "تحديد كقيد الانتظار",
+  "markPending": "إعادة إلى غير المعتمد",
   "noRequirements": "لا توجد متطلبات بعد",
   "requirementsReady": "{ready}/{total} جاهز",
   "@requirementsReady": {
-    "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
+    "placeholders": {
+      "ready": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
   "extractFromFile": "مسح الملف بالذكاء الاصطناعي",
   "reviewExtractedDefect": "مراجعة العطل المستخرج",
@@ -470,7 +509,6 @@
   "previousCrew": "السابق",
   "addCrew": "إضافة فرد طاقم",
   "crewNameLabel": "الاسم",
-  "rankLabel": "الرتبة",
   "nationalityLabel": "الجنسية",
   "signOnDateLabel": "تاريخ الالتحاق",
   "signOffDateLabel": "تاريخ المغادرة",
@@ -480,9 +518,12 @@
   "noPreviousCrew": "لا يوجد طاقم سابق",
   "crewOnboard": "{count, plural, zero{لا يوجد طاقم} one{فرد واحد} two{فردان} few{{count} أفراد} many{{count} فردًا} other{{count} فرد}}",
   "@crewOnboard": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "aiAssistant": "المساعد",
   "aiAssistantSubtitle": "اسأل عن كيفية استخدام التطبيق",
   "aiDisclaimer": "قد تكون إجابات الذكاء الاصطناعي غير دقيقة — تحقق من الإجراءات الرسمية. لا يتم إرسال أي بيانات عن السفن.",
@@ -506,22 +547,38 @@
   "certsExpiringLabel": "الشهادات القاربة على الانتهاء",
   "certAlarmTitle": "{count, plural, zero{لا توجد شهادات تنتهي خلال 30 يومًا} one{شهادة واحدة تنتهي خلال 30 يومًا} two{شهادتان تنتهيان خلال 30 يومًا} few{{count} شهادات تنتهي خلال 30 يومًا} many{{count} شهادة تنتهي خلال 30 يومًا} other{{count} شهادة تنتهي خلال 30 يومًا}}",
   "@certAlarmTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "certAlarmTitleExpired": "{count, plural, zero{لا توجد شهادات منتهية} one{شهادة واحدة منتهية الصلاحية} two{شهادتان منتهيتا الصلاحية} few{{count} شهادات منتهية الصلاحية} many{{count} شهادة منتهية الصلاحية} other{{count} شهادة منتهية الصلاحية}}",
   "@certAlarmTitleExpired": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "certAlarmTitleMixed": "{expiredCount} منتهية، {expiringCount} تنتهي خلال 30 يومًا",
   "@certAlarmTitleMixed": {
     "placeholders": {
-      "expiredCount": { "type": "int" },
-      "expiringCount": { "type": "int" }
+      "expiredCount": {
+        "type": "int"
+      },
+      "expiringCount": {
+        "type": "int"
+      }
     }
   },
   "certDaysLeft": "{days, plural, zero{ينتهي اليوم} one{يوم واحد متبقٍ} two{يومان متبقيان} few{{days} أيام متبقية} many{{days} يومًا متبقيًا} other{{days} يوم متبقٍ}}",
   "@certDaysLeft": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "certExpiresToday": "تنتهي اليوم",
   "certExpired": "منتهية الصلاحية",
@@ -555,15 +612,295 @@
   "supplierLabel": "المورّد",
   "vesselLabel": "السفينة",
   "allVesselsFilter": "كل السفن",
-  "markApproved": "اعتماد",
-  "markPending": "إعادة إلى غير المعتمد",
   "approvedOn": "اعتُمد {date}",
   "@approvedOn": {
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "totalsLabel": "الإجماليات",
   "cashPendingBadge": "{count, plural, one{بند واحد بانتظار الاعتماد} two{بندان بانتظار الاعتماد} few{{count} بنود بانتظار الاعتماد} other{{count} بندًا بانتظار الاعتماد}}",
   "@cashPendingBadge": {
-    "placeholders": { "count": { "type": "int" } }
-  }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "navRisk": "المخاطر",
+  "navActions": "الإجراءات",
+  "commandCenterTitle": "مركز قيادة الأسطول",
+  "fleetHealthTitle": "صحة الأسطول",
+  "bandGood": "سليمة",
+  "bandAttention": "تحتاج متابعة",
+  "bandHighRisk": "خطورة عالية",
+  "bandCritical": "حرجة",
+  "vesselRankingTitle": "ترتيب السفن",
+  "priorityAttentionTitle": "أولويات المتابعة",
+  "healthScoreLabel": "مؤشر الصحة",
+  "whyThisScore": "لماذا المؤشر {score}؟",
+  "@whyThisScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scoreBreakdownTitle": "تفصيل المؤشر",
+  "deductionLine": "−{points} · {reason}",
+  "@deductionLine": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "componentScoresTitle": "المكوّنات",
+  "noRisksDetected": "لا توجد مخاطر. جميع السجلات ضمن الحدود.",
+  "calculatedAtLabel": "حُسب {time}",
+  "@calculatedAtLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "computedLocallyNote": "محسوب على هذا الجهاز من السجلات المحمّلة حاليًا.",
+  "categoryDefects": "الأعطال",
+  "categoryMaintenance": "الصيانة",
+  "categoryCertificates": "الشهادات",
+  "categoryRequisitions": "طلبات الشراء",
+  "categoryCrew": "الطاقم",
+  "categoryPortReadiness": "جاهزية الميناء",
+  "categoryOperational": "الجاهزية التشغيلية",
+  "categoryDataQuality": "جودة البيانات",
+  "severityHigh": "مرتفع",
+  "severityMedium": "متوسط",
+  "severityLow": "منخفض",
+  "severityInfo": "معلومة",
+  "riskTitle": "ذكاء المخاطر",
+  "riskSubtitle": "مستنتجة من سجلات السفن — كل بند مرتبط بمصدره",
+  "noRisksFleet": "لا توجد مخاطر في الأسطول.",
+  "evidenceLabel": "الدليل",
+  "recommendedActionLabel": "الإجراء المقترح",
+  "createActionFromRisk": "إنشاء إجراء",
+  "actionAlreadyExists": "يوجد إجراء مفتوح",
+  "openSourceRecord": "فتح السجل المصدر",
+  "riskCountBadge": "{count, plural, one{خطر واحد} two{خطران} few{{count} مخاطر} other{{count} خطرًا}}",
+  "@riskCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "riskDefectCriticalOpen": "عطل حرج ما زال مفتوحًا: {subject}",
+  "@riskDefectCriticalOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectHighOpen": "عطل بأولوية عالية مفتوح: {subject}",
+  "@riskDefectHighOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectStale": "عطل مفتوح منذ {days} يومًا: {subject}",
+  "@riskDefectStale": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectRecurring": "عطل متكرر محتمل ({count}×): {subject} — يلزم المراجعة",
+  "@riskDefectRecurring": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCertExpired": "شهادة منتهية: {subject}",
+  "@riskCertExpired": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCertExpiring": "تنتهي الشهادة خلال {days} يومًا: {subject}",
+  "@riskCertExpiring": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCrewCertExpired": "شهادة طاقم منتهية: {subject}",
+  "@riskCrewCertExpired": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCrewCertExpiring": "تنتهي شهادة الطاقم خلال {days} يومًا: {subject}",
+  "@riskCrewCertExpiring": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskMaintenanceOverdue": "صيانة متأخرة: {subject}",
+  "@riskMaintenanceOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskMaintenanceDueSoon": "صيانة مستحقة خلال {days} أيام: {subject}",
+  "@riskMaintenanceDueSoon": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskRequisitionUrgentStalled": "طلب شراء عاجل بانتظار الاعتماد منذ {days} يومًا: {subject}",
+  "@riskRequisitionUrgentStalled": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskRequisitionDeliveryOverdue": "طلب شراء تجاوز تاريخ التسليم المطلوب: {subject}",
+  "@riskRequisitionDeliveryOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskPortRequirementPending": "متطلب ميناء غير جاهز: {subject}",
+  "@riskPortRequirementPending": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskUrgentNotificationOpen": "تنبيه عاجل غير مُستلم: {subject}",
+  "@riskUrgentNotificationOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskUrgentActionOverdue": "إجراء تنبيه متأخر: {subject}",
+  "@riskUrgentActionOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDailyTasksOverdue": "{count, plural, one{مهمة يومية متأخرة} two{مهمتان يوميتان متأخرتان} few{{count} مهام يومية متأخرة} other{{count} مهمة يومية متأخرة}}",
+  "@riskDailyTasksOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "riskDataMissingInfo": "لا يوجد ضابط مسؤول: {subject}",
+  "@riskDataMissingInfo": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "recDefectCritical": "كلّف مهندسًا اليوم وسجّل الإجراء الفوري المتخذ.",
+  "recDefectHigh": "كلّف ضابطًا مسؤولًا وحدّد تاريخًا مستهدفًا للإغلاق.",
+  "recDefectStale": "راجع الحالة مع السفينة — أغلقه أو أعد جدولة الإصلاح.",
+  "recDefectRecurring": "راجع السجل مع كبير المهندسين قبل تحديد السبب.",
+  "recCertificate": "رتّب التجديد مع الجهة المصدرة وارفع الشهادة الجديدة.",
+  "recMaintenance": "أكّد خطة العمل مع السفينة وحدّث تاريخ الاستحقاق أو أغلقها.",
+  "recRequisition": "صعّد الاعتماد أو أكّد تاريخ التسليم مع المورّد.",
+  "recPortRequirement": "أكمل المستند قبل الوصول وحدّد المتطلب كجاهز.",
+  "recUrgentNotification": "استلم التنبيه وأكّد استجابة السفينة الفورية.",
+  "recDailyTasks": "اطلب من السفينة إكمال الجولات المتأخرة أو إعادة جدولتها.",
+  "recDataQuality": "أضف البيانات الناقصة ليمكن تتبع السجل بشكل صحيح.",
+  "actionsTitle": "مركز الإجراءات",
+  "actionsMine": "إجراءاتي",
+  "actionsFleet": "الأسطول",
+  "actionsOverdue": "المتأخرة",
+  "actionsCritical": "الحرجة",
+  "actionAdd": "إجراء جديد",
+  "actionEdit": "تعديل الإجراء",
+  "noActions": "لا توجد إجراءات هنا.",
+  "actionTitleLabel": "الإجراء",
+  "recommendationLabel": "التوصية",
+  "noDueDate": "بدون تاريخ استحقاق",
+  "clearDueDate": "مسح تاريخ الاستحقاق",
+  "priorityCritical": "حرجة",
+  "actionStatusOpen": "مفتوح",
+  "actionStatusInProgress": "قيد التنفيذ",
+  "actionStatusWaitingVessel": "بانتظار السفينة",
+  "actionStatusWaitingOffice": "بانتظار المكتب",
+  "actionStatusCompleted": "مكتمل",
+  "actionStatusCancelled": "ملغى",
+  "actionOverdueBadge": "متأخر",
+  "actionSourceLabel": "المصدر",
+  "actionCreatedFromRisk": "أُنشئ من خطر مكتشف",
+  "openActionsBadge": "{count, plural, one{إجراء مفتوح} two{إجراءان مفتوحان} few{{count} إجراءات مفتوحة} other{{count} إجراءً مفتوحًا}}",
+  "@openActionsBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionsSubtitle": "حوّل المخاطر إلى متابعة موثقة",
+  "sourceModuleDefect": "عطل",
+  "sourceModuleVesselCert": "شهادة سفينة",
+  "sourceModuleCrewCert": "شهادة طاقم",
+  "sourceModuleMaintenance": "صيانة",
+  "sourceModuleRequisition": "طلب شراء",
+  "sourceModulePortRequirement": "متطلب ميناء",
+  "sourceModuleUrgentNotification": "تنبيه عاجل",
+  "sourceModuleDailyTask": "مهمة يومية"
 }

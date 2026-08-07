@@ -1973,7 +1973,7 @@ abstract class AppLocalizations {
   /// No description provided for @assignedToLabel.
   ///
   /// In en, this message translates to:
-  /// **'Assigned To'**
+  /// **'Assigned to'**
   String get assignedToLabel;
 
   /// No description provided for @frequencyLabel.
@@ -2183,7 +2183,7 @@ abstract class AppLocalizations {
   /// No description provided for @dueDateLabel.
   ///
   /// In en, this message translates to:
-  /// **'Due Date'**
+  /// **'Due date'**
   String get dueDateLabel;
 
   /// No description provided for @setDueDate.
@@ -2827,6 +2827,600 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, one{1 line awaiting approval} other{{count} lines awaiting approval}}'**
   String cashPendingBadge(int count);
+
+  /// No description provided for @navRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk'**
+  String get navRisk;
+
+  /// No description provided for @navActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get navActions;
+
+  /// No description provided for @commandCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fleet Command Center'**
+  String get commandCenterTitle;
+
+  /// No description provided for @fleetHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fleet Health'**
+  String get fleetHealthTitle;
+
+  /// No description provided for @bandGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get bandGood;
+
+  /// No description provided for @bandAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention required'**
+  String get bandAttention;
+
+  /// No description provided for @bandHighRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'High risk'**
+  String get bandHighRisk;
+
+  /// No description provided for @bandCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get bandCritical;
+
+  /// No description provided for @vesselRankingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vessel ranking'**
+  String get vesselRankingTitle;
+
+  /// No description provided for @priorityAttentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority attention'**
+  String get priorityAttentionTitle;
+
+  /// No description provided for @healthScoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Health score'**
+  String get healthScoreLabel;
+
+  /// No description provided for @whyThisScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Why is this score {score}?'**
+  String whyThisScore(int score);
+
+  /// No description provided for @scoreBreakdownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Score breakdown'**
+  String get scoreBreakdownTitle;
+
+  /// No description provided for @deductionLine.
+  ///
+  /// In en, this message translates to:
+  /// **'−{points} · {reason}'**
+  String deductionLine(int points, String reason);
+
+  /// No description provided for @componentScoresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Components'**
+  String get componentScoresTitle;
+
+  /// No description provided for @noRisksDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'No risks detected. All monitored records are within limits.'**
+  String get noRisksDetected;
+
+  /// No description provided for @calculatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculated {time}'**
+  String calculatedAtLabel(String time);
+
+  /// No description provided for @computedLocallyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Computed on this device from the records currently loaded.'**
+  String get computedLocallyNote;
+
+  /// No description provided for @categoryDefects.
+  ///
+  /// In en, this message translates to:
+  /// **'Defects'**
+  String get categoryDefects;
+
+  /// No description provided for @categoryMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get categoryMaintenance;
+
+  /// No description provided for @categoryCertificates.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificates'**
+  String get categoryCertificates;
+
+  /// No description provided for @categoryRequisitions.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisitions'**
+  String get categoryRequisitions;
+
+  /// No description provided for @categoryCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get categoryCrew;
+
+  /// No description provided for @categoryPortReadiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Port readiness'**
+  String get categoryPortReadiness;
+
+  /// No description provided for @categoryOperational.
+  ///
+  /// In en, this message translates to:
+  /// **'Operational readiness'**
+  String get categoryOperational;
+
+  /// No description provided for @categoryDataQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Data quality'**
+  String get categoryDataQuality;
+
+  /// No description provided for @severityHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get severityHigh;
+
+  /// No description provided for @severityMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get severityMedium;
+
+  /// No description provided for @severityLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get severityLow;
+
+  /// No description provided for @severityInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get severityInfo;
+
+  /// No description provided for @riskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk Intelligence'**
+  String get riskTitle;
+
+  /// No description provided for @riskSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected from vessel records — every item links to its source'**
+  String get riskSubtitle;
+
+  /// No description provided for @noRisksFleet.
+  ///
+  /// In en, this message translates to:
+  /// **'No risks detected across the fleet.'**
+  String get noRisksFleet;
+
+  /// No description provided for @evidenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence'**
+  String get evidenceLabel;
+
+  /// No description provided for @recommendedActionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended action'**
+  String get recommendedActionLabel;
+
+  /// No description provided for @createActionFromRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Create action'**
+  String get createActionFromRisk;
+
+  /// No description provided for @actionAlreadyExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Action already open'**
+  String get actionAlreadyExists;
+
+  /// No description provided for @openSourceRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Open source record'**
+  String get openSourceRecord;
+
+  /// No description provided for @riskCountBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 risk} other{{count} risks}}'**
+  String riskCountBadge(int count);
+
+  /// No description provided for @riskDefectCriticalOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical defect still open: {subject}'**
+  String riskDefectCriticalOpen(String subject);
+
+  /// No description provided for @riskDefectHighOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'High-severity defect open: {subject}'**
+  String riskDefectHighOpen(String subject);
+
+  /// No description provided for @riskDefectStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Defect open {days} days: {subject}'**
+  String riskDefectStale(int days, String subject);
+
+  /// No description provided for @riskDefectRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible recurring defect ({count}×): {subject} — review required'**
+  String riskDefectRecurring(int count, String subject);
+
+  /// No description provided for @riskCertExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate expired: {subject}'**
+  String riskCertExpired(String subject);
+
+  /// No description provided for @riskCertExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate expires in {days} days: {subject}'**
+  String riskCertExpiring(int days, String subject);
+
+  /// No description provided for @riskCrewCertExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew certificate expired: {subject}'**
+  String riskCrewCertExpired(String subject);
+
+  /// No description provided for @riskCrewCertExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew certificate expires in {days} days: {subject}'**
+  String riskCrewCertExpiring(int days, String subject);
+
+  /// No description provided for @riskMaintenanceOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance overdue: {subject}'**
+  String riskMaintenanceOverdue(String subject);
+
+  /// No description provided for @riskMaintenanceDueSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance due in {days} days: {subject}'**
+  String riskMaintenanceDueSoon(int days, String subject);
+
+  /// No description provided for @riskRequisitionUrgentStalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent requisition awaiting approval {days} days: {subject}'**
+  String riskRequisitionUrgentStalled(int days, String subject);
+
+  /// No description provided for @riskRequisitionDeliveryOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisition past required delivery date: {subject}'**
+  String riskRequisitionDeliveryOverdue(String subject);
+
+  /// No description provided for @riskPortRequirementPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Port requirement not ready: {subject}'**
+  String riskPortRequirementPending(String subject);
+
+  /// No description provided for @riskUrgentNotificationOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent alert not acknowledged: {subject}'**
+  String riskUrgentNotificationOpen(String subject);
+
+  /// No description provided for @riskUrgentActionOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned alert action overdue: {subject}'**
+  String riskUrgentActionOverdue(String subject);
+
+  /// No description provided for @riskDailyTasksOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 daily task overdue} other{{count} daily tasks overdue}}'**
+  String riskDailyTasksOverdue(int count);
+
+  /// No description provided for @riskDataMissingInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'No responsible officer assigned: {subject}'**
+  String riskDataMissingInfo(String subject);
+
+  /// No description provided for @recDefectCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign an engineer today and record the immediate action taken.'**
+  String get recDefectCritical;
+
+  /// No description provided for @recDefectHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign a responsible officer and set a target closing date.'**
+  String get recDefectHigh;
+
+  /// No description provided for @recDefectStale.
+  ///
+  /// In en, this message translates to:
+  /// **'Review status with the vessel — close it or re-plan the repair.'**
+  String get recDefectStale;
+
+  /// No description provided for @recDefectRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the history with the Chief Engineer before deciding a cause.'**
+  String get recDefectRecurring;
+
+  /// No description provided for @recCertificate.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrange renewal with the issuing authority and upload the new certificate.'**
+  String get recCertificate;
+
+  /// No description provided for @recMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm the job plan with the vessel and update the due date or close it.'**
+  String get recMaintenance;
+
+  /// No description provided for @recRequisition.
+  ///
+  /// In en, this message translates to:
+  /// **'Escalate the approval or confirm the delivery date with the supplier.'**
+  String get recRequisition;
+
+  /// No description provided for @recPortRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the document before arrival and mark the requirement ready.'**
+  String get recPortRequirement;
+
+  /// No description provided for @recUrgentNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledge the alert and confirm the vessel\'s immediate response.'**
+  String get recUrgentNotification;
+
+  /// No description provided for @recDailyTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the vessel to complete or reschedule the overdue rounds.'**
+  String get recDailyTasks;
+
+  /// No description provided for @recDataQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the missing details so the record can be tracked properly.'**
+  String get recDataQuality;
+
+  /// No description provided for @actionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Action Center'**
+  String get actionsTitle;
+
+  /// No description provided for @actionsMine.
+  ///
+  /// In en, this message translates to:
+  /// **'My actions'**
+  String get actionsMine;
+
+  /// No description provided for @actionsFleet.
+  ///
+  /// In en, this message translates to:
+  /// **'Fleet'**
+  String get actionsFleet;
+
+  /// No description provided for @actionsOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get actionsOverdue;
+
+  /// No description provided for @actionsCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get actionsCritical;
+
+  /// No description provided for @actionAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'New action'**
+  String get actionAdd;
+
+  /// No description provided for @actionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit action'**
+  String get actionEdit;
+
+  /// No description provided for @noActions.
+  ///
+  /// In en, this message translates to:
+  /// **'No actions here.'**
+  String get noActions;
+
+  /// No description provided for @actionTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get actionTitleLabel;
+
+  /// No description provided for @recommendationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get recommendationLabel;
+
+  /// No description provided for @noDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No due date'**
+  String get noDueDate;
+
+  /// No description provided for @clearDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear due date'**
+  String get clearDueDate;
+
+  /// No description provided for @priorityCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get priorityCritical;
+
+  /// No description provided for @actionStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get actionStatusOpen;
+
+  /// No description provided for @actionStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get actionStatusInProgress;
+
+  /// No description provided for @actionStatusWaitingVessel.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for vessel'**
+  String get actionStatusWaitingVessel;
+
+  /// No description provided for @actionStatusWaitingOffice.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for office'**
+  String get actionStatusWaitingOffice;
+
+  /// No description provided for @actionStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get actionStatusCompleted;
+
+  /// No description provided for @actionStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get actionStatusCancelled;
+
+  /// No description provided for @actionOverdueBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get actionOverdueBadge;
+
+  /// No description provided for @actionSourceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get actionSourceLabel;
+
+  /// No description provided for @actionCreatedFromRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Created from detected risk'**
+  String get actionCreatedFromRisk;
+
+  /// No description provided for @openActionsBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 open action} other{{count} open actions}}'**
+  String openActionsBadge(int count);
+
+  /// No description provided for @actionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn risks into tracked follow-up'**
+  String get actionsSubtitle;
+
+  /// No description provided for @sourceModuleDefect.
+  ///
+  /// In en, this message translates to:
+  /// **'Defect'**
+  String get sourceModuleDefect;
+
+  /// No description provided for @sourceModuleVesselCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Vessel certificate'**
+  String get sourceModuleVesselCert;
+
+  /// No description provided for @sourceModuleCrewCert.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew certificate'**
+  String get sourceModuleCrewCert;
+
+  /// No description provided for @sourceModuleMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get sourceModuleMaintenance;
+
+  /// No description provided for @sourceModuleRequisition.
+  ///
+  /// In en, this message translates to:
+  /// **'Requisition'**
+  String get sourceModuleRequisition;
+
+  /// No description provided for @sourceModulePortRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Port requirement'**
+  String get sourceModulePortRequirement;
+
+  /// No description provided for @sourceModuleUrgentNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent alert'**
+  String get sourceModuleUrgentNotification;
+
+  /// No description provided for @sourceModuleDailyTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily task'**
+  String get sourceModuleDailyTask;
 }
 
 class _AppLocalizationsDelegate

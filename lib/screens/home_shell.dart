@@ -3,9 +3,11 @@ import '../l10n/gen/app_localizations.dart';
 import '../services/sync_queue.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_tokens.dart';
+import 'actions_screen.dart';
 import 'ai_assistant_screen.dart';
 import 'analytics_dashboard_screen.dart';
 import 'dashboard_screen.dart';
+import 'risk_screen.dart';
 import 'settings_screen.dart';
 
 /// Honest offline indicator: shown whenever a write hasn't reached Supabase
@@ -61,8 +63,12 @@ class _HomeShellState extends State<HomeShell> {
   /// dashboard; after that IndexedStack keeps every visited tab's state.
   final Set<int> _built = {0};
 
+  static const _tabCount = 6;
+
   static const _icons = [
     (Icons.directions_boat_outlined, Icons.directions_boat_filled),
+    (Icons.warning_amber_outlined, Icons.warning_amber_rounded),
+    (Icons.task_alt_outlined, Icons.task_alt),
     (Icons.insights_outlined, Icons.insights),
     (Icons.smart_toy_outlined, Icons.smart_toy),
     (Icons.settings_outlined, Icons.settings),
@@ -70,8 +76,10 @@ class _HomeShellState extends State<HomeShell> {
 
   Widget _tab(int i) => switch (i) {
         0 => const DashboardScreen(),
-        1 => const AnalyticsDashboardScreen(),
-        2 => const AiAssistantScreen(),
+        1 => const RiskScreen(),
+        2 => const ActionsScreen(),
+        3 => const AnalyticsDashboardScreen(),
+        4 => const AiAssistantScreen(),
         _ => const SettingsScreen(),
       };
 
@@ -83,7 +91,14 @@ class _HomeShellState extends State<HomeShell> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final labels = [t.navFleet, t.navAnalytics, t.navAssistant, t.settings];
+    final labels = [
+      t.navFleet,
+      t.navRisk,
+      t.navActions,
+      t.navAnalytics,
+      t.navAssistant,
+      t.settings,
+    ];
     final body = Column(
       children: [
         const _PendingSyncBanner(),
@@ -91,7 +106,7 @@ class _HomeShellState extends State<HomeShell> {
           child: IndexedStack(
             index: _index,
             children: [
-              for (var i = 0; i < 4; i++)
+              for (var i = 0; i < _tabCount; i++)
                 _built.contains(i) ? _tab(i) : const SizedBox.shrink(),
             ],
           ),
@@ -110,7 +125,7 @@ class _HomeShellState extends State<HomeShell> {
                   onDestinationSelected: _select,
                   labelType: NavigationRailLabelType.all,
                   destinations: [
-                    for (var i = 0; i < 4; i++)
+                    for (var i = 0; i < _tabCount; i++)
                       NavigationRailDestination(
                         icon: Icon(_icons[i].$1),
                         selectedIcon: Icon(_icons[i].$2),

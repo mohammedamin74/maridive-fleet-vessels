@@ -1048,7 +1048,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskTitleLabel => 'Task Title';
 
   @override
-  String get assignedToLabel => 'Assigned To';
+  String get assignedToLabel => 'Assigned to';
 
   @override
   String get frequencyLabel => 'Frequency';
@@ -1180,7 +1180,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignToManagement => 'Assign to management';
 
   @override
-  String get dueDateLabel => 'Due Date';
+  String get dueDateLabel => 'Due date';
 
   @override
   String get setDueDate => 'Set due date';
@@ -1556,4 +1556,377 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get navRisk => 'Risk';
+
+  @override
+  String get navActions => 'Actions';
+
+  @override
+  String get commandCenterTitle => 'Fleet Command Center';
+
+  @override
+  String get fleetHealthTitle => 'Fleet Health';
+
+  @override
+  String get bandGood => 'Healthy';
+
+  @override
+  String get bandAttention => 'Attention required';
+
+  @override
+  String get bandHighRisk => 'High risk';
+
+  @override
+  String get bandCritical => 'Critical';
+
+  @override
+  String get vesselRankingTitle => 'Vessel ranking';
+
+  @override
+  String get priorityAttentionTitle => 'Priority attention';
+
+  @override
+  String get healthScoreLabel => 'Health score';
+
+  @override
+  String whyThisScore(int score) {
+    return 'Why is this score $score?';
+  }
+
+  @override
+  String get scoreBreakdownTitle => 'Score breakdown';
+
+  @override
+  String deductionLine(int points, String reason) {
+    return '−$points · $reason';
+  }
+
+  @override
+  String get componentScoresTitle => 'Components';
+
+  @override
+  String get noRisksDetected =>
+      'No risks detected. All monitored records are within limits.';
+
+  @override
+  String calculatedAtLabel(String time) {
+    return 'Calculated $time';
+  }
+
+  @override
+  String get computedLocallyNote =>
+      'Computed on this device from the records currently loaded.';
+
+  @override
+  String get categoryDefects => 'Defects';
+
+  @override
+  String get categoryMaintenance => 'Maintenance';
+
+  @override
+  String get categoryCertificates => 'Certificates';
+
+  @override
+  String get categoryRequisitions => 'Requisitions';
+
+  @override
+  String get categoryCrew => 'Crew';
+
+  @override
+  String get categoryPortReadiness => 'Port readiness';
+
+  @override
+  String get categoryOperational => 'Operational readiness';
+
+  @override
+  String get categoryDataQuality => 'Data quality';
+
+  @override
+  String get severityHigh => 'High';
+
+  @override
+  String get severityMedium => 'Medium';
+
+  @override
+  String get severityLow => 'Low';
+
+  @override
+  String get severityInfo => 'Information';
+
+  @override
+  String get riskTitle => 'Risk Intelligence';
+
+  @override
+  String get riskSubtitle =>
+      'Detected from vessel records — every item links to its source';
+
+  @override
+  String get noRisksFleet => 'No risks detected across the fleet.';
+
+  @override
+  String get evidenceLabel => 'Evidence';
+
+  @override
+  String get recommendedActionLabel => 'Recommended action';
+
+  @override
+  String get createActionFromRisk => 'Create action';
+
+  @override
+  String get actionAlreadyExists => 'Action already open';
+
+  @override
+  String get openSourceRecord => 'Open source record';
+
+  @override
+  String riskCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count risks',
+      one: '1 risk',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String riskDefectCriticalOpen(String subject) {
+    return 'Critical defect still open: $subject';
+  }
+
+  @override
+  String riskDefectHighOpen(String subject) {
+    return 'High-severity defect open: $subject';
+  }
+
+  @override
+  String riskDefectStale(int days, String subject) {
+    return 'Defect open $days days: $subject';
+  }
+
+  @override
+  String riskDefectRecurring(int count, String subject) {
+    return 'Possible recurring defect ($count×): $subject — review required';
+  }
+
+  @override
+  String riskCertExpired(String subject) {
+    return 'Certificate expired: $subject';
+  }
+
+  @override
+  String riskCertExpiring(int days, String subject) {
+    return 'Certificate expires in $days days: $subject';
+  }
+
+  @override
+  String riskCrewCertExpired(String subject) {
+    return 'Crew certificate expired: $subject';
+  }
+
+  @override
+  String riskCrewCertExpiring(int days, String subject) {
+    return 'Crew certificate expires in $days days: $subject';
+  }
+
+  @override
+  String riskMaintenanceOverdue(String subject) {
+    return 'Maintenance overdue: $subject';
+  }
+
+  @override
+  String riskMaintenanceDueSoon(int days, String subject) {
+    return 'Maintenance due in $days days: $subject';
+  }
+
+  @override
+  String riskRequisitionUrgentStalled(int days, String subject) {
+    return 'Urgent requisition awaiting approval $days days: $subject';
+  }
+
+  @override
+  String riskRequisitionDeliveryOverdue(String subject) {
+    return 'Requisition past required delivery date: $subject';
+  }
+
+  @override
+  String riskPortRequirementPending(String subject) {
+    return 'Port requirement not ready: $subject';
+  }
+
+  @override
+  String riskUrgentNotificationOpen(String subject) {
+    return 'Urgent alert not acknowledged: $subject';
+  }
+
+  @override
+  String riskUrgentActionOverdue(String subject) {
+    return 'Assigned alert action overdue: $subject';
+  }
+
+  @override
+  String riskDailyTasksOverdue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count daily tasks overdue',
+      one: '1 daily task overdue',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String riskDataMissingInfo(String subject) {
+    return 'No responsible officer assigned: $subject';
+  }
+
+  @override
+  String get recDefectCritical =>
+      'Assign an engineer today and record the immediate action taken.';
+
+  @override
+  String get recDefectHigh =>
+      'Assign a responsible officer and set a target closing date.';
+
+  @override
+  String get recDefectStale =>
+      'Review status with the vessel — close it or re-plan the repair.';
+
+  @override
+  String get recDefectRecurring =>
+      'Review the history with the Chief Engineer before deciding a cause.';
+
+  @override
+  String get recCertificate =>
+      'Arrange renewal with the issuing authority and upload the new certificate.';
+
+  @override
+  String get recMaintenance =>
+      'Confirm the job plan with the vessel and update the due date or close it.';
+
+  @override
+  String get recRequisition =>
+      'Escalate the approval or confirm the delivery date with the supplier.';
+
+  @override
+  String get recPortRequirement =>
+      'Complete the document before arrival and mark the requirement ready.';
+
+  @override
+  String get recUrgentNotification =>
+      'Acknowledge the alert and confirm the vessel\'s immediate response.';
+
+  @override
+  String get recDailyTasks =>
+      'Ask the vessel to complete or reschedule the overdue rounds.';
+
+  @override
+  String get recDataQuality =>
+      'Add the missing details so the record can be tracked properly.';
+
+  @override
+  String get actionsTitle => 'Action Center';
+
+  @override
+  String get actionsMine => 'My actions';
+
+  @override
+  String get actionsFleet => 'Fleet';
+
+  @override
+  String get actionsOverdue => 'Overdue';
+
+  @override
+  String get actionsCritical => 'Critical';
+
+  @override
+  String get actionAdd => 'New action';
+
+  @override
+  String get actionEdit => 'Edit action';
+
+  @override
+  String get noActions => 'No actions here.';
+
+  @override
+  String get actionTitleLabel => 'Action';
+
+  @override
+  String get recommendationLabel => 'Recommendation';
+
+  @override
+  String get noDueDate => 'No due date';
+
+  @override
+  String get clearDueDate => 'Clear due date';
+
+  @override
+  String get priorityCritical => 'Critical';
+
+  @override
+  String get actionStatusOpen => 'Open';
+
+  @override
+  String get actionStatusInProgress => 'In progress';
+
+  @override
+  String get actionStatusWaitingVessel => 'Waiting for vessel';
+
+  @override
+  String get actionStatusWaitingOffice => 'Waiting for office';
+
+  @override
+  String get actionStatusCompleted => 'Completed';
+
+  @override
+  String get actionStatusCancelled => 'Cancelled';
+
+  @override
+  String get actionOverdueBadge => 'Overdue';
+
+  @override
+  String get actionSourceLabel => 'Source';
+
+  @override
+  String get actionCreatedFromRisk => 'Created from detected risk';
+
+  @override
+  String openActionsBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count open actions',
+      one: '1 open action',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get actionsSubtitle => 'Turn risks into tracked follow-up';
+
+  @override
+  String get sourceModuleDefect => 'Defect';
+
+  @override
+  String get sourceModuleVesselCert => 'Vessel certificate';
+
+  @override
+  String get sourceModuleCrewCert => 'Crew certificate';
+
+  @override
+  String get sourceModuleMaintenance => 'Maintenance';
+
+  @override
+  String get sourceModuleRequisition => 'Requisition';
+
+  @override
+  String get sourceModulePortRequirement => 'Port requirement';
+
+  @override
+  String get sourceModuleUrgentNotification => 'Urgent alert';
+
+  @override
+  String get sourceModuleDailyTask => 'Daily task';
 }

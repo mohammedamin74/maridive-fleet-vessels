@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'app.dart';
 import 'services/supabase_config.dart';
 import 'services/sync_queue.dart';
+import 'state/action_provider.dart';
 import 'state/app_state.dart';
 import 'state/auth_provider.dart';
 import 'state/cash_meeting_provider.dart';
@@ -52,6 +53,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => IngestionBatchProvider()),
         ChangeNotifierProvider(create: (_) => CashMeetingProvider()),
+        ChangeNotifierProvider(create: (_) => ActionProvider()),
       ],
       child: const MaridiveFleetApp(),
     ),

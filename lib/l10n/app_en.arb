@@ -1,9 +1,7 @@
 {
   "@@locale": "en",
-
   "appTitle": "Maridive Fleet Vessels",
   "@appTitle": {},
-
   "dashboardTitle": "Fleet Dashboard",
   "dashboardSubtitle": "Offshore Support Vessels · Libya",
   "fleetOverview": "Fleet Overview",
@@ -12,12 +10,10 @@
   "inPort": "In Port",
   "underMaintenance": "Maintenance",
   "avgFuelLevel": "Avg. Fuel",
-
   "statusActive": "Active",
   "statusStandby": "Standby",
   "statusInPort": "In Port",
   "statusMaintenance": "Maintenance",
-
   "searchVessels": "Search vessels...",
   "noResults": "No vessels match your search",
   "filterAll": "All",
@@ -68,34 +64,37 @@
   "actionFailed": "Action failed — check your connection and try again",
   "filesCount": "{count, plural, =0{No files} one{1 file} other{{count} files}}",
   "@filesCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "vesselDetails": "Vessel Details",
   "imoNumber": "IMO Number",
   "vesselType": "Vessel Type",
   "homePort": "Home Port",
   "crewOnBoard": "Crew on Board",
   "lastUpdated": "Last updated",
-
   "tankSystems": "Tank Systems",
   "categoryFuelOil": "Fuel Oil Tanks",
   "categoryBrineMud": "Brine / Mud Tanks",
   "categoryLubeHydraulic": "Lube & Hydraulic Oil",
   "categoryOther": "Other Tanks",
   "categorySoundingTables": "Sounding Tables",
-
   "tanksInCategory": "{count, plural, one{1 tank} other{{count} tanks}}",
   "@tanksInCategory": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "selectTank": "Select Tank",
   "tankLevel": "Tank Level",
   "tankPercent": "Tank Percent",
   "capacity": "Capacity",
   "currentVolume": "Current Volume",
-
   "pumpCalculator": "Pump-Out Calculator",
   "quantityToPumpOut": "Quantity to Pump Out",
   "stopPumpingAtLevel": "Stop Pumping at Level",
@@ -103,14 +102,16 @@
   "calculate": "Calculate",
   "reset": "Reset",
   "enterAValue": "Enter a value",
-
   "soundingTableTitle": "{tank} — Sounding Table",
   "@soundingTableTitle": {
-    "placeholders": { "tank": { "type": "String" } }
+    "placeholders": {
+      "tank": {
+        "type": "String"
+      }
+    }
   },
   "levelCm": "Level (cm)",
   "volumeM3": "Volume (m³)",
-
   "settings": "Settings",
   "tankHistoryChartSemantics": "Tank level history chart, currently {percent}% of capacity",
   "@tankHistoryChartSemantics": {
@@ -140,7 +141,6 @@
   "themeLight": "Light",
   "about": "About",
   "aboutBody": "Maridive Fleet Vessels helps crews and shore staff monitor fuel, mud, lube and hydraulic tank levels across the fleet of offshore support vessels operating in Libya.",
-
   "back": "Back",
   "close": "Close",
   "refresh": "Refresh",
@@ -150,7 +150,6 @@
   "gallons": "IG",
   "cubicMeters": "m³",
   "percent": "%",
-
   "updateLevel": "Update Current Level",
   "newReading": "New Reading",
   "saveReading": "Save",
@@ -158,20 +157,20 @@
   "viewHistory": "View Reading History",
   "readingHistory": "Reading History",
   "noHistory": "No readings recorded yet",
-
   "criticalLevel": "Critical",
   "warningLevel": "Warning",
   "noData": "No Data",
-
   "alertsTitle": "{count, plural, one{1 tank needs attention} other{{count} tanks need attention}}",
   "@alertsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "logbook": "Logbook",
   "addNoteHint": "Add a note...",
   "noNotes": "No log entries yet",
-
   "exportReport": "Export Report",
   "status": "Status",
   "tankLabel": "Tank",
@@ -185,7 +184,6 @@
   "reviewReport": "Review",
   "reportNoEntries": "No entries",
   "generatedAtLabel": "Generated",
-
   "vesselOperations": "Vessel Operations",
   "viewEntries": "View entries",
   "bulkImport": "Bulk Import",
@@ -207,18 +205,28 @@
   "confirmDeleteTitle": "Delete this?",
   "confirmDeleteMessage": "\"{item}\" will be permanently deleted. This can't be undone.",
   "@confirmDeleteMessage": {
-    "placeholders": { "item": { "type": "String" } }
+    "placeholders": {
+      "item": {
+        "type": "String"
+      }
+    }
   },
-
   "openCount": "{count, plural, one{1 open} other{{count} open}}",
   "@openCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "pendingCount": "{count, plural, one{1 pending} other{{count} pending}}",
   "@pendingCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "defects": "Defects",
   "addDefect": "Report Defect",
   "editDefect": "Edit Defect",
@@ -236,17 +244,22 @@
   "markInProgress": "Mark In Progress",
   "markClosed": "Mark Closed",
   "reopen": "Reopen",
-
   "criticalDefectsTitle": "{count, plural, one{1 critical defect} other{{count} critical defects}}",
   "@criticalDefectsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "pendingSyncBanner": "{count, plural, one{1 change waiting to sync} other{{count} changes waiting to sync}}",
   "@pendingSyncBanner": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "requisitions": "Requisitions",
   "addRequisition": "New Requisition",
   "itemNameLabel": "Item Name",
@@ -268,7 +281,6 @@
   "markOrdered": "Mark Ordered",
   "markReceived": "Mark Received",
   "markRejected": "Reject",
-
   "analyticsDashboard": "Analytics Dashboard",
   "allVessels": "All Vessels",
   "totalDefects": "Total Defects",
@@ -279,7 +291,6 @@
   "defectsByPriority": "Defects by Priority",
   "requisitionsByStatus": "Requisitions by Status",
   "requisitionsByDepartment": "Requisitions by Department",
-
   "priorityMedium": "Medium",
   "priorityHigh": "High",
   "locationLabel": "Location",
@@ -305,26 +316,36 @@
   "reqStatusTechSup": "Technical Superintendent Approval",
   "markHodApproval": "Mark HOD Approved",
   "markTechSupApproval": "Mark Tech. Sup. Approved",
-
   "temperatureLabel": "Temperature (°C)",
   "lastSounding": "Last reading",
   "justNow": "Just now",
   "minutesAgo": "{count, plural, one{1 minute ago} other{{count} minutes ago}}",
   "@minutesAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "hoursAgo": "{count, plural, one{1 hour ago} other{{count} hours ago}}",
   "@hoursAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "daysAgo": "{count, plural, one{1 day ago} other{{count} days ago}}",
   "@daysAgo": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "soundingHistory24h": "Reading History",
   "overfillCritical": "Critical (Overfill)",
   "overfillWarning": "Warning (Overfill)",
-
   "portCalls": "Port Calls",
   "noPortCalls": "No port calls scheduled",
   "addPortCall": "Add Port Call",
@@ -343,7 +364,6 @@
   "portStatusArrived": "Arrived",
   "portStatusDeparted": "Departed",
   "customsChecklistLabel": "Customs & Documentation Checklist",
-
   "certification": "Certification",
   "vesselCerts": "Vessel Certificates",
   "crewCerts": "Crew Certificates",
@@ -364,7 +384,6 @@
   "addPhoto": "Add Photo",
   "addFile": "Add File",
   "attachmentsLabel": "Attachments",
-
   "urgentNotifications": "Urgent Notifications",
   "noUrgentNotifications": "No urgent notifications",
   "addUrgentNotification": "Raise Urgent Notification",
@@ -383,9 +402,12 @@
   "raiseAlert": "Raise Alert",
   "urgentAlertsTitle": "{count, plural, one{1 urgent notification} other{{count} urgent notifications}}",
   "@urgentAlertsTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "dailyTasks": "Daily Tasks",
   "noDailyTasks": "No daily tasks yet",
   "addDailyTask": "Add Daily Task",
@@ -396,7 +418,7 @@
   "categoryNavigationEquipment": "Navigation Equipment Tests",
   "categoryGalleyHygiene": "Galley Hygiene Inspections",
   "taskTitleLabel": "Task Title",
-  "assignedToLabel": "Assigned To",
+  "assignedToLabel": "Assigned to",
   "frequencyLabel": "Frequency",
   "frequencyDaily": "Daily",
   "frequencyEveryWatch": "Every Watch",
@@ -429,24 +451,34 @@
   "markCompleted": "Mark Completed",
   "upcomingCount": "{count, plural, one{1 upcoming} other{{count} upcoming}}",
   "@upcomingCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "unacknowledgedCount": "{count, plural, one{1 unacknowledged} other{{count} unacknowledged}}",
   "@unacknowledgedCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "overdueCount": "{count, plural, one{1 overdue} other{{count} overdue}}",
   "@overdueCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "assignToManagement": "Assign to management",
-  "dueDateLabel": "Due Date",
+  "dueDateLabel": "Due date",
   "setDueDate": "Set due date",
   "managementAction": "Management Action",
-  "markInProgress": "Mark In Progress",
   "noAssignedActions": "No assigned actions",
   "unassignedLabel": "Unassigned",
-  "filterAll": "All",
   "filterActions": "Actions",
   "downloadFile": "Download",
   "previewUnavailable": "Preview isn't available for this file type. Download it to open in another app.",
@@ -466,11 +498,18 @@
   "reqStatusReady": "Ready",
   "reqStatusPendingLabel": "Pending",
   "markReady": "Mark Ready",
-  "markPending": "Mark Pending",
+  "markPending": "Return to pending",
   "noRequirements": "No requirements yet",
   "requirementsReady": "{ready}/{total} ready",
   "@requirementsReady": {
-    "placeholders": { "ready": { "type": "int" }, "total": { "type": "int" } }
+    "placeholders": {
+      "ready": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
   "extractFromFile": "Scan file with AI",
   "reviewExtractedDefect": "Review Extracted Defect",
@@ -485,7 +524,6 @@
   "previousCrew": "Previous",
   "addCrew": "Add Crew Member",
   "crewNameLabel": "Name",
-  "rankLabel": "Rank",
   "nationalityLabel": "Nationality",
   "signOnDateLabel": "Sign-on Date",
   "signOffDateLabel": "Sign-off Date",
@@ -495,9 +533,12 @@
   "noPreviousCrew": "No previous crew",
   "crewOnboard": "{count, plural, =0{No crew} one{1 onboard} other{{count} onboard}}",
   "@crewOnboard": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-
   "aiAssistant": "Assistant",
   "aiAssistantSubtitle": "Ask how to use the app",
   "aiDisclaimer": "AI answers may be wrong — verify against official procedures. No vessel data is sent.",
@@ -521,22 +562,38 @@
   "certsExpiringLabel": "Certificates expiring",
   "certAlarmTitle": "{count, plural, one{1 certificate expires within 30 days} other{{count} certificates expire within 30 days}}",
   "@certAlarmTitle": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "certAlarmTitleExpired": "{count, plural, one{1 certificate has expired} other{{count} certificates have expired}}",
   "@certAlarmTitleExpired": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "certAlarmTitleMixed": "{expiredCount} expired, {expiringCount} expiring within 30 days",
   "@certAlarmTitleMixed": {
     "placeholders": {
-      "expiredCount": { "type": "int" },
-      "expiringCount": { "type": "int" }
+      "expiredCount": {
+        "type": "int"
+      },
+      "expiringCount": {
+        "type": "int"
+      }
     }
   },
   "certDaysLeft": "{days, plural, one{1 day left} other{{days} days left}}",
   "@certDaysLeft": {
-    "placeholders": { "days": { "type": "int" } }
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
   "certExpiresToday": "Expires today",
   "certExpired": "Expired",
@@ -570,15 +627,295 @@
   "supplierLabel": "Supplier",
   "vesselLabel": "Vessel",
   "allVesselsFilter": "All vessels",
-  "markApproved": "Approve",
-  "markPending": "Return to pending",
   "approvedOn": "Approved {date}",
   "@approvedOn": {
-    "placeholders": { "date": { "type": "String" } }
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   },
   "totalsLabel": "Totals",
   "cashPendingBadge": "{count, plural, one{1 line awaiting approval} other{{count} lines awaiting approval}}",
   "@cashPendingBadge": {
-    "placeholders": { "count": { "type": "int" } }
-  }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "navRisk": "Risk",
+  "navActions": "Actions",
+  "commandCenterTitle": "Fleet Command Center",
+  "fleetHealthTitle": "Fleet Health",
+  "bandGood": "Healthy",
+  "bandAttention": "Attention required",
+  "bandHighRisk": "High risk",
+  "bandCritical": "Critical",
+  "vesselRankingTitle": "Vessel ranking",
+  "priorityAttentionTitle": "Priority attention",
+  "healthScoreLabel": "Health score",
+  "whyThisScore": "Why is this score {score}?",
+  "@whyThisScore": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "scoreBreakdownTitle": "Score breakdown",
+  "deductionLine": "−{points} · {reason}",
+  "@deductionLine": {
+    "placeholders": {
+      "points": {
+        "type": "int"
+      },
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "componentScoresTitle": "Components",
+  "noRisksDetected": "No risks detected. All monitored records are within limits.",
+  "calculatedAtLabel": "Calculated {time}",
+  "@calculatedAtLabel": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "computedLocallyNote": "Computed on this device from the records currently loaded.",
+  "categoryDefects": "Defects",
+  "categoryMaintenance": "Maintenance",
+  "categoryCertificates": "Certificates",
+  "categoryRequisitions": "Requisitions",
+  "categoryCrew": "Crew",
+  "categoryPortReadiness": "Port readiness",
+  "categoryOperational": "Operational readiness",
+  "categoryDataQuality": "Data quality",
+  "severityHigh": "High",
+  "severityMedium": "Medium",
+  "severityLow": "Low",
+  "severityInfo": "Information",
+  "riskTitle": "Risk Intelligence",
+  "riskSubtitle": "Detected from vessel records — every item links to its source",
+  "noRisksFleet": "No risks detected across the fleet.",
+  "evidenceLabel": "Evidence",
+  "recommendedActionLabel": "Recommended action",
+  "createActionFromRisk": "Create action",
+  "actionAlreadyExists": "Action already open",
+  "openSourceRecord": "Open source record",
+  "riskCountBadge": "{count, plural, one{1 risk} other{{count} risks}}",
+  "@riskCountBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "riskDefectCriticalOpen": "Critical defect still open: {subject}",
+  "@riskDefectCriticalOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectHighOpen": "High-severity defect open: {subject}",
+  "@riskDefectHighOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectStale": "Defect open {days} days: {subject}",
+  "@riskDefectStale": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDefectRecurring": "Possible recurring defect ({count}×): {subject} — review required",
+  "@riskDefectRecurring": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCertExpired": "Certificate expired: {subject}",
+  "@riskCertExpired": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCertExpiring": "Certificate expires in {days} days: {subject}",
+  "@riskCertExpiring": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCrewCertExpired": "Crew certificate expired: {subject}",
+  "@riskCrewCertExpired": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskCrewCertExpiring": "Crew certificate expires in {days} days: {subject}",
+  "@riskCrewCertExpiring": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskMaintenanceOverdue": "Maintenance overdue: {subject}",
+  "@riskMaintenanceOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskMaintenanceDueSoon": "Maintenance due in {days} days: {subject}",
+  "@riskMaintenanceDueSoon": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskRequisitionUrgentStalled": "Urgent requisition awaiting approval {days} days: {subject}",
+  "@riskRequisitionUrgentStalled": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskRequisitionDeliveryOverdue": "Requisition past required delivery date: {subject}",
+  "@riskRequisitionDeliveryOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskPortRequirementPending": "Port requirement not ready: {subject}",
+  "@riskPortRequirementPending": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskUrgentNotificationOpen": "Urgent alert not acknowledged: {subject}",
+  "@riskUrgentNotificationOpen": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskUrgentActionOverdue": "Assigned alert action overdue: {subject}",
+  "@riskUrgentActionOverdue": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskDailyTasksOverdue": "{count, plural, one{1 daily task overdue} other{{count} daily tasks overdue}}",
+  "@riskDailyTasksOverdue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "riskDataMissingInfo": "No responsible officer assigned: {subject}",
+  "@riskDataMissingInfo": {
+    "placeholders": {
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "recDefectCritical": "Assign an engineer today and record the immediate action taken.",
+  "recDefectHigh": "Assign a responsible officer and set a target closing date.",
+  "recDefectStale": "Review status with the vessel — close it or re-plan the repair.",
+  "recDefectRecurring": "Review the history with the Chief Engineer before deciding a cause.",
+  "recCertificate": "Arrange renewal with the issuing authority and upload the new certificate.",
+  "recMaintenance": "Confirm the job plan with the vessel and update the due date or close it.",
+  "recRequisition": "Escalate the approval or confirm the delivery date with the supplier.",
+  "recPortRequirement": "Complete the document before arrival and mark the requirement ready.",
+  "recUrgentNotification": "Acknowledge the alert and confirm the vessel's immediate response.",
+  "recDailyTasks": "Ask the vessel to complete or reschedule the overdue rounds.",
+  "recDataQuality": "Add the missing details so the record can be tracked properly.",
+  "actionsTitle": "Action Center",
+  "actionsMine": "My actions",
+  "actionsFleet": "Fleet",
+  "actionsOverdue": "Overdue",
+  "actionsCritical": "Critical",
+  "actionAdd": "New action",
+  "actionEdit": "Edit action",
+  "noActions": "No actions here.",
+  "actionTitleLabel": "Action",
+  "recommendationLabel": "Recommendation",
+  "noDueDate": "No due date",
+  "clearDueDate": "Clear due date",
+  "priorityCritical": "Critical",
+  "actionStatusOpen": "Open",
+  "actionStatusInProgress": "In progress",
+  "actionStatusWaitingVessel": "Waiting for vessel",
+  "actionStatusWaitingOffice": "Waiting for office",
+  "actionStatusCompleted": "Completed",
+  "actionStatusCancelled": "Cancelled",
+  "actionOverdueBadge": "Overdue",
+  "actionSourceLabel": "Source",
+  "actionCreatedFromRisk": "Created from detected risk",
+  "openActionsBadge": "{count, plural, one{1 open action} other{{count} open actions}}",
+  "@openActionsBadge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "actionsSubtitle": "Turn risks into tracked follow-up",
+  "sourceModuleDefect": "Defect",
+  "sourceModuleVesselCert": "Vessel certificate",
+  "sourceModuleCrewCert": "Crew certificate",
+  "sourceModuleMaintenance": "Maintenance",
+  "sourceModuleRequisition": "Requisition",
+  "sourceModulePortRequirement": "Port requirement",
+  "sourceModuleUrgentNotification": "Urgent alert",
+  "sourceModuleDailyTask": "Daily task"
 }

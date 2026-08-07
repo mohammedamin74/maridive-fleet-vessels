@@ -1089,7 +1089,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taskTitleLabel => 'عنوان المهمة';
 
   @override
-  String get assignedToLabel => 'مسندة إلى';
+  String get assignedToLabel => 'مُسند إلى';
 
   @override
   String get frequencyLabel => 'التكرار';
@@ -1627,4 +1627,381 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get navRisk => 'المخاطر';
+
+  @override
+  String get navActions => 'الإجراءات';
+
+  @override
+  String get commandCenterTitle => 'مركز قيادة الأسطول';
+
+  @override
+  String get fleetHealthTitle => 'صحة الأسطول';
+
+  @override
+  String get bandGood => 'سليمة';
+
+  @override
+  String get bandAttention => 'تحتاج متابعة';
+
+  @override
+  String get bandHighRisk => 'خطورة عالية';
+
+  @override
+  String get bandCritical => 'حرجة';
+
+  @override
+  String get vesselRankingTitle => 'ترتيب السفن';
+
+  @override
+  String get priorityAttentionTitle => 'أولويات المتابعة';
+
+  @override
+  String get healthScoreLabel => 'مؤشر الصحة';
+
+  @override
+  String whyThisScore(int score) {
+    return 'لماذا المؤشر $score؟';
+  }
+
+  @override
+  String get scoreBreakdownTitle => 'تفصيل المؤشر';
+
+  @override
+  String deductionLine(int points, String reason) {
+    return '−$points · $reason';
+  }
+
+  @override
+  String get componentScoresTitle => 'المكوّنات';
+
+  @override
+  String get noRisksDetected => 'لا توجد مخاطر. جميع السجلات ضمن الحدود.';
+
+  @override
+  String calculatedAtLabel(String time) {
+    return 'حُسب $time';
+  }
+
+  @override
+  String get computedLocallyNote =>
+      'محسوب على هذا الجهاز من السجلات المحمّلة حاليًا.';
+
+  @override
+  String get categoryDefects => 'الأعطال';
+
+  @override
+  String get categoryMaintenance => 'الصيانة';
+
+  @override
+  String get categoryCertificates => 'الشهادات';
+
+  @override
+  String get categoryRequisitions => 'طلبات الشراء';
+
+  @override
+  String get categoryCrew => 'الطاقم';
+
+  @override
+  String get categoryPortReadiness => 'جاهزية الميناء';
+
+  @override
+  String get categoryOperational => 'الجاهزية التشغيلية';
+
+  @override
+  String get categoryDataQuality => 'جودة البيانات';
+
+  @override
+  String get severityHigh => 'مرتفع';
+
+  @override
+  String get severityMedium => 'متوسط';
+
+  @override
+  String get severityLow => 'منخفض';
+
+  @override
+  String get severityInfo => 'معلومة';
+
+  @override
+  String get riskTitle => 'ذكاء المخاطر';
+
+  @override
+  String get riskSubtitle => 'مستنتجة من سجلات السفن — كل بند مرتبط بمصدره';
+
+  @override
+  String get noRisksFleet => 'لا توجد مخاطر في الأسطول.';
+
+  @override
+  String get evidenceLabel => 'الدليل';
+
+  @override
+  String get recommendedActionLabel => 'الإجراء المقترح';
+
+  @override
+  String get createActionFromRisk => 'إنشاء إجراء';
+
+  @override
+  String get actionAlreadyExists => 'يوجد إجراء مفتوح';
+
+  @override
+  String get openSourceRecord => 'فتح السجل المصدر';
+
+  @override
+  String riskCountBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count خطرًا',
+      few: '$count مخاطر',
+      two: 'خطران',
+      one: 'خطر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String riskDefectCriticalOpen(String subject) {
+    return 'عطل حرج ما زال مفتوحًا: $subject';
+  }
+
+  @override
+  String riskDefectHighOpen(String subject) {
+    return 'عطل بأولوية عالية مفتوح: $subject';
+  }
+
+  @override
+  String riskDefectStale(int days, String subject) {
+    return 'عطل مفتوح منذ $days يومًا: $subject';
+  }
+
+  @override
+  String riskDefectRecurring(int count, String subject) {
+    return 'عطل متكرر محتمل ($count×): $subject — يلزم المراجعة';
+  }
+
+  @override
+  String riskCertExpired(String subject) {
+    return 'شهادة منتهية: $subject';
+  }
+
+  @override
+  String riskCertExpiring(int days, String subject) {
+    return 'تنتهي الشهادة خلال $days يومًا: $subject';
+  }
+
+  @override
+  String riskCrewCertExpired(String subject) {
+    return 'شهادة طاقم منتهية: $subject';
+  }
+
+  @override
+  String riskCrewCertExpiring(int days, String subject) {
+    return 'تنتهي شهادة الطاقم خلال $days يومًا: $subject';
+  }
+
+  @override
+  String riskMaintenanceOverdue(String subject) {
+    return 'صيانة متأخرة: $subject';
+  }
+
+  @override
+  String riskMaintenanceDueSoon(int days, String subject) {
+    return 'صيانة مستحقة خلال $days أيام: $subject';
+  }
+
+  @override
+  String riskRequisitionUrgentStalled(int days, String subject) {
+    return 'طلب شراء عاجل بانتظار الاعتماد منذ $days يومًا: $subject';
+  }
+
+  @override
+  String riskRequisitionDeliveryOverdue(String subject) {
+    return 'طلب شراء تجاوز تاريخ التسليم المطلوب: $subject';
+  }
+
+  @override
+  String riskPortRequirementPending(String subject) {
+    return 'متطلب ميناء غير جاهز: $subject';
+  }
+
+  @override
+  String riskUrgentNotificationOpen(String subject) {
+    return 'تنبيه عاجل غير مُستلم: $subject';
+  }
+
+  @override
+  String riskUrgentActionOverdue(String subject) {
+    return 'إجراء تنبيه متأخر: $subject';
+  }
+
+  @override
+  String riskDailyTasksOverdue(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مهمة يومية متأخرة',
+      few: '$count مهام يومية متأخرة',
+      two: 'مهمتان يوميتان متأخرتان',
+      one: 'مهمة يومية متأخرة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String riskDataMissingInfo(String subject) {
+    return 'لا يوجد ضابط مسؤول: $subject';
+  }
+
+  @override
+  String get recDefectCritical =>
+      'كلّف مهندسًا اليوم وسجّل الإجراء الفوري المتخذ.';
+
+  @override
+  String get recDefectHigh =>
+      'كلّف ضابطًا مسؤولًا وحدّد تاريخًا مستهدفًا للإغلاق.';
+
+  @override
+  String get recDefectStale =>
+      'راجع الحالة مع السفينة — أغلقه أو أعد جدولة الإصلاح.';
+
+  @override
+  String get recDefectRecurring =>
+      'راجع السجل مع كبير المهندسين قبل تحديد السبب.';
+
+  @override
+  String get recCertificate =>
+      'رتّب التجديد مع الجهة المصدرة وارفع الشهادة الجديدة.';
+
+  @override
+  String get recMaintenance =>
+      'أكّد خطة العمل مع السفينة وحدّث تاريخ الاستحقاق أو أغلقها.';
+
+  @override
+  String get recRequisition =>
+      'صعّد الاعتماد أو أكّد تاريخ التسليم مع المورّد.';
+
+  @override
+  String get recPortRequirement =>
+      'أكمل المستند قبل الوصول وحدّد المتطلب كجاهز.';
+
+  @override
+  String get recUrgentNotification =>
+      'استلم التنبيه وأكّد استجابة السفينة الفورية.';
+
+  @override
+  String get recDailyTasks =>
+      'اطلب من السفينة إكمال الجولات المتأخرة أو إعادة جدولتها.';
+
+  @override
+  String get recDataQuality =>
+      'أضف البيانات الناقصة ليمكن تتبع السجل بشكل صحيح.';
+
+  @override
+  String get actionsTitle => 'مركز الإجراءات';
+
+  @override
+  String get actionsMine => 'إجراءاتي';
+
+  @override
+  String get actionsFleet => 'الأسطول';
+
+  @override
+  String get actionsOverdue => 'المتأخرة';
+
+  @override
+  String get actionsCritical => 'الحرجة';
+
+  @override
+  String get actionAdd => 'إجراء جديد';
+
+  @override
+  String get actionEdit => 'تعديل الإجراء';
+
+  @override
+  String get noActions => 'لا توجد إجراءات هنا.';
+
+  @override
+  String get actionTitleLabel => 'الإجراء';
+
+  @override
+  String get recommendationLabel => 'التوصية';
+
+  @override
+  String get noDueDate => 'بدون تاريخ استحقاق';
+
+  @override
+  String get clearDueDate => 'مسح تاريخ الاستحقاق';
+
+  @override
+  String get priorityCritical => 'حرجة';
+
+  @override
+  String get actionStatusOpen => 'مفتوح';
+
+  @override
+  String get actionStatusInProgress => 'قيد التنفيذ';
+
+  @override
+  String get actionStatusWaitingVessel => 'بانتظار السفينة';
+
+  @override
+  String get actionStatusWaitingOffice => 'بانتظار المكتب';
+
+  @override
+  String get actionStatusCompleted => 'مكتمل';
+
+  @override
+  String get actionStatusCancelled => 'ملغى';
+
+  @override
+  String get actionOverdueBadge => 'متأخر';
+
+  @override
+  String get actionSourceLabel => 'المصدر';
+
+  @override
+  String get actionCreatedFromRisk => 'أُنشئ من خطر مكتشف';
+
+  @override
+  String openActionsBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count إجراءً مفتوحًا',
+      few: '$count إجراءات مفتوحة',
+      two: 'إجراءان مفتوحان',
+      one: 'إجراء مفتوح',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get actionsSubtitle => 'حوّل المخاطر إلى متابعة موثقة';
+
+  @override
+  String get sourceModuleDefect => 'عطل';
+
+  @override
+  String get sourceModuleVesselCert => 'شهادة سفينة';
+
+  @override
+  String get sourceModuleCrewCert => 'شهادة طاقم';
+
+  @override
+  String get sourceModuleMaintenance => 'صيانة';
+
+  @override
+  String get sourceModuleRequisition => 'طلب شراء';
+
+  @override
+  String get sourceModulePortRequirement => 'متطلب ميناء';
+
+  @override
+  String get sourceModuleUrgentNotification => 'تنبيه عاجل';
+
+  @override
+  String get sourceModuleDailyTask => 'مهمة يومية';
 }

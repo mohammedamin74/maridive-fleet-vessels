@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Council Report — Maridive Fleet Vessels</title>
+<style>
+  :root{
+    --ink:#16233b; --muted:#5b6b83; --line:#e3e8f0; --bg:#f6f8fb; --card:#ffffff;
+    --navy:#12325c; --teal:#0e7d78; --red:#b3382e; --amber:#9a6b12; --violet:#5b4a9e; --green:#2c7a3f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.55}
+  .wrap{max-width:960px; margin:0 auto; padding:32px 20px 64px}
+  header.hero{background:linear-gradient(135deg,#7c2d24 0%,#12325c 100%); color:#fff;
+       border-radius:16px; padding:28px 32px; margin-bottom:28px}
+  header.hero h1{margin:0 0 6px; font-size:24px; letter-spacing:-0.3px}
+  header.hero p{margin:0; opacity:.85; font-size:14px}
+  .qbox{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--red);
+       border-radius:12px; padding:18px 22px; margin-bottom:28px; font-size:14.5px}
+  .qbox b{color:var(--navy)}
+  h2{font-size:18px; margin:36px 0 14px; color:var(--navy); letter-spacing:-0.2px}
+  .verdict{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px 28px;
+       box-shadow:0 4px 18px rgba(18,50,92,.06)}
+  .verdict h3{font-size:15px; margin:22px 0 8px; color:var(--red); text-transform:uppercase; letter-spacing:.6px}
+  .verdict h3:first-child{margin-top:0}
+  .verdict p, .verdict li{font-size:14.5px}
+  .verdict ol{padding-inline-start:22px}
+  code{background:#eef1f6; border-radius:5px; padding:1px 6px; font-size:12.5px}
+  .first-thing{background:#eef7f0; border:1px solid #cfe6d5; border-radius:10px; padding:14px 18px;
+       font-size:15px; margin-top:10px}
+  .first-thing b{color:var(--green)}
+  .headline{background:#fdecea; border:1px solid #f2c6c0; border-radius:10px; padding:14px 18px;
+       font-size:14.5px; margin:4px 0 14px}
+  .headline b{color:var(--red)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:14px 0 4px}
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .tile .name{font-weight:700; font-size:13.5px; margin-bottom:4px}
+  .tile .pos{font-size:12.5px; color:var(--muted)}
+  .tile.contrarian{border-top:3px solid var(--red)}
+  .tile.firstp{border-top:3px solid var(--navy)}
+  .tile.expansion{border-top:3px solid var(--amber)}
+  .tile.outsider{border-top:3px solid var(--violet)}
+  .tile.executor{border-top:3px solid var(--green)}
+  .badge{display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:99px;
+       margin-top:8px; letter-spacing:.3px}
+  .badge.win{background:#e7f1ff; color:var(--navy)}
+  .badge.flag{background:#fdecea; color:var(--red)}
+  .spectrum{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin-top:14px; font-size:13.5px}
+  .spectrum .row{display:flex; align-items:center; gap:10px; margin:8px 0}
+  .spectrum .lbl{width:280px; color:var(--muted); flex-shrink:0}
+  .spectrum .bar{flex:1; height:10px; border-radius:99px; background:linear-gradient(90deg,#f5dbd7,#dbe6f5)}
+  details{background:var(--card); border:1px solid var(--line); border-radius:12px; margin:10px 0; overflow:hidden}
+  details summary{cursor:pointer; padding:14px 18px; font-weight:600; font-size:14.5px; list-style:none; display:flex; align-items:center; gap:10px}
+  details summary::before{content:"▸"; color:var(--muted); transition:transform .15s}
+  details[open] summary::before{transform:rotate(90deg)}
+  details .body{padding:0 22px 18px; font-size:14px; color:#243450}
+  details .body p{margin:10px 0}
+  .dotc{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .c-red{background:var(--red)} .c-navy{background:var(--navy)} .c-amber{background:var(--amber)}
+  .c-violet{background:var(--violet)} .c-green{background:var(--green)}
+  footer{margin-top:40px; font-size:12.5px; color:var(--muted); text-align:center}
+  .agreeline{font-size:13px; color:var(--muted); margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>QA Council Report — Testing the Existing App</h1>
+  <p>Hands-on audit of all 16 existing modules · fixes &amp; amendments only, no new modules · 17 July 2026</p>
+</header>
+
+<div class="qbox">
+  <b>The question:</b> Test the existing Maridive Fleet Vessels app and recommend anything required or amended in the
+  existing modules — <b>without adding any module</b>. Five advisors inspected the actual source code
+  (screens, providers, services, models); the Executor also ran the test suite, analyzer, and risk-pattern greps.
+  Every finding cites real files.
+</div>
+
+<h2>Chairman's Verdict</h2>
+<div class="verdict">
+  <div class="headline"><b>Headline defect (4 of 5 advisors independently):</b> "offline-first" is not actually implemented.
+  Hive persists only settings; every module writes straight to Supabase inside 26 silent <code>catch (_)</code> blocks with no retry
+  queue. A tank reading or defect entered offshore shows on screen — then vanishes on restart.</div>
+
+  <h3>Where the council agrees</h3>
+  <ol>
+    <li><b>Data durability &amp; integrity:</b> offline writes lost; <code>fetchAll()</code> unordered/unpaginated (silently wrong tank levels past 1,000 rows); last-write-wins clobbering between two officers; REQ numbers that can duplicate (<code>cache count + 1</code>).</li>
+    <li><b>Numbers not yet fully trustworthy:</b> sounding tables are a linear fiction presented as authoritative; fleet fuel average counts unread tanks as 0%; certificate status lacks an "expired" tier and has a day-boundary off-by-one; pump calculator computes from zero when no reading exists.</li>
+    <li><b>Daily-use safety gaps on every list screen:</b> instant unrecoverable deletes with zero confirmations app-wide; Save buttons that silently no-op on invalid input; typed comments lost on rebuild; no search anywhere.</li>
+    <li><b>Tests cover the wrong risk:</b> all 11 are serialization round-trips; zero coverage of the alarm/expiry/average math crews act on.</li>
+  </ol>
+
+  <h3>Where the council clashes</h3>
+  <p><b>Fix order:</b> the Outsider says user-facing safety (deletes/saves/search) harms crews <i>tomorrow</i>; the Contrarian and three reviewers say the invisible data-layer bugs are graver — crews can't detect them and they harden as data grows. Resolved: data layer first, then the three worst UX traps.</p>
+  <p><b>The Expansionist's polish list</b> (export coverage, cert dots on crew list, defect→requisition prefill, order-value totals, overdue chips) was unanimously judged <i>right ideas, wrong time</i> — don't surface more numbers before the numbers are trustworthy. Kept, sequenced last.</p>
+
+  <h3>Blind spots the council caught</h3>
+  <ol>
+    <li><b>Access control &amp; audit trail (all 5 reviewers):</b> no one checked Supabase RLS, role separation, or change history — any logged-in user can silently, permanently delete any vessel's quasi-legal records.</li>
+    <li><b>One root cause:</b> most data findings trace to a single primitive — CloudStore's whole-blob jsonb upsert. Fix the primitive once; six symptoms collapse into one repair.</li>
+    <li><b>Nobody actually ran the app:</b> no airplane-mode session, no two-device conflict test, no Arabic RTL runtime walkthrough.</li>
+  </ol>
+
+  <h3>The recommendation — a 4-phase repair sprint (existing modules only)</h3>
+  <ol>
+    <li><b>Data durability:</b> try/catch on every CloudStore put/remove + Hive pending-sync queue flushed on reconnect; ordered &amp; paginated fetch; updated-at conflict guard; honest offline/auth error states replacing the 26 silent catches.</li>
+    <li><b>Crew safety UX:</b> shared confirm-delete + undo SnackBar; inline validation messages; onChanged draft persistence; search field on every list.</li>
+    <li><b>Number honesty:</b> sounding table labeled as estimate (or real calibration data); fleet averages skip unread tanks; "expired" certificate tier with date-only math; calculator guard.</li>
+    <li><b>Tests + localization:</b> clock-injected boundary tests; migrate the 35 hardcoded strings; full Arabic runtime pass.</li>
+  </ol>
+  <p>Then the Expansionist's seven amendments. In parallel: review Supabase RLS and add change history to CloudStore.</p>
+
+  <h3>The one thing to do first</h3>
+  <div class="first-thing"><b>Make one offline write survive.</b> Wrap CloudStore.put in try/catch with a Hive pending-sync queue, then run the airplane-mode test: add a tank reading offline → kill the app → relaunch (reading still there) → reconnect (reading in Supabase). Everything else builds on that guarantee.</div>
+</div>
+
+<h2>How the advisors lined up</h2>
+<div class="grid">
+  <div class="tile contrarian"><div class="name">The Contrarian</div><div class="pos">Offline-first is false; 1000-row cap corrupts tank levels; last-write-wins; REQ collisions; base64 bloat; all errors look like "wrong password".</div><span class="badge win">4× strongest vote</span></div>
+  <div class="tile firstp"><div class="name">First Principles</div><div class="pos">Sounding table is fiction; unread tanks average as 0%; no "expired" cert tier; calculator from zero; tests miss all decision math.</div></div>
+  <div class="tile expansion"><div class="name">The Expansionist</div><div class="pos">7 small amendments: export coverage, cert dots, defect→req prefill, order totals, overdue chips, defect aging, dashboard task counts.</div><span class="badge flag">5× biggest blind spot — "polish before integrity"</span></div>
+  <div class="tile outsider"><div class="name">The Outsider</div><div class="pos">Silent unrecoverable deletes on 12+ screens; no-op Save buttons; text lost on rebuild; no search anywhere; sibling-screen drift; locale leaks.</div><span class="badge win">1× strongest vote</span></div>
+  <div class="tile executor"><div class="name">The Executor</div><div class="pos">Ran tests/analyzer/greps: 11 serialization-only tests, 26 silent catches, 35 hardcoded strings. Week-by-week fix plan with airplane-mode verification.</div></div>
+</div>
+<div class="spectrum">
+  <div class="row"><span class="lbl">Offline writes are silently lost (fix first)</span><div class="bar"></div><span style="font-weight:700;color:var(--red)">4 / 5 found it independently</span></div>
+  <div class="row"><span class="lbl">Deletes need confirm + undo</span><div class="bar"></div><span style="font-weight:700;color:var(--green)">consensus</span></div>
+  <div class="row"><span class="lbl">Decision math needs tests + honesty fixes</span><div class="bar"></div><span style="font-weight:700;color:var(--green)">consensus</span></div>
+  <div class="row"><span class="lbl">UX first vs data layer first</span><div class="bar"></div><span style="font-weight:700;color:var(--amber)">contested → data layer won</span></div>
+  <div class="row"><span class="lbl">Ship polish amendments now</span><div class="bar"></div><span style="font-weight:700;color:var(--red)">rejected 5 / 5 — sequence last</span></div>
+</div>
+<p class="agreeline">All findings are grounded in source: advisors cite lib/services/cloud_store.dart, lib/state/tank_data_provider.dart, lib/models/tank.dart, attachment_store.dart, auth_provider.dart, and a dozen screens by line.</p>
+
+<h2>Full advisor findings</h2>
+
+<details>
+<summary><span class="dotc c-red"></span>The Contrarian — data-layer failures (voted strongest, 4/5)</summary>
+<div class="body">
+<p><b>1. Offline-first is false.</b> Optimistic in-memory update, then <code>await store.put(...)</code> with no catch, queue, or local persistence (tank_data_provider.dart:128-130); Hive holds only settings. Screens fire-and-forget (defect_list_screen.dart:427). Offline: record shows, put throws unhandled, record vanishes on restart — or sooner, since <code>_loadAll</code> replaces the whole cache on every token refresh.</p>
+<p><b>2. fetchAll() unordered &amp; unpaginated</b> (cloud_store.dart:18). PostgREST caps at 1,000 rows; past that, an arbitrary 1,000 load and "current tank level = newest cached reading" is silently wrong — stale levels, false alarms.</p>
+<p><b>3. Last-write-wins.</b> put upserts the whole data blob, no version check, no realtime subscription. Two officers editing the same defect clobber each other invisibly.</p>
+<p><b>4. REQ numbers collide.</b> seq = cache count + 1 (tank_data_provider.dart:371-374): a delete or a second device produces duplicate REQ-xxx numbers on procurement documents. Microsecond IDs can also collide across devices.</p>
+<p><b>5. Attachment fallback re-inlines base64 into jsonb on any upload error</b> (attachment_store.dart:36-38) — multi-MB photos land inside record rows that then sync through the same failing path.</p>
+<p><b>6. Every failure masquerades as wrong password.</b> login's <code>catch (_) =&gt; invalidCredentials</code> (auth_provider.dart:72-74); 26 silent catches fleet-wide.</p>
+</div>
+</details>
+
+<details>
+<summary><span class="dotc c-navy"></span>First Principles — can a mariner trust the numbers?</summary>
+<div class="body">
+<p><b>1. The sounding table is fiction</b> (tank.dart:18-32): a linear 250cm profile invented from capacity ("good enough to demo"). Real tank geometry is nonlinear; sounding→m³ output is fabricated but presented as authoritative. Label as estimate or load real calibration data.</p>
+<p><b>2. Offline-first false</b> — UI shows in-memory cache, cloud is truth, disk holds nothing.</p>
+<p><b>3. Unread tanks count as 0% in fleet averages</b> (tank_data_provider.dart:133-139), dragging the fuel KPI down — though alert_thresholds.dart explicitly refuses that conflation elsewhere. Average only tanks with readings.</p>
+<p><b>4. No "expired" certificate tier</b> (vessel_certificate.dart:35-40): expired 6 months ago looks identical to 29-days-out; inDays truncation gives a day-30/31 off-by-one. Use date-only math.</p>
+<p><b>5. REQ sequence collisions.</b> <b>6. Pump calculator computes from 0 with no reading and clamps negatives</b>, masking impossible operations (tank_calculator_screen.dart:98, 47-67).</p>
+<p><b>7. All 11 tests are serialization round-trips</b> — zero coverage of thresholds, averages, sounding math, sequence generation: precisely the numbers crews act on.</p>
+</div>
+</details>
+
+<details>
+<summary><span class="dotc c-amber"></span>The Expansionist — 7 amendments, unanimously re-sequenced to last</summary>
+<div class="body">
+<p><b>1.</b> Unified export covers 7 of ~13 modules (export_report_screen.dart) — certifications, maintenance, handover, logbook, urgent notifications missing though providers exist. <b>2.</b> Crew list blind to certificates — one status dot + tap-through. <b>3.</b> Defect→requisition one-tap prefill from requiredSpareParts (~15 lines). <b>4.</b> Requisition value never totaled (unitPrice × quantity exist). <b>5.</b> Overdue delivery invisible — one red chip. <b>6.</b> Defect aging ("N days open"). <b>7.</b> Overdue task counts exist but never shown on the fleet dashboard.</p>
+<p><i>Council ruling: all seven stay on the roadmap — after the data layer, UX safety, and number-honesty phases. Reviewers' reason: "polish before integrity amplifies wrong numbers to inspectors — the worst audience."</i></p>
+</div>
+</details>
+
+<details>
+<summary><span class="dotc c-violet"></span>The Outsider — daily-friction findings</summary>
+<div class="body">
+<p><b>1. Every delete is instant, silent, unrecoverable</b> — 12+ screens, zero confirmations; the only AlertDialog in the app is the AI-review dialog; trash icons sit beside routine AppBar actions (daily_task_detail_screen.dart:26-32, port_call_detail_screen.dart:28-31); no undo SnackBar anywhere.</p>
+<p><b>2. Save buttons silently no-op on invalid input</b> — twelve screens share <code>if (title.isEmpty) return;</code>. Crew assume the app froze.</p>
+<p><b>3. Typed text quietly lost</b> — checklist comments commit only onSubmitted and controllers rebuild from stored state on every rebuild (daily_task_detail_screen.dart:72-80); same trap for defect "action taken".</p>
+<p><b>4. No search or filter on any list</b> (0 matches across 27 screens).</p>
+<p><b>5. Sibling drift:</b> sheets vs pushed screens; requisitions editable, defects not; defects get PDF, requisitions don't. <b>6. Locale leaks:</b> hardcoded date formats, English enum names, 'pcs'.</p>
+<p>Fixes: one shared confirm-delete helper, inline validation errors, onChanged persistence, a search field per list header.</p>
+</div>
+</details>
+
+<details>
+<summary><span class="dotc c-green"></span>The Executor — measured, with a verification plan</summary>
+<div class="body">
+<p>Ran: flutter test (11/11, all model serialization; zero widget/provider/service coverage), flutter analyze (clean), pub outdated (19 held back, none blocking). Greps: 26 silent catches, 31 DateTime.now() in models/state, 35 hardcoded English strings in screens, 0 force-unwraps.</p>
+<p><b>This week:</b> (1) wrap every CloudStore.put/remove, add Hive pending-sync queue, flush on reconnect — verify via airplane-mode test; (2) "cached/offline" banner instead of a silently empty-but-healthy fleet. <b>Next:</b> (3) clock-injected boundary tests for cert-expiry and task-overdue math; (4) migrate the 35 strings to ARB and re-verify in Arabic.</p>
+</div>
+</details>
+
+<h2>Peer-review highlights</h2>
+<details>
+<summary>What the anonymous cross-review surfaced</summary>
+<div class="body">
+<p><b>Strongest votes:</b> Contrarian ×4 ("the bugs a crew can't detect and a developer can't fix later"; "failures that survive contact with production at scale"). Outsider ×1 ("the only response that watched a human use the app").</p>
+<p><b>Blind-spot votes:</b> Expansionist ×5 — unanimous. "Optimizes the roof while the foundation is condemned"; "an order-value stat computed from a truncated, unordered cache extends the lie with more confident-looking numbers."</p>
+<p><b>What ALL five missed:</b> (a) authorization &amp; audit trail — Supabase RLS, role separation, change history; any account can permanently destroy quasi-legal maritime records; (b) the shared root cause — one CloudStore primitive (whole-blob jsonb upsert) behind most data findings: fix it once; (c) nobody ran the app — no airplane-mode, two-device, or Arabic RTL runtime session; (d) no migration/versioning story for the jsonb blobs.</p>
+<p><b>Executor-reviewer's final priority:</b> Contrarian fixes → Outsider items 1-3 → sync queue → number-honesty labels → Expansionist polish.</p>
+</div>
+</details>
+
+<footer>
+LLM Council (QA edition) · 5 code-grounded advisors + anonymous peer review + chairman synthesis · Existing modules only, no new modules · 17 July 2026<br>
+Full transcript: council-transcript-qa-2026-07-17.md · Previous council (module additions): council-report-2026-07-17.html
+</footer>
+
+</div>
+</body>
+</html>

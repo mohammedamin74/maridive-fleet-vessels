@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Council Report — Maridive Fleet Vessels App Review</title>
+<style>
+  :root{
+    --ink:#16233b; --muted:#5b6b83; --line:#e3e8f0; --bg:#f6f8fb; --card:#ffffff;
+    --navy:#12325c; --teal:#0e7d78; --red:#b3382e; --amber:#9a6b12; --violet:#5b4a9e; --green:#2c7a3f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg); color:var(--ink); line-height:1.55}
+  .wrap{max-width:960px; margin:0 auto; padding:32px 20px 64px}
+  header.hero{background:linear-gradient(135deg,#12325c 0%,#0e7d78 100%); color:#fff;
+       border-radius:16px; padding:28px 32px; margin-bottom:28px}
+  header.hero h1{margin:0 0 6px; font-size:24px; letter-spacing:-0.3px}
+  header.hero p{margin:0; opacity:.85; font-size:14px}
+  .qbox{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--teal);
+       border-radius:12px; padding:18px 22px; margin-bottom:28px; font-size:14.5px}
+  .qbox b{color:var(--navy)}
+  h2{font-size:18px; margin:36px 0 14px; color:var(--navy); letter-spacing:-0.2px}
+  .verdict{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:24px 28px;
+       box-shadow:0 4px 18px rgba(18,50,92,.06)}
+  .verdict h3{font-size:15px; margin:22px 0 8px; color:var(--teal); text-transform:uppercase; letter-spacing:.6px}
+  .verdict h3:first-child{margin-top:0}
+  .verdict p, .verdict li{font-size:14.5px}
+  .verdict ol{padding-inline-start:22px}
+  .first-thing{background:#eef7f0; border:1px solid #cfe6d5; border-radius:10px; padding:14px 18px;
+       font-size:15px; margin-top:10px}
+  .first-thing b{color:var(--green)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin:14px 0 4px}
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .tile .name{font-weight:700; font-size:13.5px; margin-bottom:4px}
+  .tile .pos{font-size:12.5px; color:var(--muted)}
+  .tile.contrarian{border-top:3px solid var(--red)}
+  .tile.firstp{border-top:3px solid var(--navy)}
+  .tile.expansion{border-top:3px solid var(--amber)}
+  .tile.outsider{border-top:3px solid var(--violet)}
+  .tile.executor{border-top:3px solid var(--green)}
+  .badge{display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:99px;
+       margin-top:8px; letter-spacing:.3px}
+  .badge.win{background:#e7f1ff; color:var(--navy)}
+  .badge.flag{background:#fdecea; color:var(--red)}
+  .spectrum{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin-top:14px; font-size:13.5px}
+  .spectrum .row{display:flex; align-items:center; gap:10px; margin:8px 0}
+  .spectrum .lbl{width:220px; color:var(--muted); flex-shrink:0}
+  .spectrum .bar{flex:1; height:10px; border-radius:99px; background:linear-gradient(90deg,#dbe6f5,#bcd6d4)}
+  .spectrum .dot{width:14px; height:14px; border-radius:50%; margin-left:-7px; position:relative; flex-shrink:0}
+  details{background:var(--card); border:1px solid var(--line); border-radius:12px; margin:10px 0; overflow:hidden}
+  details summary{cursor:pointer; padding:14px 18px; font-weight:600; font-size:14.5px; list-style:none; display:flex; align-items:center; gap:10px}
+  details summary::before{content:"▸"; color:var(--muted); transition:transform .15s}
+  details[open] summary::before{transform:rotate(90deg)}
+  details .body{padding:0 22px 18px; font-size:14px; color:#243450}
+  details .body p{margin:10px 0}
+  .dotc{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .c-red{background:var(--red)} .c-navy{background:var(--navy)} .c-amber{background:var(--amber)}
+  .c-violet{background:var(--violet)} .c-green{background:var(--green)}
+  footer{margin-top:40px; font-size:12.5px; color:var(--muted); text-align:center}
+  .agreeline{font-size:13px; color:var(--muted); margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Council Report — Maridive Fleet Vessels App</h1>
+  <p>Professional-mariner review of the whole app: what to add, what to amend, before fleet-wide rollout · 17 July 2026</p>
+</header>
+
+<div class="qbox">
+  <b>The question:</b> The app manages 5 OSVs (Maridive 601, 701, 704, Zohr 1, Zohr 2) from Tripoli with 16 modules —
+  tanks, defects, requisitions, port calls, certifications, notifications, tasks, crew, handovers, logbook, exports,
+  file viewer, AI extraction, analytics. As professional mariners: what additions or amendments are required for it to
+  serve as the fleet's <b>primary daily operations tool</b>, measured against real OSV workflows and ISM/SOLAS/MLC/class/flag expectations?
+</div>
+
+<h2>Chairman's Verdict</h2>
+<div class="verdict">
+  <h3>Where the council agrees</h3>
+  <p>All five advisors independently converged on the same three gaps — the strongest possible signal:</p>
+  <ol>
+    <li><b>Planned Maintenance System (PMS) is the single biggest missing module.</b> Running-hours-driven maintenance for critical machinery (ISM 10.3) is what a chief engineer lives in. Without it the app stays the "second screen" next to Excel.</li>
+    <li><b>A daily noon report is the missing spine.</b> One 3-minute form — soundings, ROB, running hours, position, weather, activity mode — feeds tanks, PMS counters, dashboard, and analytics at once, and cuts the data-entry burden that decides adoption.</li>
+    <li><b>Sync trust and infrastructure honesty.</b> Per-record sync indicators, a defined conflict-resolution policy for concurrent offline edits, and either a paid database tier (~$25/mo) or an explicit "paper remains the system of record" stance.</li>
+  </ol>
+  <p>Secondary consensus: AI extraction needs a logged human-verification step (one hallucinated certificate date can detain a vessel), and rollout should be a one-vessel pilot with a hard adoption gate.</p>
+
+  <h3>Where the council clashes</h3>
+  <p><b>Rebuild vs. ship:</b> First Principles wants the data model unified around deviations/readiness/daily-report before anything else; the Executor calls that an unshippable rewrite for a solo developer. Resolution: add the unified "Outstanding" view as a new screen over existing data — no rewrite.</p>
+  <p><b>Consolidate vs. expand:</b> the Outsider says fewer modules done boringly well; the Expansionist says double down on tank data as bunker-dispute intelligence and design for Maridive's ~80-vessel fleet. Peer review sided 4-to-1 with consolidation first — but the bunker-reconciliation insight survives as the best reason the tank module deserves investment.</p>
+
+  <h3>Blind spots the council caught</h3>
+  <ol>
+    <li><b>Organizational mandate is the real gate:</b> under ISM, an app is only "primary" if the company's SMS designates it (controlled forms, DPA sign-off, flag acceptance of e-records). Otherwise it's an uncontrolled parallel record — itself an audit finding.</li>
+    <li><b>Record integrity:</b> editable historical entries are worse than paper in an audit or casualty investigation. Logbook-class records need append-only history with visible corrections and master sign-off.</li>
+    <li><b>Security & access control:</b> crew PII and certificates in cloud storage, row-level security, per-user accounts and crew offboarding — unaddressed in round one.</li>
+    <li><b>Premature scaling:</b> 4 of 5 reviewers rejected multi-tenant/market ambitions before single-vessel adoption is proven.</li>
+  </ol>
+
+  <h3>The recommendation</h3>
+  <p>Do <b>not</b> add more feature modules yet. Make four amendments that convert the 16 modules from a records portfolio into an operations tool:</p>
+  <ol>
+    <li>Ship a <b>daily noon-report form</b> feeding tanks, running hours, and the dashboard.</li>
+    <li>Build the <b>PMS module</b> on those running hours (top ~30 machinery items per vessel).</li>
+    <li>Add a unified per-vessel <b>"Outstanding" view</b> — open defects + expiring certs + active alarms + assigned actions in one accountable, sign-off list.</li>
+    <li><b>Harden trust</b>: sync-status indicators, append-only record history, AI-verification step, paid database tier.</li>
+  </ol>
+  <p>In parallel, get Maridive management to formally sanction the app in the SMS — that decision, not any feature, determines whether it becomes the primary tool.</p>
+
+  <h3>The one thing to do first</h3>
+  <div class="first-thing"><b>Ship the noon-report form and pilot it on one vessel</b> (the friendliest master), with a single success metric: 30 consecutive days of daily submissions before building anything else.</div>
+</div>
+
+<h2>How the advisors lined up</h2>
+<div class="grid">
+  <div class="tile contrarian"><div class="name">The Contrarian</div><div class="pos">Records system pretending to be an ops tool: no PMS, no conflict resolution, no audit controls, AI detention risk.</div><span class="badge flag">1× strongest vote</span></div>
+  <div class="tile firstp"><div class="name">First Principles</div><div class="pos">"Safe, legal, ready to work today?" — unify deviations, readiness, daily report; modules become views.</div><span class="badge win">3× strongest vote</span></div>
+  <div class="tile expansion"><div class="name">The Expansionist</div><div class="pos">Tank data = bunker-dispute intelligence; PMS = lock-in; regional Arab-first OSV market prize.</div><span class="badge flag">4× biggest blind spot</span></div>
+  <div class="tile outsider"><div class="name">The Outsider</div><div class="pos">16 modules is a portfolio not a product; bus factor of one; free tier ≠ operations tier; WhatsApp is the real competitor.</div><span class="badge flag">1× biggest blind spot</span></div>
+  <div class="tile executor"><div class="name">The Executor</div><div class="pos">Week 1 noon report → Month 1 PMS + cert escalation → Quarter 1 requisition tracking + Android. Hard adoption gate.</div><span class="badge win">1× strongest vote</span></div>
+</div>
+<div class="spectrum">
+  <div class="row"><span class="lbl">Add PMS module</span><div class="bar"></div><span style="font-weight:700;color:var(--green)">5 / 5 agree</span></div>
+  <div class="row"><span class="lbl">Add daily noon report</span><div class="bar"></div><span style="font-weight:700;color:var(--green)">5 / 5 agree</span></div>
+  <div class="row"><span class="lbl">Fix sync trust / infra tier</span><div class="bar"></div><span style="font-weight:700;color:var(--green)">4 / 5 agree</span></div>
+  <div class="row"><span class="lbl">Rebuild data model first</span><div class="bar"></div><span style="font-weight:700;color:var(--amber)">contested</span></div>
+  <div class="row"><span class="lbl">Scale to 80 vessels / market now</span><div class="bar"></div><span style="font-weight:700;color:var(--red)">rejected 4 / 5</span></div>
+</div>
+<p class="agreeline">Natural tensions held: Contrarian vs Expansionist (risk vs upside), First Principles vs Executor (rethink vs ship). The Outsider's structural warnings (bus factor, free tier, data-entry fatigue) were echoed by both reviewers and the chairman.</p>
+
+<h2>Full advisor responses</h2>
+
+<details class="adv">
+<summary><span class="dotc c-red"></span>The Contrarian — "A records system pretending to be an operations tool"</summary>
+<div class="body">
+<p><b>Connectivity is your fatal flaw.</b> Offshore Tripoli means VSAT that drops for days, and "offline-first with Supabase free tier" means five vessels syncing photo evidence, PDFs, and readings through a plan with row limits, 1GB storage, and projects that pause after a week of inactivity. Your sync will silently fail mid-hitch, two masters will edit the same defect list, and your conflict resolution strategy is — what, exactly?</p>
+<p><b>No planned maintenance system.</b> For a chief engineer, PMS <i>is</i> the job — running hours, class-linked intervals, critical equipment per ISM 10.3, spares tied to jobs. Without it the chief double-enters, and double entry is how ops apps die.</p>
+<p><b>Regulatory records without controls are worse than paper.</b> Can a master retroactively edit a logbook entry? If yes, no auditor accepts it and it's a liability in a casualty investigation. Where's the sign-off workflow, the DPA reporting line, the non-conformity/corrective-action loop? A defect list is not a nonconformity system.</p>
+<p><b>Missing the daily bread:</b> noon reports, ROB/consumption reconciliation, drill and rest-hour logging (PSC's favorite deficiency), crew change planning against Libyan visa chaos, DP/anchor-handling job records.</p>
+<p><b>And the AI extraction?</b> One hallucinated certificate expiry a superintendent trusts, and a vessel gets detained. Who verifies, and where is that logged? Ask the crews what they'd stop using Excel for. I'd bet the answer today is: nothing.</p>
+</div>
+</details>
+
+<details class="adv">
+<summary><span class="dotc c-navy"></span>First Principles — "Is this vessel safe, legal, and ready to work today?"</summary>
+<div class="body">
+<p>Fleet software on an OSV operation exists to answer one question reliably: "Is this vessel safe, legal, and ready to work today — and if not, who must do what by when?" Everything else is decoration.</p>
+<p>This module list scatters. A defect, an overdue certificate, a tank alarm, an urgent notification, and a daily task are all the same underlying object — a deviation requiring an owner, a deadline, and a closure record. The app models them as five silos: no unified "what's outstanding on Maridive 704" view, no accountability chain, no audit trail an ISM auditor can walk.</p>
+<p>The most glaring absence is what ISM actually runs on: planned maintenance. Tank readings without engine running hours and consumption-vs-ROB reconciliation is half a picture. If the PMS lives elsewhere, this app will never be "primary" — it will be the second screen.</p>
+<p>Second absence: this is a charter business. No charter/DPR module, no off-hire tracking, no client-facing deliverable — "are my five vessels earning?" is unanswerable here.</p>
+<p>Rebuild around three primitives: <b>deviations</b> (unified lifecycle with sign-off), <b>readiness</b> (certs + PMS + crew compliance as one per-vessel status), and the <b>daily operational report</b>. The current modules become views on those, not islands.</p>
+</div>
+</details>
+
+<details class="adv">
+<summary><span class="dotc c-amber"></span>The Expansionist — "The tank module is the undervalued crown jewel"</summary>
+<div class="body">
+<p>Tank soundings plus readings history is 80% of the way to bunkering intelligence — the single biggest cost line on an OSV. Add ROB trend curves, consumption-per-mode (DP, transit, standby, port), and charterer fuel reconciliation, and this settles bunker disputes worth tens of thousands of dollars per voyage. Charterers (Eni, Mellitah) demand daily fuel reporting anyway — auto-generate their format and the app becomes contractually embedded.</p>
+<p>The missing multiplier: PMS. Ship it and the app touches every crew member every day — that's the retention lock-in.</p>
+<p>Next-order upside: (1) noon reports with auto-computed distance, consumption, DP hours; (2) crew rotation planning tied to the existing certification module (MLC rest hours + rotation forecasting); (3) free AIS + Open-Meteo overlays on the fleet dashboard.</p>
+<p>The real prize: Maridive operates ~80 vessels. Bilingual Arabic-first, offline-tolerant OSV software has essentially zero competitors in the Egyptian/Libyan/Gulf market. Build the noon report + PMS + bunker triangle, prove it on five hulls, and you have the fleet-wide standard. Design the schema multi-tenant now.</p>
+</div>
+</details>
+
+<details class="adv">
+<summary><span class="dotc c-violet"></span>The Outsider — "Sixteen modules is a portfolio, not a product"</summary>
+<div class="body">
+<p>Ask what a master actually opens daily — probably tanks, defects, and tasks — and make everything else secondary. Offshore crews rotate constantly, so onboarding is the normal condition: you need role-based home screens (master / chief / superintendent) and a 10-minute path to competence, or each rotation resets adoption to zero.</p>
+<p><b>1. Bus factor of one.</b> Before adding modules, write down how sync conflicts resolve, how to restore a vessel's data, and how to onboard a second maintainer.</p>
+<p><b>2. Free tier is not an operations tier.</b> Supabase free pauses inactive projects, caps storage, no SLA. Either budget ~$25/month or explicitly define the app as a convenience layer with paper as the system of record.</p>
+<p><b>3. Data-entry burden decides everything.</b> Every field you add is a field someone fakes at 2 a.m. Audit which entries are used downstream and delete the rest.</p>
+<p><b>4. Trust needs visibility.</b> Users must always see per-record sync status — "did shore actually receive this?" — or they fall back to WhatsApp, which is your real competitor.</p>
+<p>Fewer modules, done boringly well, beats sixteen done fragile.</p>
+</div>
+</details>
+
+<details class="adv">
+<summary><span class="dotc c-green"></span>The Executor — "Ship the thing they'll open every morning"</summary>
+<div class="body">
+<p><b>Week 1:</b> Noon report as a single 3-minute form — tank soundings, ROB, running hours, position, weather. That one screen feeds dashboard, tanks, and analytics for free. Sync-status indicators everywhere. Seed all 5 vessels' data yourself — never ask crews to bootstrap an empty app.</p>
+<p><b>Month 1:</b> Running-hours-based PMS for the top ~30 machinery items per vessel, wired to noon-report counters. Certificate expiry escalation (30/60/90 days). PDF export matching the exact formats charterers and PSC inspectors already expect.</p>
+<p><b>Quarter 1:</b> Requisition-to-delivery tracking ("where's my spare part"), oil-record-book-style logs, drill/safety meeting scheduler with photo evidence, then Android — masters do rounds with phones, not laptops.</p>
+<p><b>Do NOT build:</b> full ISM document management, e-signatures, crewing/payroll, charter party management, custom reporting engines, or more AI features until the data underneath is trustworthy.</p>
+<p><b>Rollout:</b> one friendly-master pilot vessel, two weeks, personal WhatsApp support, 10-minute Arabic training video, one laminated sheet per module. Adoption metric: all 5 vessels submitting a noon report daily for 30 straight days before building anything new.</p>
+</div>
+</details>
+
+<h2>Peer-review highlights</h2>
+<details>
+<summary>What the anonymous cross-review surfaced</summary>
+<div class="body">
+<p><b>Strongest-response votes:</b> First Principles ×3 (First Principles, Expansionist, Outsider reviewers), Contrarian ×1 (Contrarian reviewer: "D's flaws are the ones auditors and PSC will actually find"), Executor ×1 (Executor reviewer: "the only response with a Monday-morning plan and a hard adoption gate").</p>
+<p><b>Blind-spot votes:</b> Expansionist ×4 — "a business plan, not a review"; "optimizes the prize before the prerequisite"; "building bunker-dispute evidence on infrastructure that silently fails mid-hitch is a contradiction E never notices". Outsider ×1 (from the Expansionist reviewer: "pure subtraction; caution without a compounding thesis").</p>
+<p><b>What ALL five missed</b> (each caught only in review):</p>
+<p>· <b>Organizational mandate</b> — under ISM the SMS must designate the app (controlled forms, DPA sign-off, flag acceptance of electronic records) or it's an uncontrolled parallel record — itself a nonconformity. Ownership, data custody, and what happens if the developer leaves were never addressed.</p>
+<p>· <b>Security & privacy</b> — crew PII and certificates in the cloud, row-level security, per-user accounts, crew offboarding, device loss, Libya-specific data-hosting and sanctions-adjacent constraints.</p>
+<p>· <b>The data as the asset</b> — consumption-per-mode, defect MTTR, and PMS histories compound into fleet benchmarking, charter-bid costing, and vetting evidence; plus interoperability pipes (API/export) to charterer and class systems.</p>
+<p>· <b>Device & language reality</b> — shared vessel PCs vs. per-user logins, and Arabic data-entry quality (not just an RTL UI).</p>
+</div>
+</details>
+
+<footer>
+LLM Council · 5 advisors + anonymous peer review + chairman synthesis · Question: full-app professional-mariner review of Maridive Fleet Vessels · 17 July 2026<br>
+Full transcript: council-transcript-2026-07-17.md
+</footer>
+
+</div>
+</body>
+</html>

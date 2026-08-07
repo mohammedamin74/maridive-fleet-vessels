@@ -13,6 +13,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_tokens.dart';
 import '../widgets/alerts_panel.dart';
 import '../widgets/cert_alerts_panel.dart';
+import '../widgets/command_center_panel.dart';
 import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/urgent_alerts_banner.dart';
@@ -128,6 +129,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ]),
               ),
+            ),
+            SliverPadding(
+              padding: gutter
+                  .add(const EdgeInsetsDirectional.only(top: AppSpacing.md)),
+              sliver: const SliverToBoxAdapter(child: CommandCenterPanel()),
             ),
             SliverPadding(
               padding: gutter
