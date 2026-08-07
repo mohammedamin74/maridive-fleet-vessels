@@ -36,7 +36,6 @@ class _CashMeetingReportScreenState extends State<CashMeetingReportScreen> {
     final headers = [
       t.vesselLabel,
       t.requestDescriptionLabel,
-      t.prNumberLabel,
       t.costLabel,
       t.currencyLabel,
       t.supplierLabel,
@@ -49,7 +48,6 @@ class _CashMeetingReportScreenState extends State<CashMeetingReportScreen> {
               [
                 vesselNames[c.vesselId] ?? c.vesselId,
                 c.description,
-                c.prNumber,
                 _money.format(c.cost),
                 c.currency.label,
                 c.supplier,
