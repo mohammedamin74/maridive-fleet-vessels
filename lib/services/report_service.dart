@@ -165,6 +165,104 @@ class ReportService {
     );
   }
 
+  /// Fleet-level Cash Meeting Sheet PDF: no vessel header — the sheet spans
+  /// all vessels. One titled table per section (not approved / approved /
+  /// per-currency totals), matching the in-app report preview exactly.
+  static Future<void> exportCashMeetingPdf({
+    required List<ReportSection> sections,
+  }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
+    final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    final doc = pw.Document();
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(28),
+        header: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('Maridive Fleet Vessels - Cash Meeting Sheet',
+                style: pw.TextStyle(
+                    fontSize: 15,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 2),
+            pw.Text('Generated: $generatedAt',
+                style: const pw.TextStyle(
+                    fontSize: 9, color: PdfColors.grey700)),
+            pw.Divider(),
+          ],
+        ),
+        build: (context) => [
+          for (final s in sections) ...[
+            pw.Text(s.title,
+                style: pw.TextStyle(
+                    fontSize: 13,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 6),
+            if (s.rows.isEmpty)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 4),
+                child: pw.Text('No entries',
+                    style: pw.TextStyle(
+                        fontSize: 9,
+                        color: PdfColors.grey600,
+                        fontFallback: fallback)),
+              )
+            else
+              pw.TableHelper.fromTextArray(
+                headers: s.headers,
+                data: s.rows,
+                columnWidths: _columnWidths(s.headers, s.rows),
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold,
+                    fontSize: 8.5,
+                    color: PdfColors.white,
+                    fontFallback: fallback),
+                headerDecoration:
+                    const pw.BoxDecoration(color: PdfColors.blueGrey800),
+                cellStyle:
+                    pw.TextStyle(fontSize: 8, fontFallback: fallback),
+                border:
+                    pw.TableBorder.all(color: PdfColors.grey400, width: 0.4),
+                cellPadding:
+                    const pw.EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+              ),
+            pw.SizedBox(height: 16),
+          ],
+        ],
+      ),
+    );
+
+    await _savePdf(await doc.save(), 'Cash_Meeting_Sheet.pdf');
+  }
+
+  /// Fleet-level Cash Meeting Sheet CSV, same sections as the PDF.
+  static Future<void> exportCashMeetingCsv({
+    required List<ReportSection> sections,
+  }) async {
+    final buf = StringBuffer();
+    for (final s in sections) {
+      buf.writeln(_csvRow([s.title]));
+      buf.writeln(_csvRow(s.headers));
+      for (final r in s.rows) {
+        buf.writeln(_csvRow(r));
+      }
+      buf.writeln();
+    }
+    final bytes = Uint8List.fromList(
+        [0xEF, 0xBB, 0xBF, ...utf8.encode(buf.toString())]);
+    await FileSaver.instance.saveAs(
+      name: 'Cash_Meeting_Sheet',
+      bytes: bytes,
+      fileExtension: 'csv',
+      mimeType: MimeType.csv,
+    );
+  }
+
   // Table.layout() sizes unconstrained (IntrinsicColumnWidth) columns by
   // splitting page width in proportion to each column's longest unwrapped
   // line. One free-text column (a title/description) can be many times

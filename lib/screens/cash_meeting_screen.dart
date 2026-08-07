@@ -11,6 +11,7 @@ import '../theme/app_colors.dart';
 import '../theme/app_tokens.dart';
 import '../widgets/ai_fill.dart';
 import '../widgets/confirm_delete.dart';
+import 'cash_meeting_report_screen.dart';
 
 /// The cash meeting sheet, digitized from the office's Excel: a rolling
 /// ledger of purchase lines (PR + PO) per vessel, split into "not approved"
@@ -38,8 +39,16 @@ class _CashMeetingScreenState extends State<CashMeetingScreen> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text(t.cashMeetingTitle),
+          title: Text(t.managementTitle),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.summarize_outlined),
+              tooltip: t.exportReport,
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (_) => const CashMeetingReportScreen()),
+              ),
+            ),
             AiFillAction(onPressed: () => _extractFromFile(context, t)),
             IconButton(
               icon: const Icon(Icons.add),

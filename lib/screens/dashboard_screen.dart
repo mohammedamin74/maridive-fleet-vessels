@@ -17,7 +17,7 @@ import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/urgent_alerts_banner.dart';
 import '../widgets/vessel_card.dart';
-import 'management_screen.dart';
+import 'cash_meeting_screen.dart';
 import 'vessel_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -571,7 +571,7 @@ class _ManagementCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: ListTile(
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const ManagementScreen()),
+          MaterialPageRoute(builder: (_) => const CashMeetingScreen()),
         ),
         leading: Container(
           width: 42,
