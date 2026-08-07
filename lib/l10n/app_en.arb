@@ -550,5 +550,35 @@
   "acknowledgeReport": "Acknowledge",
   "acknowledgedByLabel": "Acknowledged by",
   "exportPdf": "Export PDF",
-  "editReport": "Edit"
+  "editReport": "Edit",
+  "managementTitle": "Management",
+  "managementSubtitle": "Cash meeting & office approvals",
+  "cashMeetingTitle": "Cash Meeting Sheet",
+  "cashMeetingSubtitle": "Purchase lines with PR & PO, reviewed in the cash meeting",
+  "cashPendingTab": "Not approved",
+  "cashApprovedTab": "Approved",
+  "cashNoItems": "No purchase lines yet. Add one or scan the meeting sheet with AI.",
+  "cashItemAdd": "Add Purchase Line",
+  "cashItemEdit": "Edit Purchase Line",
+  "cashItemReviewExtracted": "Review Extracted Line",
+  "operationLabel": "Operation / Dept.",
+  "requestDescriptionLabel": "Request description",
+  "prNumberLabel": "PR number",
+  "poNumberLabel": "PO number",
+  "costLabel": "Cost",
+  "currencyLabel": "Currency",
+  "supplierLabel": "Supplier",
+  "vesselLabel": "Vessel",
+  "allVesselsFilter": "All vessels",
+  "markApproved": "Approve",
+  "markPending": "Return to pending",
+  "approvedOn": "Approved {date}",
+  "@approvedOn": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "totalsLabel": "Totals",
+  "cashPendingBadge": "{count, plural, one{1 line awaiting approval} other{{count} lines awaiting approval}}",
+  "@cashPendingBadge": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

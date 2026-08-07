@@ -256,6 +256,29 @@ const KINDS: Record<string, Kind> = {
       },
     }),
   },
+  cash_item: {
+    mode: "list",
+    prompt: "You are reading a fleet cash meeting sheet or purchase list " +
+      "(e.g. an Excel with columns like Operation/DD, Vessel, Request " +
+      "Description, Cost, Currency, Supplier, PO). Each row is one purchase " +
+      "line. Extract the PR number embedded in the description when present " +
+      "(e.g. MDZOHRIENG2026-204). Normalize currency to EUR, USD or GBP. " +
+      "Parse costs with European formats (comma decimals, space or dot " +
+      "thousand separators) into plain numbers." + LIST_RULES,
+    schema: listOf({
+      type: "object",
+      properties: {
+        vessel: { type: "string" },
+        operation: { type: "string" },
+        description: { type: "string" },
+        prNumber: { type: "string" },
+        cost: { type: "number" },
+        currency: { type: "string", enum: ["EUR", "USD", "GBP"] },
+        supplier: { type: "string" },
+        poNumber: { type: "string" },
+      },
+    }),
+  },
   requisition: {
     mode: "list",
     prompt: "You are reading a ship spare-parts requisition (a purchase " +

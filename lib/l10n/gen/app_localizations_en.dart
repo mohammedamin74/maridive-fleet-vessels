@@ -1253,7 +1253,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markReady => 'Mark Ready';
 
   @override
-  String get markPending => 'Mark Pending';
+  String get markPending => 'Return to pending';
 
   @override
   String get noRequirements => 'No requirements yet';
@@ -1478,4 +1478,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editReport => 'Edit';
+
+  @override
+  String get managementTitle => 'Management';
+
+  @override
+  String get managementSubtitle => 'Cash meeting & office approvals';
+
+  @override
+  String get cashMeetingTitle => 'Cash Meeting Sheet';
+
+  @override
+  String get cashMeetingSubtitle =>
+      'Purchase lines with PR & PO, reviewed in the cash meeting';
+
+  @override
+  String get cashPendingTab => 'Not approved';
+
+  @override
+  String get cashApprovedTab => 'Approved';
+
+  @override
+  String get cashNoItems =>
+      'No purchase lines yet. Add one or scan the meeting sheet with AI.';
+
+  @override
+  String get cashItemAdd => 'Add Purchase Line';
+
+  @override
+  String get cashItemEdit => 'Edit Purchase Line';
+
+  @override
+  String get cashItemReviewExtracted => 'Review Extracted Line';
+
+  @override
+  String get operationLabel => 'Operation / Dept.';
+
+  @override
+  String get requestDescriptionLabel => 'Request description';
+
+  @override
+  String get prNumberLabel => 'PR number';
+
+  @override
+  String get poNumberLabel => 'PO number';
+
+  @override
+  String get costLabel => 'Cost';
+
+  @override
+  String get currencyLabel => 'Currency';
+
+  @override
+  String get supplierLabel => 'Supplier';
+
+  @override
+  String get vesselLabel => 'Vessel';
+
+  @override
+  String get allVesselsFilter => 'All vessels';
+
+  @override
+  String approvedOn(String date) {
+    return 'Approved $date';
+  }
+
+  @override
+  String get totalsLabel => 'Totals';
+
+  @override
+  String cashPendingBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lines awaiting approval',
+      one: '1 line awaiting approval',
+    );
+    return '$_temp0';
+  }
 }

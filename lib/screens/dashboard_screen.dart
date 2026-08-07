@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../data/fleet_data.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/vessel.dart';
+import '../state/cash_meeting_provider.dart';
 import '../state/certification_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
@@ -16,6 +17,7 @@ import '../widgets/defects_panel.dart';
 import '../widgets/stat_tile.dart';
 import '../widgets/urgent_alerts_banner.dart';
 import '../widgets/vessel_card.dart';
+import 'management_screen.dart';
 import 'vessel_detail_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -125,6 +127,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     accent: AppColors.amber400,
                   ),
                 ]),
+              ),
+            ),
+            SliverPadding(
+              padding: gutter
+                  .add(const EdgeInsetsDirectional.only(top: AppSpacing.md)),
+              sliver: SliverToBoxAdapter(
+                child: _ManagementCard(t: t),
               ),
             ),
             if (urgentNotifications.isNotEmpty)
@@ -541,6 +550,74 @@ class _FilterChip extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point to the office-side Management hub (cash meeting sheet and
+/// future management modules). Shows how many purchase lines are still
+/// awaiting approval so the pending backlog is visible from the dashboard.
+class _ManagementCard extends StatelessWidget {
+  final AppLocalizations t;
+  const _ManagementCard({required this.t});
+
+  @override
+  Widget build(BuildContext context) {
+    final pendingCount = context.watch<CashMeetingProvider>().pendingCount;
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const ManagementScreen()),
+        ),
+        leading: Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: AppColors.teal500.withValues(alpha: 0.15),
+            borderRadius: AppRadius.mdAll,
+          ),
+          alignment: Alignment.center,
+          child: const Icon(Icons.business_center_outlined,
+              color: AppColors.teal500, size: 20),
+        ),
+        title: Text(t.managementTitle,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium
+                ?.copyWith(fontWeight: FontWeight.w700)),
+        subtitle: Text(
+          pendingCount > 0
+              ? t.cashPendingBadge(pendingCount)
+              : t.managementSubtitle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (pendingCount > 0)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColors.amber400.withValues(alpha: 0.18),
+                  borderRadius: AppRadius.pill,
+                ),
+                child: Text(
+                  '$pendingCount',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppColors.amber400,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+              ),
+            Icon(Icons.chevron_right,
+                color: scheme.onSurface.withValues(alpha: 0.4)),
+          ],
         ),
       ),
     );

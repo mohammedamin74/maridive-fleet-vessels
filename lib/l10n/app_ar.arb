@@ -535,5 +535,35 @@
   "acknowledgeReport": "تأكيد الاستلام",
   "acknowledgedByLabel": "تم الاستلام بواسطة",
   "exportPdf": "تصدير PDF",
-  "editReport": "تعديل"
+  "editReport": "تعديل",
+  "managementTitle": "الإدارة",
+  "managementSubtitle": "اجتماع النقدية وموافقات المكتب",
+  "cashMeetingTitle": "كشف اجتماع النقدية",
+  "cashMeetingSubtitle": "بنود الشراء مع طلبات وأوامر الشراء، تُراجع في اجتماع النقدية",
+  "cashPendingTab": "غير معتمد",
+  "cashApprovedTab": "معتمد",
+  "cashNoItems": "لا توجد بنود شراء بعد. أضف بندًا أو امسح كشف الاجتماع بالذكاء الاصطناعي.",
+  "cashItemAdd": "إضافة بند شراء",
+  "cashItemEdit": "تعديل بند الشراء",
+  "cashItemReviewExtracted": "مراجعة البند المستخرج",
+  "operationLabel": "العمليات / القسم",
+  "requestDescriptionLabel": "وصف الطلب",
+  "prNumberLabel": "رقم طلب الشراء (PR)",
+  "poNumberLabel": "رقم أمر الشراء (PO)",
+  "costLabel": "التكلفة",
+  "currencyLabel": "العملة",
+  "supplierLabel": "المورّد",
+  "vesselLabel": "السفينة",
+  "allVesselsFilter": "كل السفن",
+  "markApproved": "اعتماد",
+  "markPending": "إعادة إلى غير المعتمد",
+  "approvedOn": "اعتُمد {date}",
+  "@approvedOn": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "totalsLabel": "الإجماليات",
+  "cashPendingBadge": "{count, plural, one{بند واحد بانتظار الاعتماد} two{بندان بانتظار الاعتماد} few{{count} بنود بانتظار الاعتماد} other{{count} بندًا بانتظار الاعتماد}}",
+  "@cashPendingBadge": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }

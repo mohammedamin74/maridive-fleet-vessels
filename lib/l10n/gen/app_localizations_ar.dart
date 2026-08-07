@@ -1306,7 +1306,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get markReady => 'تحديد كجاهز';
 
   @override
-  String get markPending => 'تحديد كقيد الانتظار';
+  String get markPending => 'إعادة إلى غير المعتمد';
 
   @override
   String get noRequirements => 'لا توجد متطلبات بعد';
@@ -1547,4 +1547,84 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editReport => 'تعديل';
+
+  @override
+  String get managementTitle => 'الإدارة';
+
+  @override
+  String get managementSubtitle => 'اجتماع النقدية وموافقات المكتب';
+
+  @override
+  String get cashMeetingTitle => 'كشف اجتماع النقدية';
+
+  @override
+  String get cashMeetingSubtitle =>
+      'بنود الشراء مع طلبات وأوامر الشراء، تُراجع في اجتماع النقدية';
+
+  @override
+  String get cashPendingTab => 'غير معتمد';
+
+  @override
+  String get cashApprovedTab => 'معتمد';
+
+  @override
+  String get cashNoItems =>
+      'لا توجد بنود شراء بعد. أضف بندًا أو امسح كشف الاجتماع بالذكاء الاصطناعي.';
+
+  @override
+  String get cashItemAdd => 'إضافة بند شراء';
+
+  @override
+  String get cashItemEdit => 'تعديل بند الشراء';
+
+  @override
+  String get cashItemReviewExtracted => 'مراجعة البند المستخرج';
+
+  @override
+  String get operationLabel => 'العمليات / القسم';
+
+  @override
+  String get requestDescriptionLabel => 'وصف الطلب';
+
+  @override
+  String get prNumberLabel => 'رقم طلب الشراء (PR)';
+
+  @override
+  String get poNumberLabel => 'رقم أمر الشراء (PO)';
+
+  @override
+  String get costLabel => 'التكلفة';
+
+  @override
+  String get currencyLabel => 'العملة';
+
+  @override
+  String get supplierLabel => 'المورّد';
+
+  @override
+  String get vesselLabel => 'السفينة';
+
+  @override
+  String get allVesselsFilter => 'كل السفن';
+
+  @override
+  String approvedOn(String date) {
+    return 'اعتُمد $date';
+  }
+
+  @override
+  String get totalsLabel => 'الإجماليات';
+
+  @override
+  String cashPendingBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count بندًا بانتظار الاعتماد',
+      few: '$count بنود بانتظار الاعتماد',
+      two: 'بندان بانتظار الاعتماد',
+      one: 'بند واحد بانتظار الاعتماد',
+    );
+    return '$_temp0';
+  }
 }

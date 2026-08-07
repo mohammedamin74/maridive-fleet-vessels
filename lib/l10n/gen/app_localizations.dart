@@ -2327,7 +2327,7 @@ abstract class AppLocalizations {
   /// No description provided for @markPending.
   ///
   /// In en, this message translates to:
-  /// **'Mark Pending'**
+  /// **'Return to pending'**
   String get markPending;
 
   /// No description provided for @noRequirements.
@@ -2695,6 +2695,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit'**
   String get editReport;
+
+  /// No description provided for @managementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get managementTitle;
+
+  /// No description provided for @managementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash meeting & office approvals'**
+  String get managementSubtitle;
+
+  /// No description provided for @cashMeetingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash Meeting Sheet'**
+  String get cashMeetingTitle;
+
+  /// No description provided for @cashMeetingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase lines with PR & PO, reviewed in the cash meeting'**
+  String get cashMeetingSubtitle;
+
+  /// No description provided for @cashPendingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Not approved'**
+  String get cashPendingTab;
+
+  /// No description provided for @cashApprovedTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get cashApprovedTab;
+
+  /// No description provided for @cashNoItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No purchase lines yet. Add one or scan the meeting sheet with AI.'**
+  String get cashNoItems;
+
+  /// No description provided for @cashItemAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Purchase Line'**
+  String get cashItemAdd;
+
+  /// No description provided for @cashItemEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Purchase Line'**
+  String get cashItemEdit;
+
+  /// No description provided for @cashItemReviewExtracted.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Extracted Line'**
+  String get cashItemReviewExtracted;
+
+  /// No description provided for @operationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation / Dept.'**
+  String get operationLabel;
+
+  /// No description provided for @requestDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Request description'**
+  String get requestDescriptionLabel;
+
+  /// No description provided for @prNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PR number'**
+  String get prNumberLabel;
+
+  /// No description provided for @poNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PO number'**
+  String get poNumberLabel;
+
+  /// No description provided for @costLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get costLabel;
+
+  /// No description provided for @currencyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currencyLabel;
+
+  /// No description provided for @supplierLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier'**
+  String get supplierLabel;
+
+  /// No description provided for @vesselLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vessel'**
+  String get vesselLabel;
+
+  /// No description provided for @allVesselsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'All vessels'**
+  String get allVesselsFilter;
+
+  /// No description provided for @approvedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved {date}'**
+  String approvedOn(String date);
+
+  /// No description provided for @totalsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals'**
+  String get totalsLabel;
+
+  /// No description provided for @cashPendingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 line awaiting approval} other{{count} lines awaiting approval}}'**
+  String cashPendingBadge(int count);
 }
 
 class _AppLocalizationsDelegate
