@@ -6,6 +6,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
+import '../models/checklist_run.dart';
+import '../models/checklist_template.dart';
 import '../models/daily_task.dart';
 import '../models/defect.dart';
 import '../models/handover_report.dart';
@@ -13,6 +15,43 @@ import '../models/tank.dart';
 import '../models/vessel.dart';
 import '../state/alert_thresholds.dart';
 import '../state/tank_data_provider.dart';
+
+/// Column headings and fixed words for a printed checklist form. Passed in
+/// by the screen so the PDF follows the reader's language while this service
+/// stays free of any dependency on the widget tree.
+class ChecklistPdfLabels {
+  final String no;
+  final String item;
+  final String itemAr;
+  final String interval;
+  final String date;
+  final String yes;
+  final String no2;
+  final String remarks;
+  final String chiefEngineer;
+  final String vessel;
+  final String month;
+  final String year;
+  final String intervalWeekly;
+  final String intervalMonthly;
+
+  const ChecklistPdfLabels({
+    required this.no,
+    required this.item,
+    required this.itemAr,
+    required this.interval,
+    required this.date,
+    required this.yes,
+    required this.no2,
+    required this.remarks,
+    required this.chiefEngineer,
+    required this.vessel,
+    required this.month,
+    required this.year,
+    this.intervalWeekly = 'Weekly',
+    this.intervalMonthly = 'Monthly',
+  });
+}
 
 /// One titled table within a unified report (Request 7). Any module maps its
 /// records to [headers] + [rows]; the report renders a section per entry.
@@ -40,6 +79,64 @@ class ReportService {
   // Bundled Arabic font so Arabic vessel names / notes render in exports
   // instead of showing empty boxes. Loaded once and cached.
   static pw.Font? _arabicFont;
+  static final RegExp _arabicScript =
+      RegExp(r'[؀-ۿݐ-ݿﭐ-﷿ﹰ-﻿]');
+
+  /// The pdf package only runs the bidirectional algorithm — which both
+  /// reorders right-to-left runs and joins Arabic letters into their cursive
+  /// forms — when a text is explicitly marked right-to-left. Left at the
+  /// default, Arabic prints in logical order with unjoined letters: the
+  /// characters are all there but no Arabic reader would accept it.
+  ///
+  /// Direction is decided per string so one document can mix English and
+  /// Arabic and have each come out correct.
+  /// [arabicFont] must be passed as the *primary* font for Arabic strings,
+  /// not merely as a fallback: with a Latin base font the package resolves
+  /// glyphs character by character, which defeats the cursive joining and
+  /// prints every letter in its isolated form.
+  static pw.Widget bidiText(String value,
+      {pw.TextStyle? style, pw.TextAlign? align, pw.Font? arabicFont}) {
+    final rtl = _arabicScript.hasMatch(value);
+    final resolved = rtl && arabicFont != null
+        ? (style ?? const pw.TextStyle()).copyWith(font: arabicFont)
+        : style;
+    return pw.Text(
+      value,
+      style: resolved,
+      textDirection: rtl ? pw.TextDirection.rtl : pw.TextDirection.ltr,
+      textAlign: align ?? (rtl ? pw.TextAlign.right : pw.TextAlign.left),
+    );
+  }
+
+  /// Header cells are built individually rather than given one row-wide
+  /// direction: a bilingual form has English and Arabic headings side by
+  /// side, and forcing the whole row right-to-left mangles the English ones.
+  static List<pw.Widget> _headerCells(
+          List<String> headers, List<pw.Font> fallback, pw.Font? arabicFont) =>
+      [
+        for (final h in headers)
+          pw.Center(
+            child: bidiText(
+              h,
+              style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 8,
+                  color: PdfColors.white,
+                  fontFallback: fallback),
+              align: pw.TextAlign.center,
+              arabicFont: arabicFont,
+            ),
+          )
+      ];
+
+  /// Cell renderer applying [bidiText] to every table cell, so Arabic record
+  /// text (defect titles, checklist items, crew names) prints correctly in
+  /// each module's report.
+  static pw.Widget? Function(int, dynamic, int) _arabicAwareCell(
+          pw.TextStyle style, pw.Font? arabicFont) =>
+      (index, data, rowNum) => bidiText(data?.toString() ?? '',
+          style: style, arabicFont: arabicFont);
+
   static Future<pw.Font?> _loadArabic() async {
     if (_arabicFont != null) return _arabicFont;
     try {
@@ -112,7 +209,7 @@ class ReportService {
               )
             else
               pw.TableHelper.fromTextArray(
-                headers: s.headers,
+                headers: _headerCells(s.headers, fallback, arabic),
                 data: s.rows,
                 columnWidths: _columnWidths(s.headers, s.rows),
                 headerStyle: pw.TextStyle(
@@ -124,6 +221,7 @@ class ReportService {
                     const pw.BoxDecoration(color: PdfColors.blueGrey800),
                 cellStyle:
                     pw.TextStyle(fontSize: 8, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 8, fontFallback: fallback), arabic),
                 border:
                     pw.TableBorder.all(color: PdfColors.grey400, width: 0.4),
                 cellPadding:
@@ -163,6 +261,186 @@ class ReportService {
       fileExtension: 'csv',
       mimeType: MimeType.csv,
     );
+  }
+
+  /// Column headings and fixed words for [exportChecklistPdf], passed in so
+  /// the printed form follows the reader's language without this service
+  /// depending on the widget tree.
+  static Future<Uint8List?> _loadLogo() async {
+    try {
+      final data = await rootBundle.load('assets/branding/mos-logo.png');
+      return data.buffer.asUint8List();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// A controlled engine-department form, reproduced as the office prints it:
+  /// MOS logo and form code in the header, the numbered bilingual item table,
+  /// real ticked boxes, and the Chief Engineer signature block.
+  ///
+  /// The on-screen sheet is a list because 31 day-columns don't fit a phone;
+  /// this is where the full printed grid is restored.
+  static Future<void> exportChecklistPdf({
+    required String vesselName,
+    required ChecklistTemplate template,
+    required ChecklistRun run,
+    required String monthLabel,
+    required ChecklistPdfLabels labels,
+  }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
+    final logoBytes = await _loadLogo();
+    final logo = logoBytes == null ? null : pw.MemoryImage(logoBytes);
+    final slots = template.slotCount(run.year, run.month);
+    final doc = pw.Document();
+
+    String mark(SlotResult r) => switch (r) {
+          SlotResult.done => '[X]',
+          SlotResult.notApplicable => 'N/A',
+          SlotResult.failed => '[!]',
+          SlotResult.pending => '[  ]',
+        };
+
+    final isYesNo = template.grid == ChecklistGrid.yesNo;
+    // English and Arabic get their own columns, exactly as the paper form
+    // does. Besides matching the original, it keeps each cell single-script,
+    // which is what makes the bidi pass reliable.
+    final headers = <String>[
+      labels.no,
+      labels.item,
+      labels.itemAr,
+      if (isYesNo) ...[labels.interval, labels.date, labels.yes, labels.no2]
+      else
+        for (var s = 1; s <= slots; s++) '$s',
+      labels.remarks,
+    ];
+
+    final rows = <List<String>>[
+      for (final item in template.items)
+        [
+          '${item.no}',
+          item.en,
+          item.ar,
+          if (isYesNo) ...[
+            item.interval == ChecklistInterval.weekly
+                ? labels.intervalWeekly
+                : labels.intervalMonthly,
+            run.dates[item.key] ?? '',
+            run.resultFor(item.key, 0) == SlotResult.done ? '[X]' : '[  ]',
+            run.resultFor(item.key, 0) == SlotResult.failed ? '[X]' : '[  ]',
+          ] else
+            for (var s = 0; s < slots; s++) mark(run.resultFor(item.key, s)),
+          run.remarks[item.key] ?? '',
+        ]
+    ];
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat:
+            isYesNo ? PdfPageFormat.a4 : PdfPageFormat.a4.landscape,
+        margin: const pw.EdgeInsets.all(22),
+        header: (context) => pw.Column(
+          children: [
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                if (logo != null)
+                  pw.Container(
+                      width: 46, height: 46, child: pw.Image(logo)),
+                pw.SizedBox(width: 10),
+                pw.Expanded(
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                    children: [
+                      pw.Text(template.titleEn,
+                          style: pw.TextStyle(
+                              fontSize: 13,
+                              fontWeight: pw.FontWeight.bold,
+                              fontFallback: fallback)),
+                      bidiText(template.titleAr,
+                          style: pw.TextStyle(
+                              fontSize: 11, font: arabic, fontFallback: fallback),
+                          arabicFont: arabic),
+                    ],
+                  ),
+                ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.end,
+                  children: [
+                    if (template.revNo.isNotEmpty)
+                      pw.Text('Rev. No. ${template.revNo}',
+                          style: const pw.TextStyle(fontSize: 8)),
+                    if (template.revDate.isNotEmpty)
+                      pw.Text('Rev. Date ${template.revDate}',
+                          style: const pw.TextStyle(fontSize: 8)),
+                    pw.Text(template.code,
+                        style: pw.TextStyle(
+                            fontSize: 9, fontWeight: pw.FontWeight.bold)),
+                    pw.Text(
+                        'Page ${context.pageNumber} of ${context.pagesCount}',
+                        style: const pw.TextStyle(fontSize: 8)),
+                  ],
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 6),
+            pw.Row(children: [
+              pw.Text('${labels.vessel}: ',
+                  style: const pw.TextStyle(fontSize: 9)),
+              pw.Text(vesselName,
+                  style: pw.TextStyle(
+                      fontSize: 9, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(width: 18),
+              pw.Text('${labels.month}: $monthLabel   ${labels.year}: ${run.year}',
+                  style: const pw.TextStyle(fontSize: 9)),
+            ]),
+            pw.Divider(),
+          ],
+        ),
+        build: (context) => [
+          pw.TableHelper.fromTextArray(
+            headers: _headerCells(headers, fallback, arabic),
+            data: rows,
+            columnWidths: {
+              0: const pw.FlexColumnWidth(0.7),
+              1: pw.FlexColumnWidth(isYesNo ? 5 : 4),
+              2: pw.FlexColumnWidth(isYesNo ? 4 : 3),
+            },
+            headerStyle: pw.TextStyle(
+                fontWeight: pw.FontWeight.bold,
+                fontSize: 7.5,
+                color: PdfColors.white,
+                fontFallback: fallback),
+            headerDecoration:
+                const pw.BoxDecoration(color: PdfColors.blueGrey800),
+            cellStyle: pw.TextStyle(fontSize: 7, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 7, fontFallback: fallback), arabic),
+            cellAlignment: pw.Alignment.centerLeft,
+            border: pw.TableBorder.all(color: PdfColors.grey500, width: 0.4),
+            cellPadding:
+                const pw.EdgeInsets.symmetric(horizontal: 3, vertical: 2.5),
+          ),
+          pw.SizedBox(height: 18),
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(vesselName,
+                  style: pw.TextStyle(
+                      fontSize: 9, fontWeight: pw.FontWeight.bold)),
+              pw.Text('${labels.chiefEngineer}: ${run.chiefEngineer}',
+                  style: pw.TextStyle(fontSize: 9, fontFallback: fallback)),
+              pw.Text(
+                  'Date: ${run.submittedAt == null ? '' : DateFormat('dd/MM/yyyy').format(run.submittedAt!)}',
+                  style: const pw.TextStyle(fontSize: 9)),
+            ],
+          ),
+        ],
+      ),
+    );
+
+    await _savePdf(await doc.save(),
+        '${template.code.replaceAll(RegExp(r'[^A-Za-z0-9]'), '_')}_${run.year}_${run.month}.pdf');
   }
 
   /// Superintendent Daily Briefing: titled sections of plain bullet lines
@@ -284,7 +562,7 @@ class ReportService {
               )
             else
               pw.TableHelper.fromTextArray(
-                headers: s.headers,
+                headers: _headerCells(s.headers, fallback, arabic),
                 data: s.rows,
                 columnWidths: _columnWidths(s.headers, s.rows),
                 headerStyle: pw.TextStyle(
@@ -296,6 +574,7 @@ class ReportService {
                     const pw.BoxDecoration(color: PdfColors.blueGrey800),
                 cellStyle:
                     pw.TextStyle(fontSize: 8, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 8, fontFallback: fallback), arabic),
                 border:
                     pw.TableBorder.all(color: PdfColors.grey400, width: 0.4),
                 cellPadding:
@@ -459,7 +738,7 @@ class ReportService {
           ),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: tankHeaders,
+            headers: _headerCells(tankHeaders, fallback, arabic),
             data: rows,
             columnWidths: _columnWidths(tankHeaders, rows),
             headerStyle: pw.TextStyle(
@@ -470,6 +749,7 @@ class ReportService {
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
             cellStyle: pw.TextStyle(fontSize: 8.5, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 8.5, fontFallback: fallback), arabic),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,
@@ -558,7 +838,7 @@ class ReportService {
                   fontSize: 11, color: PdfColors.grey700, fontFallback: fallback)),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: taskHeaders,
+            headers: _headerCells(taskHeaders, fallback, arabic),
             data: rows,
             columnWidths: _columnWidths(taskHeaders, rows),
             headerStyle: pw.TextStyle(
@@ -569,6 +849,7 @@ class ReportService {
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
             cellStyle: pw.TextStyle(fontSize: 8, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 8, fontFallback: fallback), arabic),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,
@@ -656,7 +937,7 @@ class ReportService {
                   fontSize: 11, color: PdfColors.grey700, fontFallback: fallback)),
           pw.SizedBox(height: 18),
           pw.TableHelper.fromTextArray(
-            headers: defectHeaders,
+            headers: _headerCells(defectHeaders, fallback, arabic),
             data: rows,
             columnWidths: _columnWidths(defectHeaders, rows),
             headerStyle: pw.TextStyle(
@@ -667,6 +948,7 @@ class ReportService {
             headerDecoration:
                 const pw.BoxDecoration(color: PdfColors.blueGrey800),
             cellStyle: pw.TextStyle(fontSize: 8.5, fontFallback: fallback),
+            cellBuilder: _arabicAwareCell(pw.TextStyle(fontSize: 8.5, fontFallback: fallback), arabic),
             cellAlignments: {
               0: pw.Alignment.centerLeft,
               1: pw.Alignment.centerLeft,

@@ -1,11 +1,14 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
+import '../data/checklist_templates.dart';
 import '../data/fleet_data.dart';
 import '../models/fleet_intelligence.dart';
 import '../models/vessel.dart';
 import '../state/action_provider.dart';
 import '../state/certification_provider.dart';
+import '../state/checklist_provider.dart';
+import 'clock.dart';
 import '../state/daily_tasks_provider.dart';
 import '../state/maintenance_provider.dart';
 import '../state/port_requirement_provider.dart';
@@ -71,6 +74,8 @@ class FleetIntel {
     final notifications = context.watch<UrgentNotificationProvider>();
     final tasks = context.watch<DailyTasksProvider>();
     final actions = context.watch<ActionProvider>();
+    final checklists = context.watch<ChecklistProvider>();
+    final now = clockNow();
 
     final result = <VesselIntel>[];
     for (final vessel in FleetData.vessels) {
@@ -85,6 +90,14 @@ class FleetIntel {
         notifications: notifications.forVessel(vessel.id),
         dailyTasks: tasks.forVessel(vessel.id),
         actions: actions.forVessel(vessel.id),
+        criticalChecklist: checklists.find(
+          vesselId: vessel.id,
+          templateCode: ChecklistTemplates.criticalEquipment.code,
+          year: now.year,
+          month: now.month,
+        ),
+        criticalChecklistItemCount:
+            ChecklistTemplates.criticalEquipment.items.length,
       );
       final risks = RiskEngine.analyze(input);
       result.add(VesselIntel(

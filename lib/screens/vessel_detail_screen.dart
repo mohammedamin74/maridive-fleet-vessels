@@ -24,6 +24,7 @@ import 'certification_screen.dart';
 import 'crew_list_screen.dart';
 import 'daily_tasks_list_screen.dart';
 import 'defect_list_screen.dart';
+import 'engine_checklists_screen.dart';
 import 'export_report_screen.dart';
 import 'handover_list_screen.dart';
 import 'ingestion_batch_screen.dart';
@@ -298,6 +299,17 @@ class VesselDetailScreen extends StatelessWidget {
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(
                           builder: (_) => HandoverListScreen(vessel: vessel)),
+                    ),
+                  ),
+                  CategoryTile(
+                    icon: Icons.fact_check_outlined,
+                    title: t.engineChecklists,
+                    subtitle: t.engineChecklistsSubtitle,
+                    color: AppColors.teal400,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (_) =>
+                              EngineChecklistsScreen(vessel: resolved)),
                     ),
                   ),
                   CategoryTile(

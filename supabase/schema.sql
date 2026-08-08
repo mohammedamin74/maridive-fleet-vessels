@@ -58,7 +58,7 @@ declare
     'vessel_certs', 'crew_certs', 'urgent_notifications', 'daily_tasks',
     'maintenance_records', 'vessel_specs', 'vessel_profiles',
     'handover_reports', 'ingestion_batches', 'ingestion_errors',
-    'cash_items', 'superintendent_actions'
+    'cash_items', 'superintendent_actions', 'checklist_runs'
   ];
 begin
   foreach t in array module_tables loop

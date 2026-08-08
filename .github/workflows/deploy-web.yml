@@ -28,7 +28,12 @@ jobs:
       # --no-web-resources-cdn bundles CanvasKit locally instead of loading it
       # from gstatic.com, so the app loads on networks where that CDN is
       # blocked (matches build.yml's build-web job).
-      - run: flutter build web --release --base-href /maridive-fleet-vessels/ --no-web-resources-cdn
+      # use_bidi=false switches the pdf package to its dedicated Arabic shaper.
+      # Its default generic-bidi path mangles several letters with the bundled
+      # Noto Naskh font (verified by rendering both), so exported forms would be
+      # unreadable in Arabic without it. Compile-time only, so every shipping
+      # build command must carry it.
+      - run: flutter build web --release --base-href /maridive-fleet-vessels/ --no-web-resources-cdn --dart-define=use_bidi=false
 
       - uses: peaceiris/actions-gh-pages@v4
         with:

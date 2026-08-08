@@ -39,6 +39,8 @@ enum RiskKind {
   urgentNotificationOpen,
   urgentActionOverdue,
   dailyTasksOverdue,
+  checklistIncomplete,
+  checklistMissing,
   dataMissingInfo,
 }
 

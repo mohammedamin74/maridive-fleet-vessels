@@ -3565,6 +3565,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accepting creates a new record. To correct the existing one, reject this and edit it in its own module.'**
   String get discrepancyHint;
+
+  /// No description provided for @engineChecklists.
+  ///
+  /// In en, this message translates to:
+  /// **'Engine Checklists'**
+  String get engineChecklists;
+
+  /// No description provided for @engineChecklistsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Controlled forms: critical equipment & routine maintenance'**
+  String get engineChecklistsSubtitle;
+
+  /// No description provided for @checklistCriticalEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Equipment'**
+  String get checklistCriticalEquipment;
+
+  /// No description provided for @checklistWeeklyRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Routine'**
+  String get checklistWeeklyRoutine;
+
+  /// No description provided for @checklistDailyRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Routine'**
+  String get checklistDailyRoutine;
+
+  /// No description provided for @checklistMonthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get checklistMonthLabel;
+
+  /// No description provided for @checklistYearLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get checklistYearLabel;
+
+  /// No description provided for @checklistProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} checks recorded'**
+  String checklistProgress(int done, int total);
+
+  /// No description provided for @checklistWeekShort.
+  ///
+  /// In en, this message translates to:
+  /// **'W{week}'**
+  String checklistWeekShort(int week);
+
+  /// No description provided for @checklistIntervalWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get checklistIntervalWeekly;
+
+  /// No description provided for @checklistIntervalMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get checklistIntervalMonthly;
+
+  /// No description provided for @checklistScheduledDates.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get checklistScheduledDates;
+
+  /// No description provided for @checklistDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get checklistDone;
+
+  /// No description provided for @checklistNotApplicable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get checklistNotApplicable;
+
+  /// No description provided for @checklistFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get checklistFailed;
+
+  /// No description provided for @checklistPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Not checked'**
+  String get checklistPending;
+
+  /// No description provided for @checklistRemarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Remarks'**
+  String get checklistRemarks;
+
+  /// No description provided for @checklistSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign off'**
+  String get checklistSubmit;
+
+  /// No description provided for @checklistReopen.
+  ///
+  /// In en, this message translates to:
+  /// **'Reopen sheet'**
+  String get checklistReopen;
+
+  /// No description provided for @checklistSubmittedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed off {date} by {name}'**
+  String checklistSubmittedOn(String date, String name);
+
+  /// No description provided for @checklistChiefEngineer.
+  ///
+  /// In en, this message translates to:
+  /// **'Chief Engineer'**
+  String get checklistChiefEngineer;
+
+  /// No description provided for @checklistSignOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign off sheet'**
+  String get checklistSignOffTitle;
+
+  /// No description provided for @checklistSignOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing records who completed this form and when. You can reopen it if a correction is needed.'**
+  String get checklistSignOffHint;
+
+  /// No description provided for @checklistLoadDailyRoutine.
+  ///
+  /// In en, this message translates to:
+  /// **'Load daily routine (EN.FM.008)'**
+  String get checklistLoadDailyRoutine;
+
+  /// No description provided for @checklistDailyLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily routine loaded — {count} checks'**
+  String checklistDailyLoaded(int count);
+
+  /// No description provided for @checklistNoRuns.
+  ///
+  /// In en, this message translates to:
+  /// **'No sheets yet for this month.'**
+  String get checklistNoRuns;
+
+  /// No description provided for @checklistOpenSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Open sheet'**
+  String get checklistOpenSheet;
+
+  /// No description provided for @riskChecklistIncomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical equipment checks incomplete ({count} not recorded): {subject}'**
+  String riskChecklistIncomplete(int count, String subject);
+
+  /// No description provided for @riskChecklistMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No critical equipment checklist started for this month'**
+  String get riskChecklistMissing;
+
+  /// No description provided for @recChecklist.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the vessel to complete and sign off the checklist for this month.'**
+  String get recChecklist;
+
+  /// No description provided for @checklistColNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get checklistColNo;
+
+  /// No description provided for @checklistColItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get checklistColItem;
+
+  /// No description provided for @checklistColDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get checklistColDate;
+
+  /// No description provided for @checklistColYes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get checklistColYes;
+
+  /// No description provided for @checklistColNoMark.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get checklistColNoMark;
+
+  /// No description provided for @checklistDatesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 4-11-18-25 for weekly, or 12 for monthly'**
+  String get checklistDatesHint;
 }
 
 class _AppLocalizationsDelegate

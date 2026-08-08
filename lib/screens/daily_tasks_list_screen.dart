@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../data/checklist_templates.dart';
 import '../l10n/gen/app_localizations.dart';
 import '../models/daily_task.dart';
 import '../models/vessel.dart';
@@ -164,15 +165,40 @@ class DailyTasksListScreen extends StatelessWidget {
                         vessel: vessel, tasks: tasks)),
           ),
           IconButton(
+            icon: const Icon(Icons.playlist_add_check_outlined),
+            tooltip: t.checklistLoadDailyRoutine,
+            onPressed: () => _loadDailyRoutine(context, t),
+          ),
+          IconButton(
               icon: const Icon(Icons.add),
               tooltip: t.add,
               onPressed: () => _showAddSheet(context, t)),
         ],
       ),
       body: tasks.isEmpty
+          // An empty list is the moment the engineer most needs the office's
+          // standard round, so offer it here rather than only behind a
+          // toolbar icon.
           ? Center(
-              child: Text(t.noDailyTasks,
-                  style: Theme.of(context).textTheme.bodyMedium))
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(t.noDailyTasks,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 16),
+                    FilledButton.tonalIcon(
+                      icon: const Icon(Icons.playlist_add_check_outlined,
+                          size: 18),
+                      label: Text(t.checklistLoadDailyRoutine),
+                      onPressed: () => _loadDailyRoutine(context, t),
+                    ),
+                  ],
+                ),
+              ),
+            )
           : ListView.separated(
               padding: const EdgeInsets.all(20),
               itemCount: tasks.length,
@@ -275,6 +301,32 @@ class DailyTasksListScreen extends StatelessWidget {
         progressLabel: items.length > 1 ? '(${i + 1}/${items.length})' : null,
       );
     }
+  }
+
+  /// Creates today's engine round from the office's controlled daily form
+  /// (EN.FM.008) — all 27 printed checks as one task's checklist, bilingual
+  /// exactly as printed, so the engineer ticks the same list they always did
+  /// instead of re-typing it every day.
+  Future<void> _loadDailyRoutine(
+      BuildContext context, AppLocalizations t) async {
+    final provider = context.read<DailyTasksProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    const template = ChecklistTemplates.dailyRoutine;
+    final now = DateTime.now();
+
+    await provider.add(
+      vesselId: vessel.id,
+      category: TaskCategory.engineRoomRounds,
+      title: '${template.titleEn} (${template.code})',
+      assignedTo: '',
+      frequency: TaskFrequency.daily,
+      scheduledTime: DateTime(now.year, now.month, now.day, 8),
+      checklistLabels: [
+        for (final item in template.items) '${item.no}. ${item.en} — ${item.ar}'
+      ],
+    );
+    messenger.showSnackBar(SnackBar(
+        content: Text(t.checklistDailyLoaded(template.items.length))));
   }
 
   Future<void> _showAddSheet(

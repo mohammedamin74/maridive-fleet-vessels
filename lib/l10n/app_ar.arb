@@ -936,5 +936,85 @@
   "discrepancyDetected": "تم رصد اختلاف في البيانات",
   "alreadyOnRecord": "مسجّل مسبقًا",
   "existingRecordLabel": "السجل الحالي",
-  "discrepancyHint": "القبول ينشئ سجلًا جديدًا. لتصحيح السجل الحالي، ارفض هذا البند وعدّله في وحدته."
+  "discrepancyHint": "القبول ينشئ سجلًا جديدًا. لتصحيح السجل الحالي، ارفض هذا البند وعدّله في وحدته.",
+  "engineChecklists": "قوائم فحص الماكينات",
+  "engineChecklistsSubtitle": "النماذج المعتمدة: المعدات الحرجة والصيانة الدورية",
+  "checklistCriticalEquipment": "المعدات الحرجة",
+  "checklistWeeklyRoutine": "الروتين الأسبوعي",
+  "checklistDailyRoutine": "الروتين اليومي",
+  "checklistMonthLabel": "الشهر",
+  "checklistYearLabel": "السنة",
+  "checklistProgress": "تم تسجيل {done} من {total} فحص",
+  "@checklistProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistWeekShort": "أ{week}",
+  "@checklistWeekShort": {
+    "placeholders": {
+      "week": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistIntervalWeekly": "أسبوعي",
+  "checklistIntervalMonthly": "شهري",
+  "checklistScheduledDates": "المواعيد",
+  "checklistDone": "تم",
+  "checklistNotApplicable": "لا ينطبق",
+  "checklistFailed": "غير سليم",
+  "checklistPending": "لم يُفحص",
+  "checklistRemarks": "ملاحظات",
+  "checklistSubmit": "اعتماد وتوقيع",
+  "checklistReopen": "إعادة فتح النموذج",
+  "checklistSubmittedOn": "اعتُمد {date} بواسطة {name}",
+  "@checklistSubmittedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checklistChiefEngineer": "كبير المهندسين",
+  "checklistSignOffTitle": "اعتماد النموذج",
+  "checklistSignOffHint": "التوقيع يسجل من أكمل النموذج ومتى. يمكنك إعادة فتحه إذا لزم التصحيح.",
+  "checklistLoadDailyRoutine": "تحميل الروتين اليومي (EN.FM.008)",
+  "checklistDailyLoaded": "تم تحميل الروتين اليومي — {count} فحص",
+  "@checklistDailyLoaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistNoRuns": "لا توجد نماذج لهذا الشهر بعد.",
+  "checklistOpenSheet": "فتح النموذج",
+  "riskChecklistIncomplete": "فحوصات المعدات الحرجة غير مكتملة ({count} غير مسجلة): {subject}",
+  "@riskChecklistIncomplete": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskChecklistMissing": "لم يبدأ نموذج فحص المعدات الحرجة لهذا الشهر",
+  "recChecklist": "اطلب من السفينة إكمال النموذج واعتماده لهذا الشهر.",
+  "checklistColNo": "م",
+  "checklistColItem": "البند",
+  "checklistColDate": "التاريخ",
+  "checklistColYes": "نعم",
+  "checklistColNoMark": "لا",
+  "checklistDatesHint": "مثال: 4-11-18-25 للأسبوعي، أو 12 للشهري"
 }

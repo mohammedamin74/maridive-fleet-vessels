@@ -9,6 +9,7 @@ import 'state/app_state.dart';
 import 'state/auth_provider.dart';
 import 'state/cash_meeting_provider.dart';
 import 'state/certification_provider.dart';
+import 'state/checklist_provider.dart';
 import 'state/crew_provider.dart';
 import 'state/daily_tasks_provider.dart';
 import 'state/handover_provider.dart';
@@ -54,6 +55,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => IngestionBatchProvider()),
         ChangeNotifierProvider(create: (_) => CashMeetingProvider()),
         ChangeNotifierProvider(create: (_) => ActionProvider()),
+        ChangeNotifierProvider(create: (_) => ChecklistProvider()),
       ],
       child: const MaridiveFleetApp(),
     ),

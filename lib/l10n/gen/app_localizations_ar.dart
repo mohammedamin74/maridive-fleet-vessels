@@ -2083,4 +2083,126 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get discrepancyHint =>
       'القبول ينشئ سجلًا جديدًا. لتصحيح السجل الحالي، ارفض هذا البند وعدّله في وحدته.';
+
+  @override
+  String get engineChecklists => 'قوائم فحص الماكينات';
+
+  @override
+  String get engineChecklistsSubtitle =>
+      'النماذج المعتمدة: المعدات الحرجة والصيانة الدورية';
+
+  @override
+  String get checklistCriticalEquipment => 'المعدات الحرجة';
+
+  @override
+  String get checklistWeeklyRoutine => 'الروتين الأسبوعي';
+
+  @override
+  String get checklistDailyRoutine => 'الروتين اليومي';
+
+  @override
+  String get checklistMonthLabel => 'الشهر';
+
+  @override
+  String get checklistYearLabel => 'السنة';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return 'تم تسجيل $done من $total فحص';
+  }
+
+  @override
+  String checklistWeekShort(int week) {
+    return 'أ$week';
+  }
+
+  @override
+  String get checklistIntervalWeekly => 'أسبوعي';
+
+  @override
+  String get checklistIntervalMonthly => 'شهري';
+
+  @override
+  String get checklistScheduledDates => 'المواعيد';
+
+  @override
+  String get checklistDone => 'تم';
+
+  @override
+  String get checklistNotApplicable => 'لا ينطبق';
+
+  @override
+  String get checklistFailed => 'غير سليم';
+
+  @override
+  String get checklistPending => 'لم يُفحص';
+
+  @override
+  String get checklistRemarks => 'ملاحظات';
+
+  @override
+  String get checklistSubmit => 'اعتماد وتوقيع';
+
+  @override
+  String get checklistReopen => 'إعادة فتح النموذج';
+
+  @override
+  String checklistSubmittedOn(String date, String name) {
+    return 'اعتُمد $date بواسطة $name';
+  }
+
+  @override
+  String get checklistChiefEngineer => 'كبير المهندسين';
+
+  @override
+  String get checklistSignOffTitle => 'اعتماد النموذج';
+
+  @override
+  String get checklistSignOffHint =>
+      'التوقيع يسجل من أكمل النموذج ومتى. يمكنك إعادة فتحه إذا لزم التصحيح.';
+
+  @override
+  String get checklistLoadDailyRoutine => 'تحميل الروتين اليومي (EN.FM.008)';
+
+  @override
+  String checklistDailyLoaded(int count) {
+    return 'تم تحميل الروتين اليومي — $count فحص';
+  }
+
+  @override
+  String get checklistNoRuns => 'لا توجد نماذج لهذا الشهر بعد.';
+
+  @override
+  String get checklistOpenSheet => 'فتح النموذج';
+
+  @override
+  String riskChecklistIncomplete(int count, String subject) {
+    return 'فحوصات المعدات الحرجة غير مكتملة ($count غير مسجلة): $subject';
+  }
+
+  @override
+  String get riskChecklistMissing =>
+      'لم يبدأ نموذج فحص المعدات الحرجة لهذا الشهر';
+
+  @override
+  String get recChecklist =>
+      'اطلب من السفينة إكمال النموذج واعتماده لهذا الشهر.';
+
+  @override
+  String get checklistColNo => 'م';
+
+  @override
+  String get checklistColItem => 'البند';
+
+  @override
+  String get checklistColDate => 'التاريخ';
+
+  @override
+  String get checklistColYes => 'نعم';
+
+  @override
+  String get checklistColNoMark => 'لا';
+
+  @override
+  String get checklistDatesHint => 'مثال: 4-11-18-25 للأسبوعي، أو 12 للشهري';
 }

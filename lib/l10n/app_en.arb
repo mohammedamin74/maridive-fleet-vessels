@@ -951,5 +951,85 @@
   "discrepancyDetected": "Data discrepancy detected",
   "alreadyOnRecord": "Already on record",
   "existingRecordLabel": "Existing record",
-  "discrepancyHint": "Accepting creates a new record. To correct the existing one, reject this and edit it in its own module."
+  "discrepancyHint": "Accepting creates a new record. To correct the existing one, reject this and edit it in its own module.",
+  "engineChecklists": "Engine Checklists",
+  "engineChecklistsSubtitle": "Controlled forms: critical equipment & routine maintenance",
+  "checklistCriticalEquipment": "Critical Equipment",
+  "checklistWeeklyRoutine": "Weekly Routine",
+  "checklistDailyRoutine": "Daily Routine",
+  "checklistMonthLabel": "Month",
+  "checklistYearLabel": "Year",
+  "checklistProgress": "{done} of {total} checks recorded",
+  "@checklistProgress": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistWeekShort": "W{week}",
+  "@checklistWeekShort": {
+    "placeholders": {
+      "week": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistIntervalWeekly": "Weekly",
+  "checklistIntervalMonthly": "Monthly",
+  "checklistScheduledDates": "Scheduled",
+  "checklistDone": "Done",
+  "checklistNotApplicable": "N/A",
+  "checklistFailed": "Failed",
+  "checklistPending": "Not checked",
+  "checklistRemarks": "Remarks",
+  "checklistSubmit": "Sign off",
+  "checklistReopen": "Reopen sheet",
+  "checklistSubmittedOn": "Signed off {date} by {name}",
+  "@checklistSubmittedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checklistChiefEngineer": "Chief Engineer",
+  "checklistSignOffTitle": "Sign off sheet",
+  "checklistSignOffHint": "Signing records who completed this form and when. You can reopen it if a correction is needed.",
+  "checklistLoadDailyRoutine": "Load daily routine (EN.FM.008)",
+  "checklistDailyLoaded": "Daily routine loaded — {count} checks",
+  "@checklistDailyLoaded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "checklistNoRuns": "No sheets yet for this month.",
+  "checklistOpenSheet": "Open sheet",
+  "riskChecklistIncomplete": "Critical equipment checks incomplete ({count} not recorded): {subject}",
+  "@riskChecklistIncomplete": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "subject": {
+        "type": "String"
+      }
+    }
+  },
+  "riskChecklistMissing": "No critical equipment checklist started for this month",
+  "recChecklist": "Ask the vessel to complete and sign off the checklist for this month.",
+  "checklistColNo": "No",
+  "checklistColItem": "Item",
+  "checklistColDate": "Date",
+  "checklistColYes": "Yes",
+  "checklistColNoMark": "No",
+  "checklistDatesHint": "e.g. 4-11-18-25 for weekly, or 12 for monthly"
 }

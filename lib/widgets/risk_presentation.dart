@@ -33,6 +33,9 @@ String riskTitle(AppLocalizations t, RiskEvent r) {
     RiskKind.urgentNotificationOpen => t.riskUrgentNotificationOpen(subject),
     RiskKind.urgentActionOverdue => t.riskUrgentActionOverdue(subject),
     RiskKind.dailyTasksOverdue => t.riskDailyTasksOverdue(r.count ?? 0),
+    RiskKind.checklistIncomplete =>
+      t.riskChecklistIncomplete(r.count ?? 0, subject),
+    RiskKind.checklistMissing => t.riskChecklistMissing,
     RiskKind.dataMissingInfo => t.riskDataMissingInfo(subject),
   };
 }
@@ -59,6 +62,9 @@ String riskRecommendation(AppLocalizations t, RiskEvent r) {
     RiskKind.urgentActionOverdue =>
       t.recUrgentNotification,
     RiskKind.dailyTasksOverdue => t.recDailyTasks,
+    RiskKind.checklistIncomplete ||
+    RiskKind.checklistMissing =>
+      t.recChecklist,
     RiskKind.dataMissingInfo => t.recDataQuality,
   };
 }
@@ -100,6 +106,7 @@ String sourceModuleLabel(AppLocalizations t, String sourceType) =>
       'portRequirement' => t.sourceModulePortRequirement,
       'urgentNotification' => t.sourceModuleUrgentNotification,
       'dailyTask' => t.sourceModuleDailyTask,
+      'checklist' => t.engineChecklists,
       _ => '',
     };
 

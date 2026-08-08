@@ -2009,4 +2009,127 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get discrepancyHint =>
       'Accepting creates a new record. To correct the existing one, reject this and edit it in its own module.';
+
+  @override
+  String get engineChecklists => 'Engine Checklists';
+
+  @override
+  String get engineChecklistsSubtitle =>
+      'Controlled forms: critical equipment & routine maintenance';
+
+  @override
+  String get checklistCriticalEquipment => 'Critical Equipment';
+
+  @override
+  String get checklistWeeklyRoutine => 'Weekly Routine';
+
+  @override
+  String get checklistDailyRoutine => 'Daily Routine';
+
+  @override
+  String get checklistMonthLabel => 'Month';
+
+  @override
+  String get checklistYearLabel => 'Year';
+
+  @override
+  String checklistProgress(int done, int total) {
+    return '$done of $total checks recorded';
+  }
+
+  @override
+  String checklistWeekShort(int week) {
+    return 'W$week';
+  }
+
+  @override
+  String get checklistIntervalWeekly => 'Weekly';
+
+  @override
+  String get checklistIntervalMonthly => 'Monthly';
+
+  @override
+  String get checklistScheduledDates => 'Scheduled';
+
+  @override
+  String get checklistDone => 'Done';
+
+  @override
+  String get checklistNotApplicable => 'N/A';
+
+  @override
+  String get checklistFailed => 'Failed';
+
+  @override
+  String get checklistPending => 'Not checked';
+
+  @override
+  String get checklistRemarks => 'Remarks';
+
+  @override
+  String get checklistSubmit => 'Sign off';
+
+  @override
+  String get checklistReopen => 'Reopen sheet';
+
+  @override
+  String checklistSubmittedOn(String date, String name) {
+    return 'Signed off $date by $name';
+  }
+
+  @override
+  String get checklistChiefEngineer => 'Chief Engineer';
+
+  @override
+  String get checklistSignOffTitle => 'Sign off sheet';
+
+  @override
+  String get checklistSignOffHint =>
+      'Signing records who completed this form and when. You can reopen it if a correction is needed.';
+
+  @override
+  String get checklistLoadDailyRoutine => 'Load daily routine (EN.FM.008)';
+
+  @override
+  String checklistDailyLoaded(int count) {
+    return 'Daily routine loaded — $count checks';
+  }
+
+  @override
+  String get checklistNoRuns => 'No sheets yet for this month.';
+
+  @override
+  String get checklistOpenSheet => 'Open sheet';
+
+  @override
+  String riskChecklistIncomplete(int count, String subject) {
+    return 'Critical equipment checks incomplete ($count not recorded): $subject';
+  }
+
+  @override
+  String get riskChecklistMissing =>
+      'No critical equipment checklist started for this month';
+
+  @override
+  String get recChecklist =>
+      'Ask the vessel to complete and sign off the checklist for this month.';
+
+  @override
+  String get checklistColNo => 'No';
+
+  @override
+  String get checklistColItem => 'Item';
+
+  @override
+  String get checklistColDate => 'Date';
+
+  @override
+  String get checklistColYes => 'Yes';
+
+  @override
+  String get checklistColNoMark => 'No';
+
+  @override
+  String get checklistDatesHint =>
+      'e.g. 4-11-18-25 for weekly, or 12 for monthly';
 }

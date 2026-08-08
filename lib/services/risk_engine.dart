@@ -1,3 +1,4 @@
+import '../models/checklist_run.dart';
 import '../models/crew_certificate.dart';
 import '../models/daily_task.dart';
 import '../models/defect.dart';
@@ -25,6 +26,13 @@ class VesselRiskInput {
   final List<DailyTask> dailyTasks;
   final List<SuperintendentAction> actions;
 
+  /// This month's run of the critical-equipment checklist, if started.
+  final ChecklistRun? criticalChecklist;
+
+  /// Item count of the critical-equipment form, so "how many checks are
+  /// missing" can be stated without the engine importing template data.
+  final int criticalChecklistItemCount;
+
   const VesselRiskInput({
     required this.vesselId,
     this.defects = const [],
@@ -36,6 +44,8 @@ class VesselRiskInput {
     this.notifications = const [],
     this.dailyTasks = const [],
     this.actions = const [],
+    this.criticalChecklist,
+    this.criticalChecklistItemCount = 0,
   });
 }
 
@@ -74,6 +84,7 @@ class RiskEngine {
       ..._requisitionRisks(input, now),
       ..._portReadinessRisks(input),
       ..._operationalRisks(input, now),
+      ..._checklistRisks(input, now),
       ..._dataQualityRisks(input),
     ];
     risks.sort((a, b) {
@@ -367,6 +378,51 @@ class RiskEngine {
       ));
     }
     return out;
+  }
+
+  // --- Controlled checklists ----------------------------------------------
+
+  /// Only judged once the month is far enough along to expect progress: a
+  /// blank sheet on the 2nd is normal, a blank sheet on the 25th is not.
+  static const int checklistGraceDays = 20;
+
+  static Iterable<RiskEvent> _checklistRisks(VesselRiskInput i, DateTime now) {
+    if (i.criticalChecklistItemCount == 0) return const [];
+    if (now.day < checklistGraceDays) return const [];
+
+    final run = i.criticalChecklist;
+    if (run == null) {
+      return [
+        RiskEvent(
+          vesselId: i.vesselId,
+          kind: RiskKind.checklistMissing,
+          category: RiskCategory.operational,
+          severity: RiskSeverity.medium,
+          subject: 'FLT-FM-009',
+          sourceType: 'checklist',
+          sourceId: '${i.vesselId}_FLT-FM-009_${now.year}_${now.month}',
+        )
+      ];
+    }
+
+    final (done, total) = run.progress(i.criticalChecklistItemCount, 1);
+    final missing = total - done;
+    if (missing <= 0) return const [];
+
+    return [
+      RiskEvent(
+        vesselId: i.vesselId,
+        kind: RiskKind.checklistIncomplete,
+        category: RiskCategory.operational,
+        // A handful outstanding late in the month is a nudge; most of the
+        // sheet blank is a real gap in critical-equipment assurance.
+        severity: missing > total / 2 ? RiskSeverity.high : RiskSeverity.medium,
+        subject: 'FLT-FM-009',
+        sourceType: 'checklist',
+        sourceId: run.id,
+        count: missing,
+      )
+    ];
   }
 
   // --- Data quality (INFO only — never deducts health points) -------------

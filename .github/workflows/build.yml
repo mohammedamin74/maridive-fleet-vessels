@@ -20,7 +20,12 @@ jobs:
           channel: stable
       - run: flutter config --enable-windows-desktop
       - run: flutter pub get
-      - run: flutter build windows --release
+      # use_bidi=false switches the pdf package to its dedicated Arabic shaper.
+      # Its default generic-bidi path mangles several letters with the bundled
+      # Noto Naskh font (verified by rendering both), so exported forms would be
+      # unreadable in Arabic without it. Compile-time only, so every shipping
+      # build command must carry it.
+      - run: flutter build windows --release --dart-define=use_bidi=false
       - name: Zip build output
         run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath maridive-fleet-windows.zip
       - uses: actions/upload-artifact@v4
@@ -39,7 +44,12 @@ jobs:
           channel: stable
       - run: flutter config --enable-macos-desktop
       - run: flutter pub get
-      - run: flutter build macos --release
+      # use_bidi=false switches the pdf package to its dedicated Arabic shaper.
+      # Its default generic-bidi path mangles several letters with the bundled
+      # Noto Naskh font (verified by rendering both), so exported forms would be
+      # unreadable in Arabic without it. Compile-time only, so every shipping
+      # build command must carry it.
+      - run: flutter build macos --release --dart-define=use_bidi=false
       - name: Zip build output
         run: |
           cd build/macos/Build/Products/Release
@@ -63,7 +73,12 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
       - run: flutter pub get
-      - run: flutter build apk --release
+      # use_bidi=false switches the pdf package to its dedicated Arabic shaper.
+      # Its default generic-bidi path mangles several letters with the bundled
+      # Noto Naskh font (verified by rendering both), so exported forms would be
+      # unreadable in Arabic without it. Compile-time only, so every shipping
+      # build command must carry it.
+      - run: flutter build apk --release --dart-define=use_bidi=false
       - uses: actions/upload-artifact@v4
         with:
           name: maridive-fleet-android
@@ -82,7 +97,12 @@ jobs:
       - run: flutter pub get
       # --no-web-resources-cdn bundles CanvasKit locally instead of loading it
       # from gstatic.com, so the app loads on networks where that CDN is blocked.
-      - run: flutter build web --release --no-web-resources-cdn
+      # use_bidi=false switches the pdf package to its dedicated Arabic shaper.
+      # Its default generic-bidi path mangles several letters with the bundled
+      # Noto Naskh font (verified by rendering both), so exported forms would be
+      # unreadable in Arabic without it. Compile-time only, so every shipping
+      # build command must carry it.
+      - run: flutter build web --release --no-web-resources-cdn --dart-define=use_bidi=false
       - uses: actions/upload-artifact@v4
         with:
           name: maridive-fleet-web
