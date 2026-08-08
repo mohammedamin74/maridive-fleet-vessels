@@ -110,32 +110,40 @@ class ChecklistRunScreen extends StatelessWidget {
 
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(t.checklistSignOffTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(t.checklistSignOffHint,
-                style: Theme.of(dialogContext).textTheme.bodySmall),
-            Gaps.h12,
-            TextField(
-              controller: controller,
-              decoration:
-                  InputDecoration(labelText: t.checklistChiefEngineer),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (dialogContext, setDialogState) => AlertDialog(
+          title: Text(t.checklistSignOffTitle),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(t.checklistSignOffHint,
+                  style: Theme.of(dialogContext).textTheme.bodySmall),
+              Gaps.h12,
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration:
+                    InputDecoration(labelText: t.checklistChiefEngineer),
+                onChanged: (_) => setDialogState(() {}),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: Text(t.cancel),
+            ),
+            // A signature with no name signs nothing. On a controlled form
+            // the record has to say who accepted it.
+            FilledButton(
+              onPressed: controller.text.trim().isEmpty
+                  ? null
+                  : () => Navigator.of(dialogContext).pop(true),
+              child: Text(t.checklistSubmit),
             ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(t.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(t.checklistSubmit),
-          ),
-        ],
       ),
     );
 
