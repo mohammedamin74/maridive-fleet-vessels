@@ -25,7 +25,9 @@ import '../state/port_call_provider.dart';
 import '../state/port_requirement_provider.dart';
 import '../state/tank_data_provider.dart';
 import '../state/urgent_notification_provider.dart';
+import '../services/discrepancy_service.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 import '../widgets/ai_fill.dart';
 
 /// Bulk file ingestion: upload many files at once, each gets auto-routed to
@@ -130,6 +132,7 @@ class _IngestionBatchScreenState extends State<IngestionBatchScreen> {
                     if (item.status == ItemStatus.pending)
                       _StagedItemCard(
                         item: item,
+                        match: _matchExisting(context, item),
                         onAccept: () => _accept(item),
                         onReject: () => provider.rejectItem(item.id),
                         onEdit: (fields) => provider.updateItemFields(item.id, fields),
@@ -153,6 +156,30 @@ class _IngestionBatchScreenState extends State<IngestionBatchScreen> {
               ],
             ),
     );
+  }
+
+  /// Looks for a record this vessel already holds that the uploaded document
+  /// seems to describe. Advisory only — it never merges or overwrites, it
+  /// just tells the reviewer "you already have this, and it says something
+  /// different", which is the whole point of the human-approval step.
+  DiscrepancyMatch? _matchExisting(BuildContext context, ModuleItem item) {
+    final vesselId = widget.vessel.id;
+    switch (item.targetKind) {
+      case 'vessel_certificate':
+        return DiscrepancyService.forVesselCert(
+            item, context.read<CertificationProvider>().vesselCertsFor(vesselId));
+      case 'crew_certificate':
+        return DiscrepancyService.forCrewCert(
+            item, context.read<CertificationProvider>().crewCertsFor(vesselId));
+      case 'requisition':
+        return DiscrepancyService.forRequisition(
+            item, context.read<TankDataProvider>().requisitionsFor(vesselId));
+      case 'defect':
+        return DiscrepancyService.forDefect(
+            item, context.read<TankDataProvider>().defectsFor(vesselId));
+      default:
+        return null;
+    }
   }
 
   String _kindLabel(AppLocalizations t, String kind) {
@@ -382,11 +409,16 @@ class _SummaryBar extends StatelessWidget {
 
 class _StagedItemCard extends StatefulWidget {
   final ModuleItem item;
+
+  /// Set when this document appears to describe a record the fleet already
+  /// holds, so the reviewer is warned before creating a second copy.
+  final DiscrepancyMatch? match;
   final VoidCallback onAccept;
   final VoidCallback onReject;
   final ValueChanged<Map<String, dynamic>> onEdit;
   const _StagedItemCard({
     required this.item,
+    required this.match,
     required this.onAccept,
     required this.onReject,
     required this.onEdit,
@@ -425,6 +457,7 @@ class _StagedItemCardState extends State<_StagedItemCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.match != null) _MatchBanner(match: widget.match!),
             for (final key in _controllers.keys)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -455,6 +488,71 @@ class _StagedItemCardState extends State<_StagedItemCard> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Warns that an uploaded document matches a record the fleet already holds,
+/// and shows exactly which fields disagree. It never merges or overwrites:
+/// accepting still creates a new record, so the reviewer can instead reject
+/// this item and update the existing one in its own module.
+class _MatchBanner extends StatelessWidget {
+  final DiscrepancyMatch match;
+  const _MatchBanner({required this.match});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = AppLocalizations.of(context)!;
+    final differs = match.hasDifferences;
+    final color = differs ? AppColors.amber400 : AppColors.statusPort;
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: AppRadius.smAll,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(differs ? Icons.compare_arrows : Icons.info_outline,
+                  size: 14, color: color),
+              Gaps.w4,
+              Expanded(
+                child: Text(
+                  differs ? t.discrepancyDetected : t.alreadyOnRecord,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: color, fontWeight: FontWeight.w700),
+                ),
+              ),
+            ],
+          ),
+          Gaps.h4,
+          Text('${t.existingRecordLabel}: ${match.existingLabel}',
+              style: Theme.of(context).textTheme.bodySmall),
+          if (differs) ...[
+            Gaps.h4,
+            for (final d in match.diffs)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Text(
+                  '${d.field}: ${d.existingValue.isEmpty ? '—' : d.existingValue} → ${d.extractedValue}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            Gaps.h4,
+            Text(t.discrepancyHint,
+                style: Theme.of(context)
+                    .textTheme
+                    .labelSmall
+                    ?.copyWith(color: AppColors.slate400)),
+          ],
+        ],
       ),
     );
   }

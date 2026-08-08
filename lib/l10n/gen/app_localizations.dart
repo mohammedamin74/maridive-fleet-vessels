@@ -3541,6 +3541,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ask about the fleet — for example: which vessel needs attention first, or why is a vessel\'s score low?'**
   String get aiFleetGreeting;
+
+  /// No description provided for @discrepancyDetected.
+  ///
+  /// In en, this message translates to:
+  /// **'Data discrepancy detected'**
+  String get discrepancyDetected;
+
+  /// No description provided for @alreadyOnRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Already on record'**
+  String get alreadyOnRecord;
+
+  /// No description provided for @existingRecordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing record'**
+  String get existingRecordLabel;
+
+  /// No description provided for @discrepancyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting creates a new record. To correct the existing one, reject this and edit it in its own module.'**
+  String get discrepancyHint;
 }
 
 class _AppLocalizationsDelegate

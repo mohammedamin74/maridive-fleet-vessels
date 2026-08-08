@@ -53,7 +53,7 @@ An adaptive shell (`lib/screens/home_shell.dart`) hosts four top-level tabs — 
 | Maintenance | `maintenance_list_screen.dart` | Maintenance records |
 | Handover | `handover_list_screen.dart` | Crew handover reports with PDF export |
 | Export report | `export_report_screen.dart`, `report_preview_screen.dart` | Unified per-vessel report, in-app preview, PDF/CSV |
-| AI ingestion | `ingestion_batch_screen.dart` | Drop a mixed document; a routing-rules engine splits extracted rows across modules for review |
+| AI ingestion | `ingestion_batch_screen.dart` | Drop a mixed document; a routing-rules engine splits extracted rows across modules for review. Items matching an existing record are flagged with a field-by-field discrepancy panel — nothing is ever auto-merged |
 
 ### Management — Cash Meeting Sheet (fleet-level)
 

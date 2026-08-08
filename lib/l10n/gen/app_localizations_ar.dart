@@ -2070,4 +2070,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get aiFleetGreeting =>
       'اسأل عن الأسطول — مثلًا: أي سفينة تحتاج المتابعة أولًا، أو لماذا مؤشر سفينة منخفض؟';
+
+  @override
+  String get discrepancyDetected => 'تم رصد اختلاف في البيانات';
+
+  @override
+  String get alreadyOnRecord => 'مسجّل مسبقًا';
+
+  @override
+  String get existingRecordLabel => 'السجل الحالي';
+
+  @override
+  String get discrepancyHint =>
+      'القبول ينشئ سجلًا جديدًا. لتصحيح السجل الحالي، ارفض هذا البند وعدّله في وحدته.';
 }

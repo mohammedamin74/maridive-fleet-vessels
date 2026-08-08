@@ -1996,4 +1996,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiFleetGreeting =>
       'Ask about the fleet — for example: which vessel needs attention first, or why is a vessel\'s score low?';
+
+  @override
+  String get discrepancyDetected => 'Data discrepancy detected';
+
+  @override
+  String get alreadyOnRecord => 'Already on record';
+
+  @override
+  String get existingRecordLabel => 'Existing record';
+
+  @override
+  String get discrepancyHint =>
+      'Accepting creates a new record. To correct the existing one, reject this and edit it in its own module.';
 }

@@ -947,5 +947,9 @@
   "aiModeHelp": "How to use",
   "aiModeFleet": "My fleet",
   "aiFleetDisclaimer": "Answers come from a summary of your fleet records (health scores and risks). Costs, crew personal data and attachments are never sent.",
-  "aiFleetGreeting": "Ask about the fleet — for example: which vessel needs attention first, or why is a vessel's score low?"
+  "aiFleetGreeting": "Ask about the fleet — for example: which vessel needs attention first, or why is a vessel's score low?",
+  "discrepancyDetected": "Data discrepancy detected",
+  "alreadyOnRecord": "Already on record",
+  "existingRecordLabel": "Existing record",
+  "discrepancyHint": "Accepting creates a new record. To correct the existing one, reject this and edit it in its own module."
 }
