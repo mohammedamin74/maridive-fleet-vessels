@@ -165,6 +165,76 @@ class ReportService {
     );
   }
 
+  /// Superintendent Daily Briefing: titled sections of plain bullet lines
+  /// rather than tables, because a briefing is read top-to-bottom. An
+  /// optional [aiSummary] is printed under an explicit AI heading so a
+  /// generated narrative is never mistaken for a recorded fact.
+  static Future<void> exportBriefingPdf({
+    required String title,
+    required String generatedLabel,
+    required List<(String, List<String>)> sections,
+    String? aiSummary,
+    String? aiHeading,
+  }) async {
+    final arabic = await _loadArabic();
+    final fallback = arabic != null ? [arabic] : <pw.Font>[];
+    final generatedAt = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());
+    final doc = pw.Document();
+
+    doc.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(30),
+        header: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text('Maridive Fleet Vessels - $title',
+                style: pw.TextStyle(
+                    fontSize: 15,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 2),
+            pw.Text('$generatedLabel: $generatedAt',
+                style: const pw.TextStyle(
+                    fontSize: 9, color: PdfColors.grey700)),
+            pw.Divider(),
+          ],
+        ),
+        build: (context) => [
+          for (final section in sections) ...[
+            pw.Text(section.$1,
+                style: pw.TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: pw.FontWeight.bold,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 5),
+            for (final line in section.$2)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 3, left: 8),
+                child: pw.Text('- $line',
+                    style: pw.TextStyle(fontSize: 9, fontFallback: fallback)),
+              ),
+            pw.SizedBox(height: 14),
+          ],
+          if (aiSummary != null && aiSummary.trim().isNotEmpty) ...[
+            pw.Divider(),
+            pw.Text(aiHeading ?? 'AI Recommendation - Human Review Required',
+                style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.orange800,
+                    fontFallback: fallback)),
+            pw.SizedBox(height: 5),
+            pw.Text(aiSummary,
+                style: pw.TextStyle(fontSize: 9, fontFallback: fallback)),
+          ],
+        ],
+      ),
+    );
+
+    await _savePdf(await doc.save(), 'Daily_Briefing.pdf');
+  }
+
   /// Fleet-level Cash Meeting Sheet PDF: no vessel header — the sheet spans
   /// all vessels. One titled table per section (not approved / approved /
   /// per-currency totals), matching the in-app report preview exactly.

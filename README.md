@@ -71,9 +71,20 @@ A rolling purchase-approval ledger modeled on the office's cash meeting Excel sh
 
 Fleet-wide charts (hand-rolled bar + donut painters with accessibility semantics): tank levels, defect/requisition counts, certificate expiry outlook. Reachable as a tab or pushed from a vessel with that vessel pre-selected.
 
+### Smart Fleet — risk intelligence (`risk_screen.dart`, `actions_screen.dart`, `daily_briefing_screen.dart`)
+
+The layer that turns records into decisions, for the Technical Superintendent:
+
+- **Fleet Command Center** (top of the dashboard): fleet health bands, vessels ranked by an explainable 0–100 health score, top priority items, and a "why is this score X?" breakdown of components and deductions.
+- **Risk** tab: ~17 deterministic rules (`risk_engine.dart`) across defects, certificates, maintenance, requisitions, port readiness, operational alerts and data quality. Every risk names its source record and a recommended next step. No AI — it runs on-device, works offline, and cannot invent a fact. A repeated defect is reported as a pattern for review, never a diagnosed cause.
+- **Actions** tab: the Superintendent Action Center — cloud-backed actions with a six-state workflow and My / Fleet / Overdue / Critical views. One tap converts a risk into a tracked action, keeping the source record as evidence.
+- **Daily Briefing**: critical / follow-up-today / upcoming / open actions / verified-quiet, with clipboard summary and PDF export.
+
+Health scoring (`vessel_health_service.dart`) is weighted per component rather than averaged, and any critical risk caps the score — with each extra critical lowering the cap, so vessels still rank against each other.
+
 ### AI Assistant (`ai_assistant_screen.dart`)
 
-Help-only chat ("how do I…" about the app). It never receives fleet data — only the typed conversation. Backed by the `assistant` edge function.
+Two modes. **How to use** answers app questions and sends only the typed conversation (`assistant` function). **My fleet** answers fleet questions from a minimal structured snapshot — health scores, risk severities and short subjects, never crew data, costs or attachments — via the `fleet-ai` function. Fleet answers are always labelled as AI recommendations requiring human review, and switching modes clears the history so the two never mix.
 
 ### Settings (`settings_screen.dart`) + User management (`user_management_screen.dart`)
 
@@ -109,6 +120,7 @@ Project ref: `forcpesacwaektzyslyh` (free tier).
 |---|---|---|
 | `extract` | AI document extraction (13+ "kinds": defects, requisitions, crew, certificates, cash items, …) | Walks a fallback chain of OpenRouter `:free` text/vision models; Gemini fallback for vision |
 | `assistant` | Help-only chat for the AI Assistant tab | Same OpenRouter key; per-user throttle (8 req/min); fallback model chain |
+| `fleet-ai` | Fleet questions + daily briefing narrative | No database access of its own — the signed-in client sends a minimal structured snapshot it already read under RLS; throttled, fallback chain |
 | `admin-users` | User administration for admins | |
 | `genimage` | Synthetic fleet profile imagery via Gemini image model | Never used for evidence photos |
 

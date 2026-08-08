@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../l10n/gen/app_localizations.dart';
 import '../services/assistant_service.dart';
+import '../services/briefing_service.dart';
+import '../services/fleet_ai_service.dart';
+import '../services/fleet_intel.dart';
+import '../state/action_provider.dart';
 import '../theme/app_colors.dart';
+import '../theme/app_tokens.dart';
 
-/// Session-only help chat (Request 5). History lives only in this screen's
-/// state — nothing is persisted, and only the user's typed text is ever sent
-/// to the AI provider (never vessel data, readings, or crew/PII).
+/// Session-only chat with two modes. **Help** (Request 5) answers how-to
+/// questions and sends only the user's typed text. **Fleet** answers
+/// questions about the fleet from a minimal structured snapshot of records
+/// this device already read under RLS — health scores, risk severities and
+/// short subjects, never crew PII, costs or attachments.
+///
+/// Either way history lives only in this screen's state and is never
+/// persisted, and every fleet answer is labelled as AI output for review.
 class AiAssistantScreen extends StatefulWidget {
   const AiAssistantScreen({super.key});
 
@@ -19,6 +31,19 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
   final List<ChatMessage> _messages = [];
   bool _sending = false;
   String? _errorCode;
+
+  /// Fleet mode sends the structured snapshot; help mode sends nothing but
+  /// the conversation. Switching clears history so the two never mix.
+  bool _fleetMode = false;
+
+  void _setMode(bool fleet) {
+    if (_fleetMode == fleet) return;
+    setState(() {
+      _fleetMode = fleet;
+      _messages.clear();
+      _errorCode = null;
+    });
+  }
 
   @override
   void dispose() {
@@ -41,6 +66,13 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
   Future<void> _send() async {
     final text = _controller.text.trim();
     if (text.isEmpty || _sending) return;
+    // Built before the await so the snapshot matches what the user sees.
+    final fleetContext = _fleetMode
+        ? BriefingService.aiContext(
+            intel: FleetIntel.build(context),
+            openActions: context.read<ActionProvider>().open,
+          )
+        : null;
     setState(() {
       _messages.add(ChatMessage(role: 'user', content: text));
       _sending = true;
@@ -49,7 +81,10 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
     _controller.clear();
     _scrollToBottom();
     try {
-      final reply = await AssistantService.send(_messages);
+      final reply = fleetContext == null
+          ? await AssistantService.send(_messages)
+          : await FleetAiService.ask(
+              history: _messages, context: fleetContext);
       if (!mounted) return;
       setState(() {
         _messages.add(ChatMessage(role: 'assistant', content: reply));
@@ -84,6 +119,24 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
       appBar: AppBar(title: Text(t.aiAssistant)),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+            child: SegmentedButton<bool>(
+              segments: [
+                ButtonSegment(
+                    value: false,
+                    icon: const Icon(Icons.help_outline, size: 16),
+                    label: Text(t.aiModeHelp)),
+                ButtonSegment(
+                    value: true,
+                    icon: const Icon(Icons.radar, size: 16),
+                    label: Text(t.aiModeFleet)),
+              ],
+              selected: {_fleetMode},
+              onSelectionChanged: (s) => _setMode(s.first),
+            ),
+          ),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -98,7 +151,7 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    t.aiDisclaimer,
+                    _fleetMode ? t.aiFleetDisclaimer : t.aiDisclaimer,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Theme.of(context).colorScheme.primary),
                   ),
@@ -111,9 +164,19 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
               controller: _scrollController,
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               children: [
-                _Bubble(text: t.aiGreeting, isUser: false),
+                _Bubble(
+                    text: _fleetMode ? t.aiFleetGreeting : t.aiGreeting,
+                    isUser: false),
                 for (final m in _messages)
-                  _Bubble(text: m.content, isUser: m.role == 'user'),
+                  _Bubble(
+                    text: m.content,
+                    isUser: m.role == 'user',
+                    // Fleet answers are advisory: label them so a
+                    // recommendation is never mistaken for a decision.
+                    aiLabel: _fleetMode && m.role == 'assistant'
+                        ? t.aiRecommendationLabel
+                        : null,
+                  ),
                 if (_sending)
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
@@ -178,7 +241,12 @@ class _AiAssistantScreenState extends State<AiAssistantScreen> {
 class _Bubble extends StatelessWidget {
   final String text;
   final bool isUser;
-  const _Bubble({required this.text, required this.isUser});
+
+  /// Shown above the text when the answer is AI-generated advice about real
+  /// fleet data, so it reads as a recommendation needing review.
+  final String? aiLabel;
+
+  const _Bubble({required this.text, required this.isUser, this.aiLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -201,17 +269,45 @@ class _Bubble extends StatelessWidget {
                     : AppColors.slate100,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Text(
-            text,
-            style: TextStyle(
-              color: isUser
-                  ? (scheme.brightness == Brightness.dark
-                      ? AppColors.navy900
-                      : Colors.white)
-                  : scheme.onSurface,
-              fontSize: 14,
-              height: 1.35,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (aiLabel != null) ...[
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.auto_awesome,
+                        size: 12, color: AppColors.amber400),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        aiLabel!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelSmall
+                            ?.copyWith(
+                                color: AppColors.amber400,
+                                fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+              ],
+              Text(
+                text,
+                style: TextStyle(
+                  color: isUser
+                      ? (scheme.brightness == Brightness.dark
+                          ? AppColors.navy900
+                          : Colors.white)
+                      : scheme.onSurface,
+                  fontSize: 14,
+                  height: 1.35,
+                ),
+              ),
+            ],
           ),
         ),
       ),

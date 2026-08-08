@@ -2004,4 +2004,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sourceModuleDailyTask => 'مهمة يومية';
+
+  @override
+  String get dailyBriefingTitle => 'الموجز اليومي';
+
+  @override
+  String get generateDailyBriefing => 'الموجز اليومي';
+
+  @override
+  String get briefingCritical => 'حرج — تصرّف الآن';
+
+  @override
+  String get briefingHighPriority => 'أولوية عالية — متابعة اليوم';
+
+  @override
+  String get briefingUpcoming => 'قادم — استعداد';
+
+  @override
+  String get briefingPositive => 'لا توجد ملاحظات جوهرية';
+
+  @override
+  String get briefingOpenActions => 'إجراءات مفتوحة';
+
+  @override
+  String get briefingNoneInSection => 'لا يوجد شيء في هذا القسم.';
+
+  @override
+  String get briefingAllClear =>
+      'لا توجد مخاطر حرجة أو مرتفعة أو متوسطة في الأسطول.';
+
+  @override
+  String briefingHeadline(int count, int total) {
+    return '$count من $total سفن تحتاج إلى متابعة.';
+  }
+
+  @override
+  String get copySummary => 'نسخ الملخص';
+
+  @override
+  String get summaryCopied => 'تم نسخ الملخص';
+
+  @override
+  String get aiSummaryTitle => 'ملخص الذكاء الاصطناعي';
+
+  @override
+  String get generateAiSummary => 'إنشاء';
+
+  @override
+  String get aiRecommendationLabel => 'توصية ذكاء اصطناعي — تتطلب مراجعة بشرية';
+
+  @override
+  String get briefingAiPrompt =>
+      'أعطني موجزًا قصيرًا للمشرف الفني من هذه البيانات: ما هو الحرج، وما يجب متابعته اليوم، وقائمة مرقّمة بالخطوات المقترحة. استخدم البيانات المرفقة فقط.';
+
+  @override
+  String get aiModeHelp => 'طريقة الاستخدام';
+
+  @override
+  String get aiModeFleet => 'أسطولي';
+
+  @override
+  String get aiFleetDisclaimer =>
+      'تأتي الإجابات من ملخص لسجلات أسطولك (مؤشرات الصحة والمخاطر). لا تُرسل التكاليف ولا بيانات الطاقم الشخصية ولا المرفقات.';
+
+  @override
+  String get aiFleetGreeting =>
+      'اسأل عن الأسطول — مثلًا: أي سفينة تحتاج المتابعة أولًا، أو لماذا مؤشر سفينة منخفض؟';
 }

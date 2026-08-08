@@ -3421,6 +3421,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Daily task'**
   String get sourceModuleDailyTask;
+
+  /// No description provided for @dailyBriefingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Briefing'**
+  String get dailyBriefingTitle;
+
+  /// No description provided for @generateDailyBriefing.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily briefing'**
+  String get generateDailyBriefing;
+
+  /// No description provided for @briefingCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical — act now'**
+  String get briefingCritical;
+
+  /// No description provided for @briefingHighPriority.
+  ///
+  /// In en, this message translates to:
+  /// **'High priority — follow up today'**
+  String get briefingHighPriority;
+
+  /// No description provided for @briefingUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming — prepare'**
+  String get briefingUpcoming;
+
+  /// No description provided for @briefingPositive.
+  ///
+  /// In en, this message translates to:
+  /// **'No significant concern'**
+  String get briefingPositive;
+
+  /// No description provided for @briefingOpenActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Open actions'**
+  String get briefingOpenActions;
+
+  /// No description provided for @briefingNoneInSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in this section.'**
+  String get briefingNoneInSection;
+
+  /// No description provided for @briefingAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'No critical, high or medium risks detected across the fleet.'**
+  String get briefingAllClear;
+
+  /// No description provided for @briefingHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total} vessels need attention.'**
+  String briefingHeadline(int count, int total);
+
+  /// No description provided for @copySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy summary'**
+  String get copySummary;
+
+  /// No description provided for @summaryCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary copied'**
+  String get summaryCopied;
+
+  /// No description provided for @aiSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI summary'**
+  String get aiSummaryTitle;
+
+  /// No description provided for @generateAiSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get generateAiSummary;
+
+  /// No description provided for @aiRecommendationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AI recommendation — human review required'**
+  String get aiRecommendationLabel;
+
+  /// No description provided for @briefingAiPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Give me a short superintendent briefing from this snapshot: what is critical, what to follow up today, and a numbered list of recommended next steps. Use only the snapshot.'**
+  String get briefingAiPrompt;
+
+  /// No description provided for @aiModeHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'How to use'**
+  String get aiModeHelp;
+
+  /// No description provided for @aiModeFleet.
+  ///
+  /// In en, this message translates to:
+  /// **'My fleet'**
+  String get aiModeFleet;
+
+  /// No description provided for @aiFleetDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers come from a summary of your fleet records (health scores and risks). Costs, crew personal data and attachments are never sent.'**
+  String get aiFleetDisclaimer;
+
+  /// No description provided for @aiFleetGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask about the fleet — for example: which vessel needs attention first, or why is a vessel\'s score low?'**
+  String get aiFleetGreeting;
 }
 
 class _AppLocalizationsDelegate

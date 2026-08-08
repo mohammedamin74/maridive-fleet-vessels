@@ -1929,4 +1929,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sourceModuleDailyTask => 'Daily task';
+
+  @override
+  String get dailyBriefingTitle => 'Daily Briefing';
+
+  @override
+  String get generateDailyBriefing => 'Daily briefing';
+
+  @override
+  String get briefingCritical => 'Critical — act now';
+
+  @override
+  String get briefingHighPriority => 'High priority — follow up today';
+
+  @override
+  String get briefingUpcoming => 'Upcoming — prepare';
+
+  @override
+  String get briefingPositive => 'No significant concern';
+
+  @override
+  String get briefingOpenActions => 'Open actions';
+
+  @override
+  String get briefingNoneInSection => 'Nothing in this section.';
+
+  @override
+  String get briefingAllClear =>
+      'No critical, high or medium risks detected across the fleet.';
+
+  @override
+  String briefingHeadline(int count, int total) {
+    return '$count of $total vessels need attention.';
+  }
+
+  @override
+  String get copySummary => 'Copy summary';
+
+  @override
+  String get summaryCopied => 'Summary copied';
+
+  @override
+  String get aiSummaryTitle => 'AI summary';
+
+  @override
+  String get generateAiSummary => 'Generate';
+
+  @override
+  String get aiRecommendationLabel =>
+      'AI recommendation — human review required';
+
+  @override
+  String get briefingAiPrompt =>
+      'Give me a short superintendent briefing from this snapshot: what is critical, what to follow up today, and a numbered list of recommended next steps. Use only the snapshot.';
+
+  @override
+  String get aiModeHelp => 'How to use';
+
+  @override
+  String get aiModeFleet => 'My fleet';
+
+  @override
+  String get aiFleetDisclaimer =>
+      'Answers come from a summary of your fleet records (health scores and risks). Costs, crew personal data and attachments are never sent.';
+
+  @override
+  String get aiFleetGreeting =>
+      'Ask about the fleet — for example: which vessel needs attention first, or why is a vessel\'s score low?';
 }

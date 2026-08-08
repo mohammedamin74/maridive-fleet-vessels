@@ -46,8 +46,15 @@ Rules per vessel using `clockNow()`:
 ### Acceptance (spec §24/§25)
 analyze 0 → all tests green (existing + new engine/score tests) → macOS release build + reinstall → EN/AR, light/dark visual check → push (web auto-deploys).
 
-## Phase 2 — Intelligence (next)
-`fleet-ai` edge function (authorized structured context only, JWT + throttle, free models), Daily Briefing (+ `ai_briefings` persistence), AI risk explanations, document discrepancy detection in ingestion.
+## Phase 2 — Intelligence (shipped, except document discrepancy detection)
+
+- **Daily Briefing** (`briefing_service.dart` + `daily_briefing_screen.dart`): critical / high priority / upcoming / open actions / verified-quiet sections, built deterministically from the same FleetIntel snapshot so it works offline. Copy-to-clipboard management summary and PDF export (`ReportService.exportBriefingPdf`).
+- **`fleet-ai` edge function**: answers fleet questions from a minimal structured snapshot the signed-in client sends. The function has **no database access and no service-role key** — the client already reads under RLS, so the model can never see more than the user can. The snapshot carries health scores plus risk severity/category/rule and truncated subjects; never crew PII, costs, suppliers, record ids or attachments (pinned by `test/briefing_test.dart`). JWT-verified, per-user throttle, free-model fallback chain.
+- **Fleet mode in the AI Assistant**: Help ↔ My fleet toggle; switching clears history so the two contexts never mix. Every fleet answer is labelled "AI recommendation — human review required", in-app and in the PDF. Model Markdown is flattened to plain text for display and print.
+- AI risk explanations and recurring-defect detection are covered by Phase 1's deterministic rules (a repeated defect is flagged as a pattern for review, never a diagnosed cause).
+- **Deferred to Phase 2b**: document discrepancy detection in the ingestion pipeline — compare an AI-extracted certificate against the existing record and surface the difference for review, never overwriting.
+
+`ai_briefings` persistence is deliberately not implemented yet: a briefing is cheap to recompute and always current, so storing it would only add stale copies. It becomes worthwhile in Phase 3, when trends need historical snapshots.
 
 ## Phase 3 — Management
 Executive dashboard with trends (needs Phase 1 snapshots — start persisting `vessel_health_scores` snapshots at the start of Phase 3), fleet ranking report, extended unified report, action KPIs.

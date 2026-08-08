@@ -18,3 +18,10 @@ verify_jwt = true
 # signed-in fleet user; the gateway verifies their JWT. No fleet data is sent.
 [functions.assistant]
 verify_jwt = true
+
+# The fleet-ai function answers superintendent questions about the fleet. It
+# has no database access of its own — the signed-in client sends a minimal
+# structured snapshot it already read under RLS — but it must still only be
+# reachable by a signed-in user, so keep the gateway JWT verification on.
+[functions.fleet-ai]
+verify_jwt = true

@@ -917,5 +917,35 @@
   "sourceModuleRequisition": "Requisition",
   "sourceModulePortRequirement": "Port requirement",
   "sourceModuleUrgentNotification": "Urgent alert",
-  "sourceModuleDailyTask": "Daily task"
+  "sourceModuleDailyTask": "Daily task",
+  "dailyBriefingTitle": "Daily Briefing",
+  "generateDailyBriefing": "Daily briefing",
+  "briefingCritical": "Critical — act now",
+  "briefingHighPriority": "High priority — follow up today",
+  "briefingUpcoming": "Upcoming — prepare",
+  "briefingPositive": "No significant concern",
+  "briefingOpenActions": "Open actions",
+  "briefingNoneInSection": "Nothing in this section.",
+  "briefingAllClear": "No critical, high or medium risks detected across the fleet.",
+  "briefingHeadline": "{count} of {total} vessels need attention.",
+  "@briefingHeadline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "copySummary": "Copy summary",
+  "summaryCopied": "Summary copied",
+  "aiSummaryTitle": "AI summary",
+  "generateAiSummary": "Generate",
+  "aiRecommendationLabel": "AI recommendation — human review required",
+  "briefingAiPrompt": "Give me a short superintendent briefing from this snapshot: what is critical, what to follow up today, and a numbered list of recommended next steps. Use only the snapshot.",
+  "aiModeHelp": "How to use",
+  "aiModeFleet": "My fleet",
+  "aiFleetDisclaimer": "Answers come from a summary of your fleet records (health scores and risks). Costs, crew personal data and attachments are never sent.",
+  "aiFleetGreeting": "Ask about the fleet — for example: which vessel needs attention first, or why is a vessel's score low?"
 }

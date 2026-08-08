@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/gen/app_localizations.dart';
 import '../models/fleet_intelligence.dart';
+import '../screens/daily_briefing_screen.dart';
 import '../screens/risk_screen.dart';
 import '../services/fleet_intel.dart';
 import '../services/vessel_health_service.dart';
@@ -45,6 +46,14 @@ class CommandCenterPanel extends StatelessWidget {
                           .textTheme
                           .titleMedium
                           ?.copyWith(fontWeight: FontWeight.w800)),
+                ),
+                TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (_) => const DailyBriefingScreen()),
+                  ),
+                  icon: const Icon(Icons.summarize_outlined, size: 16),
+                  label: Text(t.generateDailyBriefing),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).push(

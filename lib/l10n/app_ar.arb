@@ -902,5 +902,35 @@
   "sourceModuleRequisition": "طلب شراء",
   "sourceModulePortRequirement": "متطلب ميناء",
   "sourceModuleUrgentNotification": "تنبيه عاجل",
-  "sourceModuleDailyTask": "مهمة يومية"
+  "sourceModuleDailyTask": "مهمة يومية",
+  "dailyBriefingTitle": "الموجز اليومي",
+  "generateDailyBriefing": "الموجز اليومي",
+  "briefingCritical": "حرج — تصرّف الآن",
+  "briefingHighPriority": "أولوية عالية — متابعة اليوم",
+  "briefingUpcoming": "قادم — استعداد",
+  "briefingPositive": "لا توجد ملاحظات جوهرية",
+  "briefingOpenActions": "إجراءات مفتوحة",
+  "briefingNoneInSection": "لا يوجد شيء في هذا القسم.",
+  "briefingAllClear": "لا توجد مخاطر حرجة أو مرتفعة أو متوسطة في الأسطول.",
+  "briefingHeadline": "{count} من {total} سفن تحتاج إلى متابعة.",
+  "@briefingHeadline": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "copySummary": "نسخ الملخص",
+  "summaryCopied": "تم نسخ الملخص",
+  "aiSummaryTitle": "ملخص الذكاء الاصطناعي",
+  "generateAiSummary": "إنشاء",
+  "aiRecommendationLabel": "توصية ذكاء اصطناعي — تتطلب مراجعة بشرية",
+  "briefingAiPrompt": "أعطني موجزًا قصيرًا للمشرف الفني من هذه البيانات: ما هو الحرج، وما يجب متابعته اليوم، وقائمة مرقّمة بالخطوات المقترحة. استخدم البيانات المرفقة فقط.",
+  "aiModeHelp": "طريقة الاستخدام",
+  "aiModeFleet": "أسطولي",
+  "aiFleetDisclaimer": "تأتي الإجابات من ملخص لسجلات أسطولك (مؤشرات الصحة والمخاطر). لا تُرسل التكاليف ولا بيانات الطاقم الشخصية ولا المرفقات.",
+  "aiFleetGreeting": "اسأل عن الأسطول — مثلًا: أي سفينة تحتاج المتابعة أولًا، أو لماذا مؤشر سفينة منخفض؟"
 }
